@@ -14,7 +14,7 @@ Initial steps for setup and deployment
 --a .gitignore 
     to include env.py and .venv
 --a Procfile  
-    used in conjunction with gunicorn and Heroku to launch web wsgi processes.
+used in conjunction with gunicorn and Heroku to launch web wsgi processes.
 
 
 **Install**
