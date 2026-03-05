@@ -15,7 +15,8 @@ Initial steps for setup and deployment
     to include env.py and .venv
 --a Procfile  
 used in conjunction with gunicorn and Heroku to launch web wsgi processes.
-
+activate the venv
+    .venv/Scripts/activate
 
 **Install**
 `pip install jjjjj~=1.23.0`

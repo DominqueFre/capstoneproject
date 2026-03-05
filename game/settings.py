@@ -100,16 +100,17 @@ WSGI_APPLICATION = 'game.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+database_url = os.environ.get('DATABASE_URL')
+if not database_url:
+    raise RuntimeError('DATABASE_URL is required for the default PostgreSQL database.')
+
 DATABASES = {
-    'default': {
+    'default': dj_database_url.parse(database_url),
+    'backup': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    },
 }
-
-database_url = os.environ.get('DATABASE_URL')
-if database_url:
-    DATABASES['default'] = dj_database_url.parse(database_url)
 
 
 # Password validation
