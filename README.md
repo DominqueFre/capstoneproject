@@ -293,9 +293,12 @@ ERD
 |--|--|--|--|
 |Wireframe|Balsamiq|Screen, tablet and mobile view||
 |ERD|dbdiagram.io|updated sample code||
+|||||
 |Images|Freepik|AI generated|Altered as required|
 |||||
-|||||
+|Repository|Git Hub|Repository hosting service||
+|Hosting Platform|Heroku|Platform hosting service||
+|IDE|VSCode|||
 |||||
 
 Final to do's - add mubering - see if can link if not auto

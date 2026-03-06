@@ -1,5 +1,5 @@
-from django.http import HttpResponse
+from django.shortcuts import render
 
 
 def home(request):
-	return HttpResponse("Game home is running.")
+    return render(request, "gamehome/home.html")
