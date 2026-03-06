@@ -1,0 +1,94 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+Project capstoneproject {
+  database_type: 'PostgreSQL'
+  Note: 'Tic Tac Toe / Noughts and Crosses'
+}
+
+Table user {
+  id integer [primary key]
+  username varchar(xx)
+  email email
+  role varchar
+  created_at timestamp
+}
+
+Table memberinformation{
+  id integer [primary key]
+  user_id integer [ref: > user.id, unique] // one-to-one
+  gamername varchar(20) [not null, unique]
+  status varchar(8) [default: 'novice', note:'earned - seasoned, master']
+  created_at timestamp
+}
+
+Table gamescores {
+  id integer [primary key]
+  difficulty text(10) [note: 'Easy, Normal, Hard, Fiendish']
+  user_id integer [ref: > user.id] // many-to-one
+  outcome varchar [default:'L', note: 'W,L,D default for abandoned']
+  played_on timestamp
+}
+
+Table memberwinpost{
+  id integer [primary key]
+  user_id integer  [ref: > user.id] // many-to-one
+  winpost varchar(200)  [note: 'null is allowed' ] 
+}
+
+Table memberlosepost{
+  id integer [primary key]
+  user_id integer  [ref: > user.id] // many-to-one
+  losepost varchar(200)  [note: 'all same comments allowed' ] 
+}
+Table memberdrawpost{
+  id integer [primary key]
+  user_id integer  [ref: > user.id] // many-to-one
+  drawpost varchar(200)  [note: 'max 10 of each comment per user' ] 
+}
+
+Table membermovepost{
+  id integer [primary key]
+  user_id integer  [ref: > user.id] // many-to-one
+  movepost varchar(200)  [note: 'see other xxpost comments' ] 
+}
+
+Table memberavatar{
+  id integer [primary key, note:'only available to seasoned and above players']
+  user_id integer  [ref: > user.id, unique] // one-to-one
+  avatar_image cloudinary_image [note: 'one only']
+}
+
+Table memberchoice{
+  id integer [primary key, note:'only available to seasoned and above players']
+  user_id integer  [ref: > user.id,unique] // one-to-one
+  choice varchar [default:'Random' , note:'select from available']
+}
+
+
+Records user(id, username, role) {
+  0, 'Alice', 'admin'
+  1, 'Bob', 'staff'
+  2, 'Candice', 'member'
+  3, 'David', 'member'
+  4, 'Frank', 'member'
+  5, 'Jim', 'member'
+  6, 'Kay', 'member'
+  7, 'Ann', 'member'
+  8, 'Don', 'member'
+  9, 'Rob', 'member'
+ 10, 'Kylie', 'member'
+ 11, 'Julia', 'member'
+ 12, 'Benedict', 'member'
+}
+
+Records gamescores(id,difficulty,user_id,outcome,played_on) {
+  0,'easy', 2, 'W', '04/03/2026'
+  1,'hard', 2, 'W', '03/03/2026'
+  2,'fiendish', 3, 'L', '03/03/2026'
+  3,'normal',12, 'D', '03/03/2026' 
+}
+Records memberwinpost(id,user_id,winpost){
+  0, 2, 'Won'
+  1, 3, 'Yay' 
+  2, 2, 'Yes'
+}

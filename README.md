@@ -1,3 +1,13 @@
+# Capstone Project
+
+## Index
+1. Steps for Django setup
+2. Steps for deployment 
+3. 
+4. AI Usage 
+5. Supporting documentation
+6. Sources
+
 Initial steps for setup and deployment
 
 
@@ -92,15 +102,15 @@ Apply the migrations for the django_summernote app
 
 
 ### Steps for completing the installation of Whitenoise tbc
-In settings.py file in Middleware 
-
+In settings.py file in Middleware after the security middleware add
+    `'whitenoise.middleware.WhiteNoiseMiddleware',`
 Once installed and when a production deploy is planned run 
     `python manage.py collectstatic`
 
 ### Steps for completing installation of django-allauth
-(For controlled user login's etc without accessing admin)
-    `'django.contrib.sites',`
-    `'allauth',`
+In installed apps(For controlled user login's etc without accessing admin)
+    `'django.contrib.sites',` below djoango apps
+    `'allauth',`  above project apps
     `'allauth.account',`
     `'allauth.socialaccount',`
 and below the installed apps list and above middleware - add
@@ -201,48 +211,55 @@ Run the command
 `python manage.py createsuperuser`
 
 
-Django layout
-	Project: game
-	Templates: 
-•	base.html – header footer various links 
-•	login.html (in template/account/snippets)
-•	logout.html (“”)
-•	signup.html (“”)
+_Proposed Django layout_
+- Project: game
+	- Templates: 
+	    - base.html – nav bar, simple footer, various links 
+	    - login.html (in template/account/snippets)
+	    - logout.html (“”)
+	    - signup.html (“”)
 
-	App: gamehome
-	Models
-•	Member_information
-•	Scores
-	Views
-•	Member_status
-•	Top 20 scores for each difficulty level (highest % non-loss, highest % win)
-•	Member score for each difficulty level @logged_in
-	Template content
-•	Game board
-•	Score board
+- App: gamehome
+	- Models
+	    - Member_information
+	- Views
+	    - Member status
+    - Template content
+	    - Game board
+- App: gamescores
+	- Models
+	    - Gamescores
+    - Views
+	    - Member_status
+	    - Top 20 scores for each difficulty level (highest % non-loss, highest % win)
+	    - Member score for each difficulty level @logged_in
+	- Template content
+	    - Score board
 
-	App: gameprofile
-	Models (import User, Member Information
-•	Win messages (with slug)
-•	Requires input / edit form
-•	Lose messages (with slug)
-•	Requires input form
-•	Draw messages (with slug)
-•	Requires input form
-•	Move messages (with slug)
-•	Requires input form
-•	Avatar (Cloudinary image)
-•	Requires input form
-•	Avatar selection 
-•	Default status is randomise.
-	Views
-•	Message counts
-•	Current messages
-•	Image count
-•	Current image (player piece)
-	Template content
-•	Profile Screen
-•	Messages modal
+- App: gameprofile
+    - Models (import User, Member Information)
+        - Win messages (with user-id and win id)
+            - Requires input / edit form
+        - Lose messages (with user-id and win id)
+            - Requires input form
+        - Draw messages (with user-id and win id)
+            - Requires input form
+        - Move messages (with user-id and win id)
+            - Requires input form
+        - Avatar (Cloudinary image, user-id)
+            - Requires input form
+        - Avatar selection (user-id, status)
+            - Default status is randomise
+    - Views
+        - Message counts (restricted to 10 per message type)
+        - Current messages (Visible and selectable to edit)
+        - Image count
+        - Current image (player piece visible and can be overridden)
+    - Template content
+        - Profile Screen
+        - Various input modal pop ups
+
+
 
 
 Functionality
@@ -262,8 +279,23 @@ Scores recorded	|No	|Yes	|As Member	|As Member
 *Once status is achieved, can not be lost.
 
 Wireframes
-Used Balsamiq
+
+- [Homescreen Wireframes](static/wireframes/wfhome.png)
+- [Profilescreen Wireframes](static/wireframes/wfprofile.png)
+- [Scores Wireframes](static/wireframes/wfscores.png)
+
+ERD
+- [Entity Relationship Diagram](static/erds/capstone-erd.svg)
 
  
- 
- 
+ Sources
+ |Item|Source|Usage|Comment|
+|--|--|--|--|
+|Wireframe|Balsamiq|Screen, tablet and mobile view||
+|ERD|dbdiagram.io|updated sample code||
+|Images|Freepik|AI generated|Altered as required|
+|||||
+|||||
+|||||
+
+Final to do's - add mubering - see if can link if not auto
