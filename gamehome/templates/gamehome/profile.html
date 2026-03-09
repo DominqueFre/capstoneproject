@@ -1,0 +1,119 @@
+{% extends "gamehome/base.html" %}
+{% load static %}
+
+{% block content %}
+  <h1>Profile</h1>
+  <p>Personalize your game experience. Settings are saved in this browser.</p>
+
+  <form id="profileForm" class="profile-form">
+    <label for="displayName">Display name</label>
+    <input id="displayName" name="displayName" type="text" maxlength="24" placeholder="e.g. Player One">
+
+    <label for="defaultDifficulty">Default difficulty</label>
+    <select id="defaultDifficulty" name="defaultDifficulty">
+      <option value="easy">Easy</option>
+      <option value="normal">Normal</option>
+      <option value="hard">Hard</option>
+      <option value="fiendish">Fiendish</option>
+    </select>
+
+    <label for="defaultTheme">Default theme</label>
+    <select id="defaultTheme" name="defaultTheme">
+      <option value="traditional">Traditional</option>
+      <option value="robot">Robot</option>
+      <option value="flowers">Flowers</option>
+      <option value="fantasy">Fantasy</option>
+    </select>
+
+    <div class="profile-actions">
+      <button type="submit">Save preferences</button>
+      <button id="resetPreferences" type="button">Reset to defaults</button>
+      <a href="{% url 'gamehome:home' %}">Go to game</a>
+    </div>
+  </form>
+
+  <p id="profileMessage" aria-live="polite"></p>
+
+  <section class="comment-section">
+    <h2>Message Comments</h2>
+    <p>Each message type can store up to {{ max_comments_per_type }} comments.</p>
+
+    {% if feedback_message %}
+      <p class="comment-feedback">{{ feedback_message }}</p>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+      <div class="comment-errors">
+        {{ form.non_field_errors }}
+      </div>
+    {% endif %}
+
+    <form id="commentForm" class="comment-form" method="post">
+      {% csrf_token %}
+      <label for="id_message_type">Message type</label>
+      {{ form.message_type }}
+
+      <div id="commentEditorWrap" {% if not can_add_comment %}hidden{% endif %}>
+        <label for="id_comment_text">Comment</label>
+        {{ form.comment_text }}
+        {{ form.comment_id }}
+        {% if form.comment_text.errors %}
+          <div class="comment-errors">{{ form.comment_text.errors }}</div>
+        {% endif %}
+
+        <div class="profile-actions">
+          <button id="saveCommentBtn" type="submit">
+            {% if editing_comment %}Update comment{% else %}Add comment{% endif %}
+          </button>
+          <button id="clearEditBtn" type="button">Clear edit</button>
+        </div>
+      </div>
+
+      <p id="commentLimitMessage" {% if can_add_comment %}hidden{% endif %}>
+        You already entered {{ max_comments_per_type }} comments for this type.
+        Select one below to edit it.
+      </p>
+    </form>
+
+    {{ comment_counts|json_script:"comment-counts-data" }}
+    <div class="comment-lists">
+      <h3>Your saved comments</h3>
+
+      {% for message_type, rows in comments_by_type.items %}
+        <h4>
+          {{ message_type|title }} ({{ rows|length }}/{{ max_comments_per_type }})
+        </h4>
+        {% if rows %}
+          <ul class="comment-list">
+            {% for row in rows %}
+              <li>
+                <span>{{ row.text }}</span>
+                <a href="?type={{ message_type }}&edit={{ row.id }}">Edit</a>
+                <button
+                  type="button"
+                  class="edit-comment-btn"
+                  data-message-type="{{ message_type }}"
+                  data-comment-id="{{ row.id }}"
+                  data-comment-text="{{ row.text|escape }}"
+                >
+                  Quick edit
+                </button>
+                <form method="post" class="delete-comment-form">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="delete">
+                  <input type="hidden" name="delete_type" value="{{ message_type }}">
+                  <input type="hidden" name="delete_id" value="{{ row.id }}">
+                  <button type="submit">Delete</button>
+                </form>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>No comments saved for this type yet.</p>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </section>
+
+  <script src="{% static 'gamehome/js/profile.js' %}"></script>
+{% endblock %}

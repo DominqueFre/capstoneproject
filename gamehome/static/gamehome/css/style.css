@@ -66,3 +66,69 @@ th, td {
   text-align: center;
   white-space: nowrap;
 }
+
+.profile-form {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 32rem;
+}
+
+.profile-form input,
+.profile-form select,
+.profile-form button {
+  padding: 0.5rem;
+  font: inherit;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.comment-section {
+  margin-top: 2rem;
+}
+
+.comment-form {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 40rem;
+}
+
+.comment-form textarea,
+.comment-form select,
+.comment-form button {
+  font: inherit;
+}
+
+.comment-feedback {
+  color: #0b6a0b;
+}
+
+.comment-errors {
+  color: #9b1c1c;
+}
+
+.comment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 1rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.comment-list li {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.delete-comment-form {
+  margin: 0;
+}

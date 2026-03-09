@@ -4,7 +4,7 @@
   <table>
     <thead>
       <tr>
-        <th>Player</th><th>Wins</th><th>Losses</th><th>Draws</th><th>Total</th>
+        <th>Player</th><th>Wins</th><th>% Wins</th><th>Draws</th><th>% Wins and Draws</th>
       </tr>
     </thead>
     <tbody>
@@ -12,9 +12,9 @@
       <tr>
         <td>{{ row.user__username }}</td>
         <td>{{ row.wins }}</td>
-        <td>{{ row.losses }}</td>
+        <td>{{ row.win_percentage|floatformat:2 }}%</td>
         <td>{{ row.draws }}</td>
-        <td>{{ row.total }}</td>
+        <td>{{ row.total_percentage|floatformat:2 }}%</td>
       </tr>
       {% empty %}
       <tr><td colspan="5">No games yet.</td></tr>

@@ -7,6 +7,12 @@ const themeEl = document.getElementById("theme");
 const canSaveScore = Boolean(window.GAME_CAN_SAVE_SCORE);
 const loginUrl = window.GAME_LOGIN_URL || "/accounts/login/";
 
+const PROFILE_STORAGE_KEYS = {
+  displayName: "ttt.displayName",
+  difficulty: "ttt.defaultDifficulty",
+  theme: "ttt.defaultTheme"
+};
+
 const themeAssets = window.GAME_THEME_ASSETS || {};
 
 let board = Array(9).fill("");
@@ -61,6 +67,27 @@ function full() {
   return board.every(c => c !== "");
 }
 
+function getTurnMessage() {
+  const savedDisplayName = window.localStorage.getItem(PROFILE_STORAGE_KEYS.displayName);
+  if (savedDisplayName) {
+    return `${savedDisplayName}, your turn (X)`;
+  }
+  return "Your turn (X)";
+}
+
+function applySavedPreferences() {
+  const savedDifficulty = window.localStorage.getItem(PROFILE_STORAGE_KEYS.difficulty);
+  const savedTheme = window.localStorage.getItem(PROFILE_STORAGE_KEYS.theme);
+
+  if (savedDifficulty && difficultyEl && [...difficultyEl.options].some(o => o.value === savedDifficulty)) {
+    difficultyEl.value = savedDifficulty;
+  }
+
+  if (savedTheme && themeEl && [...themeEl.options].some(o => o.value === savedTheme)) {
+    themeEl.value = savedTheme;
+  }
+}
+
 function endGame(resultText, outcome) {
   gameOver = true;
   statusEl.textContent = resultText;
@@ -89,7 +116,7 @@ function aiMove() {
   if (winner("O")) return endGame("Computer wins!", "L");
   if (full()) return endGame("Draw!", "D");
 
-  statusEl.textContent = "Your turn (X)";
+  statusEl.textContent = getTurnMessage();
 }
 
 async function postScore(outcome) {
@@ -115,7 +142,7 @@ async function postScore(outcome) {
 function reset() {
   board = Array(9).fill("");
   gameOver = false;
-  statusEl.textContent = "Your turn (X)";
+  statusEl.textContent = getTurnMessage();
   renderBoard();
 }
 
@@ -123,4 +150,5 @@ resetBtn.addEventListener("click", reset);
 if (themeEl) {
   themeEl.addEventListener("change", renderBoard);
 }
+applySavedPreferences();
 reset();
