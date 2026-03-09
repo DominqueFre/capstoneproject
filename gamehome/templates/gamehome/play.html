@@ -1,0 +1,62 @@
+{% extends "gamehome/base.html" %}
+{% load static %}
+{% block content %}
+  <h1>Play</h1>
+
+  <div class="controls">
+    <label>Difficulty:
+      <select id="difficulty">
+        <option value="easy">Easy</option>
+        <option value="normal">Normal</option>
+        <option value="hard">Hard</option>
+        <option value="fiendish">Fiendish</option>
+      </select>
+    </label>
+    <label>Theme:
+      <select id="theme">
+        <option value="traditional">Traditional</option>
+        <option value="robot">Robot</option>
+        <option value="flowers">Flowers</option>
+        <option value="fantasy">Fantasy</option>
+      </select>
+    </label>
+    <button id="resetBtn" type="button">Reset</button>
+  </div>
+  {% if not user.is_authenticated %}
+    <p>Sign in to save your scores.</p>
+  {% endif %}
+
+  <p id="status">Your turn (X)</p>
+  <div id="boardFrame" class="board-frame" aria-hidden="true">
+    <div id="board" class="board" aria-label="tic tac toe board"></div>
+  </div>
+
+  <script>
+    window.GAME_CAN_SAVE_SCORE = {{ user.is_authenticated|yesno:"true,false" }};
+    window.GAME_LOGIN_URL = "{% url 'account_login' %}";
+    window.GAME_THEME_ASSETS = {
+      traditional: {
+        board: "{% static 'gamehome/images/game_traditional_gameboard.png' %}",
+        head: "{% static 'gamehome/images/game_traditional_coin_head.png' %}",
+        tail: "{% static 'gamehome/images/game_traditional_coin_tail.png' %}"
+      },
+      robot: {
+        board: "{% static 'gamehome/images/game_robot_gameboard.png' %}",
+        head: "{% static 'gamehome/images/game_robot_coin_head.png' %}",
+        tail: "{% static 'gamehome/images/game_robot_coin_tail.png' %}"
+      },
+      flowers: {
+        board: "{% static 'gamehome/images/game_flowers_gameboard.png' %}",
+        head: "{% static 'gamehome/images/game_flowers_coin_head.png' %}",
+        tail: "{% static 'gamehome/images/game_flowers_coin_tail.png' %}"
+      },
+      fantasy: {
+        board: "{% static 'gamehome/images/game_fantasy_gameboard.png' %}",
+        head: "{% static 'gamehome/images/game_fantasy_coin_head.png' %}",
+        tail: "{% static 'gamehome/images/game_fantasy_coin_tail.png' %}"
+      }
+    };
+  </script>
+
+  <script src="{% static 'gamehome/js/game.js' %}"></script>
+{% endblock %}
