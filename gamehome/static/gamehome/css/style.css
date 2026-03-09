@@ -17,6 +17,12 @@ header, main {
 
 nav { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
 .controls { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.toss-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
 .board-frame {
   width: min(92vw, 70vh, 760px);
   max-width: 100%;

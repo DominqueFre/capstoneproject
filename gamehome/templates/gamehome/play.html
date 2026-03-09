@@ -25,6 +25,11 @@
   {% endif %}
 
   <p id="status">Your turn (X)</p>
+  <div id="tossControls" class="toss-controls" hidden>
+    <span>Pick for toss:</span>
+    <button id="pickHeadsBtn" type="button">Heads</button>
+    <button id="pickTailsBtn" type="button">Tails</button>
+  </div>
   <div id="boardFrame" class="board-frame" aria-hidden="true">
     <div id="board" class="board" aria-label="tic tac toe board"></div>
   </div>
@@ -35,23 +40,31 @@
     window.GAME_THEME_ASSETS = {
       traditional: {
         board: "{% static 'gamehome/images/game_traditional_gameboard.png' %}",
-        head: "{% static 'gamehome/images/game_traditional_coin_head.png' %}",
-        tail: "{% static 'gamehome/images/game_traditional_coin_tail.png' %}"
+        coinHead: "{% static 'gamehome/images/game_traditional_coin_head.png' %}",
+        coinTail: "{% static 'gamehome/images/game_traditional_coin_tail.png' %}",
+        pieceA: "{% static 'gamehome/images/game_traditional_gamepiece_0.png' %}",
+        pieceB: "{% static 'gamehome/images/game_traditional_gamepiece_1.png' %}"
       },
       robot: {
         board: "{% static 'gamehome/images/game_robot_gameboard.png' %}",
-        head: "{% static 'gamehome/images/game_robot_coin_head.png' %}",
-        tail: "{% static 'gamehome/images/game_robot_coin_tail.png' %}"
+        coinHead: "{% static 'gamehome/images/game_robot_coin_head.png' %}",
+        coinTail: "{% static 'gamehome/images/game_robot_coin_tail.png' %}",
+        pieceA: "{% static 'gamehome/images/game_robot_gamepiece_0.png' %}",
+        pieceB: "{% static 'gamehome/images/game_robot_gamepiece_1.png' %}"
       },
       flowers: {
         board: "{% static 'gamehome/images/game_flowers_gameboard.png' %}",
-        head: "{% static 'gamehome/images/game_flowers_coin_head.png' %}",
-        tail: "{% static 'gamehome/images/game_flowers_coin_tail.png' %}"
+        coinHead: "{% static 'gamehome/images/game_flowers_coin_head.png' %}",
+        coinTail: "{% static 'gamehome/images/game_flowers_coin_tail.png' %}",
+        pieceA: "{% static 'gamehome/images/game_flowers_gamepiece_0.png' %}",
+        pieceB: "{% static 'gamehome/images/game_flowers_gamepiece_1.png' %}"
       },
       fantasy: {
         board: "{% static 'gamehome/images/game_fantasy_gameboard.png' %}",
-        head: "{% static 'gamehome/images/game_fantasy_coin_head.png' %}",
-        tail: "{% static 'gamehome/images/game_fantasy_coin_tail.png' %}"
+        coinHead: "{% static 'gamehome/images/game_fantasy_coin_head.png' %}",
+        coinTail: "{% static 'gamehome/images/game_fantasy_coin_tail.png' %}",
+        pieceA: "{% static 'gamehome/images/game_fantasy_gamepiece_0.png' %}",
+        pieceB: "{% static 'gamehome/images/game_fantasy_gamepiece_1.png' %}"
       }
     };
   </script>
