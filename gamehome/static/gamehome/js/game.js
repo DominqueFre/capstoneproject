@@ -22,8 +22,8 @@ let board = Array(9).fill("");
 let gameOver = false;
 const PLAYER_MARK = "X";
 const COMPUTER_MARK = "O";
-let playerPieceAssetKey = "pieceA";
-let computerPieceAssetKey = "pieceB";
+let playerPieceIndex = 0;
+let computerPieceIndex = 1;
 let isHumanTurn = true;
 let tossPicker = "player";
 
@@ -47,20 +47,21 @@ function renderBoard() {
     cell.className = "cell";
     cell.type = "button";
 
-    const pieceKey = value === PLAYER_MARK ? playerPieceAssetKey : computerPieceAssetKey;
-    const pieceAsset = assets[pieceKey];
+    const piecePool = Array.isArray(assets.pieces) ? assets.pieces : [];
+    const pieceIndex = value === PLAYER_MARK ? playerPieceIndex : computerPieceIndex;
+    const pieceAsset = piecePool[pieceIndex];
 
     if (value === PLAYER_MARK && pieceAsset) {
       const piece = document.createElement("img");
       piece.className = "piece-img";
       piece.src = pieceAsset;
-      piece.alt = `${theme} ${pieceKey}`;
+      piece.alt = `${theme} player piece`;
       cell.appendChild(piece);
     } else if (value === COMPUTER_MARK && pieceAsset) {
       const piece = document.createElement("img");
       piece.className = "piece-img";
       piece.src = pieceAsset;
-      piece.alt = `${theme} ${pieceKey}`;
+      piece.alt = `${theme} computer piece`;
       cell.appendChild(piece);
     } else {
       cell.textContent = value;
@@ -87,10 +88,26 @@ function getTurnMessage() {
   return "Your turn (X)";
 }
 
-function randomizePieceAssignment() {
-  const playerGetsPieceA = Math.random() < 0.5;
-  playerPieceAssetKey = playerGetsPieceA ? "pieceA" : "pieceB";
-  computerPieceAssetKey = playerGetsPieceA ? "pieceB" : "pieceA";
+function randomizePieceAssignment(theme) {
+  const assets = themeAssets[theme] || {};
+  const piecePool = Array.isArray(assets.pieces) ? assets.pieces : [];
+
+  if (piecePool.length === 0) {
+    playerPieceIndex = 0;
+    computerPieceIndex = 0;
+    return;
+  }
+
+  playerPieceIndex = Math.floor(Math.random() * piecePool.length);
+
+  if (piecePool.length === 1) {
+    computerPieceIndex = playerPieceIndex;
+    return;
+  }
+
+  do {
+    computerPieceIndex = Math.floor(Math.random() * piecePool.length);
+  } while (computerPieceIndex === playerPieceIndex);
 }
 
 function showTossControls(show) {
@@ -232,7 +249,8 @@ async function postScore(outcome) {
 function reset() {
   board = Array(9).fill("");
   gameOver = false;
-  randomizePieceAssignment();
+  const theme = themeEl ? themeEl.value : "traditional";
+  randomizePieceAssignment(theme);
   renderBoard();
   beginCoinTossFlow();
 }
