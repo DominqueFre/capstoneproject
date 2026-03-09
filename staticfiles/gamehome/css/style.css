@@ -1,10 +1,33 @@
-body { font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 1rem; }
-nav { display: flex; gap: 1rem; margin-bottom: 1rem; }
+* { box-sizing: border-box; }
+
+html, body { margin: 0; }
+
+body {
+  font-family: Arial, sans-serif;
+  min-height: 100dvh;
+  width: 100%;
+  padding: 1rem;
+  overflow-x: hidden;
+}
+
+header, main {
+  width: min(100%, 900px);
+  margin-inline: auto;
+}
+
+nav { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
 .controls { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.toss-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
 .board-frame {
-  width: min(90vw, 760px);
+  width: min(92vw, 70vh, 760px);
+  max-width: 100%;
   aspect-ratio: 1 / 1;
-  margin: 1rem 0;
+  margin: 1rem auto;
   display: grid;
   place-items: center;
   background-size: cover;
@@ -35,5 +58,83 @@ nav { display: flex; gap: 1rem; margin-bottom: 1rem; }
   object-fit: contain;
   pointer-events: none;
 }
-table { border-collapse: collapse; width: 100%; }
-th, td { border: 1px solid #ccc; padding: 0.5rem; text-align: center; }
+table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 100%;
+  display: block;
+  overflow-x: auto;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.profile-form {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 32rem;
+}
+
+.profile-form input,
+.profile-form select,
+.profile-form button {
+  padding: 0.5rem;
+  font: inherit;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.comment-section {
+  margin-top: 2rem;
+}
+
+.comment-form {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 40rem;
+}
+
+.comment-form textarea,
+.comment-form select,
+.comment-form button {
+  font: inherit;
+}
+
+.comment-feedback {
+  color: #0b6a0b;
+}
+
+.comment-errors {
+  color: #9b1c1c;
+}
+
+.comment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 1rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.comment-list li {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.delete-comment-form {
+  margin: 0;
+}
