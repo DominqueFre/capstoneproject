@@ -2,6 +2,8 @@ const profileForm = document.getElementById("profileForm");
 const displayNameEl = document.getElementById("displayName");
 const defaultDifficultyEl = document.getElementById("defaultDifficulty");
 const defaultThemeEl = document.getElementById("defaultTheme");
+const profileDifficultyButtons = document.querySelectorAll(".profile-difficulty-btn");
+const profileThemeButtons = document.querySelectorAll(".profile-theme-btn");
 const resetPreferencesBtn = document.getElementById("resetPreferences");
 const profileMessageEl = document.getElementById("profileMessage");
 const commentFormEl = document.getElementById("commentForm");
@@ -15,13 +17,21 @@ const clearEditBtn = document.getElementById("clearEditBtn");
 const quickEditButtons = document.querySelectorAll(".edit-comment-btn");
 
 const PROFILE_STORAGE_KEYS = {
-  displayName: "ttt.displayName",
   difficulty: "ttt.defaultDifficulty",
   theme: "ttt.defaultTheme"
 };
 
-const ALLOWED_DIFFICULTIES = new Set(["easy", "normal", "hard", "fiendish"]);
-const ALLOWED_THEMES = new Set(["traditional", "robot", "flowers", "fantasy"]);
+const allowedDifficulties = Array.isArray(window.PROFILE_ALLOWED_DIFFICULTIES)
+  ? window.PROFILE_ALLOWED_DIFFICULTIES
+  : ["easy"];
+const allowedThemes = Array.isArray(window.PROFILE_ALLOWED_THEMES)
+  ? window.PROFILE_ALLOWED_THEMES
+  : ["traditional"];
+
+const ALLOWED_DIFFICULTIES = new Set(allowedDifficulties);
+const ALLOWED_THEMES = new Set(allowedThemes);
+const DEFAULT_DIFFICULTY = allowedDifficulties[0] || "easy";
+const DEFAULT_THEME = allowedThemes[0] || "traditional";
 
 const commentCountsScript = document.getElementById("comment-counts-data");
 const commentCounts = commentCountsScript ? JSON.parse(commentCountsScript.textContent) : {};
@@ -39,11 +49,12 @@ function setMessage(message) {
 }
 
 function loadPreferences() {
-  const storedName = getStoredValue(PROFILE_STORAGE_KEYS.displayName);
   const storedDifficulty = getStoredValue(PROFILE_STORAGE_KEYS.difficulty);
   const storedTheme = getStoredValue(PROFILE_STORAGE_KEYS.theme);
 
-  displayNameEl.value = storedName;
+  if (displayNameEl) {
+    displayNameEl.value = window.PROFILE_DISPLAY_NAME || displayNameEl.value || "";
+  }
 
   if (ALLOWED_DIFFICULTIES.has(storedDifficulty)) {
     defaultDifficultyEl.value = storedDifficulty;
@@ -52,33 +63,48 @@ function loadPreferences() {
   if (ALLOWED_THEMES.has(storedTheme)) {
     defaultThemeEl.value = storedTheme;
   }
+
+  updatePreferenceBars();
+}
+
+function updatePreferenceBars() {
+  profileDifficultyButtons.forEach((btn) => {
+    const value = btn.getAttribute("data-difficulty") || "easy";
+    const isSelected = value === defaultDifficultyEl.value;
+    btn.classList.toggle("is-selected", isSelected);
+    btn.setAttribute("aria-pressed", isSelected ? "true" : "false");
+  });
+
+  profileThemeButtons.forEach((btn) => {
+    const value = btn.getAttribute("data-theme") || "traditional";
+    const isSelected = value === defaultThemeEl.value;
+    btn.classList.toggle("is-selected", isSelected);
+    btn.setAttribute("aria-pressed", isSelected ? "true" : "false");
+  });
 }
 
 function savePreferences(event) {
-  event.preventDefault();
-  const cleanedName = displayNameEl.value.trim();
   const difficulty = defaultDifficultyEl.value;
   const theme = defaultThemeEl.value;
 
-  window.localStorage.setItem(PROFILE_STORAGE_KEYS.displayName, cleanedName);
   if (ALLOWED_DIFFICULTIES.has(difficulty)) {
     window.localStorage.setItem(PROFILE_STORAGE_KEYS.difficulty, difficulty);
   }
   if (ALLOWED_THEMES.has(theme)) {
     window.localStorage.setItem(PROFILE_STORAGE_KEYS.theme, theme);
   }
-
-  setMessage("Preferences saved.");
 }
 
 function resetPreferences() {
-  window.localStorage.removeItem(PROFILE_STORAGE_KEYS.displayName);
   window.localStorage.removeItem(PROFILE_STORAGE_KEYS.difficulty);
   window.localStorage.removeItem(PROFILE_STORAGE_KEYS.theme);
 
-  displayNameEl.value = "";
-  defaultDifficultyEl.value = "easy";
-  defaultThemeEl.value = "traditional";
+  if (displayNameEl) {
+    displayNameEl.value = window.PROFILE_DISPLAY_NAME || "";
+  }
+  defaultDifficultyEl.value = DEFAULT_DIFFICULTY;
+  defaultThemeEl.value = DEFAULT_THEME;
+  updatePreferenceBars();
   setMessage("Preferences reset.");
 }
 
@@ -145,6 +171,32 @@ if (profileForm) {
 }
 if (resetPreferencesBtn) {
   resetPreferencesBtn.addEventListener("click", resetPreferences);
+}
+
+if (profileDifficultyButtons.length) {
+  profileDifficultyButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const value = btn.getAttribute("data-difficulty") || "easy";
+      if (!ALLOWED_DIFFICULTIES.has(value)) {
+        return;
+      }
+      defaultDifficultyEl.value = value;
+      updatePreferenceBars();
+    });
+  });
+}
+
+if (profileThemeButtons.length) {
+  profileThemeButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const value = btn.getAttribute("data-theme") || "traditional";
+      if (!ALLOWED_THEMES.has(value)) {
+        return;
+      }
+      defaultThemeEl.value = value;
+      updatePreferenceBars();
+    });
+  });
 }
 
 if (messageTypeEl) {

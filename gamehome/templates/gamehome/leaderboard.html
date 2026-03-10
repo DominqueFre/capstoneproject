@@ -1,6 +1,23 @@
 {% extends "gamehome/base.html" %}
 {% block content %}
   <h1>Leaderboard</h1>
+
+  <form method="get" class="difficulty-picker leaderboard-filter" aria-label="Filter leaderboard by difficulty">
+    <span>Difficulty:</span>
+    <div class="difficulty-button-bar" role="group" aria-label="Leaderboard difficulty filter">
+      {% for option in difficulty_options %}
+        <button
+          type="submit"
+          name="difficulty"
+          value="{{ option }}"
+          class="difficulty-btn {% if selected_difficulty == option %}is-selected{% endif %}"
+        >
+          {% if option == "all" %}All{% else %}{{ option|title }}{% endif %}
+        </button>
+      {% endfor %}
+    </div>
+  </form>
+
   <table>
     <thead>
       <tr>
@@ -10,7 +27,7 @@
     <tbody>
       {% for row in rows %}
       <tr>
-        <td>{{ row.user__username }}</td>
+        <td>{{ row.display_name }}</td>
         <td>{{ row.wins }}</td>
         <td>{{ row.win_percentage|floatformat:2 }}%</td>
         <td>{{ row.draws }}</td>

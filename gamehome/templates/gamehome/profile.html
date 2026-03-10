@@ -3,27 +3,58 @@
 
 {% block content %}
   <h1>Profile</h1>
-  <p>Personalize your game experience. Settings are saved in this browser.</p>
+  <p>
+    Welcome to the profile page {{ profile_display_name }}. You have entered the
+    inner sanctum. You can now change your game play messages to something a bit
+    more fun and interesting. I hope you enjoy the extra features, now that
+    you've decided to enter the fascinating world of tic tac toe.
+  </p>
+  <p>Display name is saved to your membership profile. Theme and difficulty defaults are saved in this browser.</p>
+  <p class="member-tier">Tier: {{ member_tier|title }}</p>
 
-  <form id="profileForm" class="profile-form">
+  <form id="profileForm" class="profile-form" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="save_profile">
     <label for="displayName">Display name</label>
-    <input id="displayName" name="displayName" type="text" maxlength="24" placeholder="e.g. Player One">
+    <input id="displayName" name="display_name" type="text" maxlength="20" value="{{ profile_member_name }}" placeholder="e.g. Player One">
 
-    <label for="defaultDifficulty">Default difficulty</label>
-    <select id="defaultDifficulty" name="defaultDifficulty">
-      <option value="easy">Easy</option>
-      <option value="normal">Normal</option>
-      <option value="hard">Hard</option>
-      <option value="fiendish">Fiendish</option>
-    </select>
+    <div class="profile-pref-picker" aria-label="Default difficulty selector">
+      <span>Default difficulty:</span>
+      <input id="defaultDifficulty" name="defaultDifficulty" type="hidden" value="{{ allowed_difficulties.0|default:'easy' }}">
+      <div class="profile-button-bar" role="group" aria-label="Choose default difficulty">
+        {% if "easy" in allowed_difficulties %}
+          <button type="button" class="profile-pref-btn profile-difficulty-btn {% if allowed_difficulties.0 == 'easy' %}is-selected{% endif %}" data-difficulty="easy">Easy</button>
+        {% endif %}
+        {% if "normal" in allowed_difficulties %}
+          <button type="button" class="profile-pref-btn profile-difficulty-btn {% if allowed_difficulties.0 == 'normal' %}is-selected{% endif %}" data-difficulty="normal">Normal</button>
+        {% endif %}
+        {% if "hard" in allowed_difficulties %}
+          <button type="button" class="profile-pref-btn profile-difficulty-btn {% if allowed_difficulties.0 == 'hard' %}is-selected{% endif %}" data-difficulty="hard">Hard</button>
+        {% endif %}
+        {% if "fiendish" in allowed_difficulties %}
+          <button type="button" class="profile-pref-btn profile-difficulty-btn {% if allowed_difficulties.0 == 'fiendish' %}is-selected{% endif %}" data-difficulty="fiendish">Fiendish</button>
+        {% endif %}
+      </div>
+    </div>
 
-    <label for="defaultTheme">Default theme</label>
-    <select id="defaultTheme" name="defaultTheme">
-      <option value="traditional">Traditional</option>
-      <option value="robot">Robot</option>
-      <option value="flowers">Flowers</option>
-      <option value="fantasy">Fantasy</option>
-    </select>
+    <div class="profile-pref-picker" aria-label="Default theme selector">
+      <span>Default theme:</span>
+      <input id="defaultTheme" name="defaultTheme" type="hidden" value="{{ allowed_themes.0|default:'traditional' }}">
+      <div class="profile-button-bar" role="group" aria-label="Choose default theme">
+        {% if "traditional" in allowed_themes %}
+          <button type="button" class="profile-pref-btn profile-theme-btn {% if allowed_themes.0 == 'traditional' %}is-selected{% endif %}" data-theme="traditional">Traditional</button>
+        {% endif %}
+        {% if "robot" in allowed_themes %}
+          <button type="button" class="profile-pref-btn profile-theme-btn {% if allowed_themes.0 == 'robot' %}is-selected{% endif %}" data-theme="robot">Robot</button>
+        {% endif %}
+        {% if "flowers" in allowed_themes %}
+          <button type="button" class="profile-pref-btn profile-theme-btn {% if allowed_themes.0 == 'flowers' %}is-selected{% endif %}" data-theme="flowers">Flowers</button>
+        {% endif %}
+        {% if "fantasy" in allowed_themes %}
+          <button type="button" class="profile-pref-btn profile-theme-btn {% if allowed_themes.0 == 'fantasy' %}is-selected{% endif %}" data-theme="fantasy">Fantasy</button>
+        {% endif %}
+      </div>
+    </div>
 
     <div class="profile-actions">
       <button type="submit">Save preferences</button>
@@ -63,9 +94,9 @@
 
         <div class="profile-actions">
           <button id="saveCommentBtn" type="submit">
-            {% if editing_comment %}Update comment{% else %}Add comment{% endif %}
+            {% if editing_comment %}Update{% else %}Add{% endif %}
           </button>
-          <button id="clearEditBtn" type="button">Clear edit</button>
+          <button id="clearEditBtn" type="button">Clear</button>
         </div>
       </div>
 
@@ -95,15 +126,18 @@
                   data-message-type="{{ message_type }}"
                   data-comment-id="{{ row.id }}"
                   data-comment-text="{{ row.text|escape }}"
+                  aria-label="Quick edit comment"
                 >
-                  Quick edit
+                  <i class="fa-solid fa-pen" aria-hidden="true"></i>
                 </button>
                 <form method="post" class="delete-comment-form">
                   {% csrf_token %}
                   <input type="hidden" name="action" value="delete">
                   <input type="hidden" name="delete_type" value="{{ message_type }}">
                   <input type="hidden" name="delete_id" value="{{ row.id }}">
-                  <button type="submit">Delete</button>
+                  <button type="submit" aria-label="Delete comment">
+                    <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                  </button>
                 </form>
               </li>
             {% endfor %}
@@ -114,6 +148,13 @@
       {% endfor %}
     </div>
   </section>
+
+  <script>
+    window.PROFILE_ALLOWED_THEMES = {{ allowed_themes|safe }};
+    window.PROFILE_ALLOWED_DIFFICULTIES = {{ allowed_difficulties|safe }};
+    window.PROFILE_DISPLAY_NAME = "{{ profile_member_name|default:''|escapejs }}";
+    window.PROFILE_SAVE_URL = "{% url 'gamehome:profile' %}";
+  </script>
 
   <script src="{% static 'gamehome/js/profile.js' %}"></script>
 {% endblock %}

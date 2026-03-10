@@ -11,6 +11,7 @@ from .forms import MemberCommentForm
 from .models import (
     GameScore,
     MemberDrawPost,
+    MemberInformation,
     MemberLosePost,
     MemberMovePost,
     MemberWinPost,
@@ -26,17 +27,78 @@ COMMENT_MODEL_MAP = {
     "move": (MemberMovePost, "movepost"),
 }
 
+TIER_TO_THEMES = {
+    "guest": ["traditional"],
+    "novice": ["traditional", "fantasy"],
+    "seasoned": ["traditional", "fantasy", "robot"],
+    "master": ["traditional", "fantasy", "robot", "flowers"],
+}
+
+TIER_TO_DIFFICULTIES = {
+    "guest": ["easy"],
+    "novice": ["easy", "normal"],
+    "seasoned": ["easy", "normal", "hard"],
+    "master": ["easy", "normal", "hard", "fiendish"],
+}
+
+
+def get_member_access(user):
+    allowed_themes = TIER_TO_THEMES["guest"]
+    allowed_difficulties = TIER_TO_DIFFICULTIES["guest"]
+    member_tier = "guest"
+
+    if user.is_authenticated:
+        user_scores = GameScore.objects.filter(user=user)
+        total_games = user_scores.count()
+        losses = user_scores.filter(outcome="L").count()
+        loss_percent = (losses / total_games * 100) if total_games else 100
+
+        if total_games >= 50 and loss_percent < 10:
+            member_tier = "master"
+        elif total_games >= 30 and loss_percent < 20:
+            member_tier = "seasoned"
+        else:
+            member_tier = "novice"
+
+        allowed_themes = TIER_TO_THEMES[member_tier]
+        allowed_difficulties = TIER_TO_DIFFICULTIES[member_tier]
+
+    return member_tier, allowed_themes, allowed_difficulties
+
 
 def home(request):
     return render(request, "gamehome/home.html")
 
 
 def play(request):
-    return render(request, "gamehome/play.html")
+    # Theme availability is based on account state and performance tier.
+    member_tier, allowed_themes, allowed_difficulties = get_member_access(
+        request.user
+    )
+
+    context = {
+        "allowed_themes": allowed_themes,
+        "allowed_difficulties": allowed_difficulties,
+        "member_tier": member_tier,
+        "profile_display_name": (
+            getattr(
+                getattr(request.user, "member_info", None),
+                "gamername",
+                None,
+            )
+            if request.user.is_authenticated
+            else None
+        ),
+    }
+    return render(request, "gamehome/play.html", context)
 
 
 @login_required
 def profile(request):
+    member_tier, allowed_themes, allowed_difficulties = get_member_access(
+        request.user
+    )
+
     selected_type = request.GET.get("type", "win")
     if selected_type not in COMMENT_MODEL_MAP:
         selected_type = "win"
@@ -45,9 +107,52 @@ def profile(request):
     editing_comment = None
     form = MemberCommentForm(initial={"message_type": selected_type})
 
+    current_member_name = getattr(
+        getattr(request.user, "member_info", None),
+        "gamername",
+        "",
+    )
+    profile_display_name = current_member_name or request.user.username
+
     if request.method == "POST":
         action = request.POST.get("action", "save")
-        if action == "delete":
+        if action == "save_profile":
+            requested_name = request.POST.get("display_name", "").strip()
+
+            if not requested_name:
+                feedback_message = "Display name cannot be empty."
+            elif len(requested_name) > 20:
+                feedback_message = (
+                    "Display name must be 20 characters or fewer."
+                )
+            elif (
+                MemberInformation.objects
+                .filter(gamername__iexact=requested_name)
+                .exclude(user=request.user)
+                .exists()
+            ):
+                feedback_message = "That display name is already in use."
+            else:
+                status_value = (
+                    member_tier
+                    if member_tier in {"novice", "seasoned", "master"}
+                    else "novice"
+                )
+                member_info, _ = MemberInformation.objects.get_or_create(
+                    user=request.user,
+                    defaults={
+                        "gamername": requested_name,
+                        "status": status_value,
+                    },
+                )
+                member_info.gamername = requested_name
+                member_info.save(update_fields=["gamername"])
+                profile_display_name = requested_name
+                current_member_name = ""
+                feedback_message = "Display name saved."
+
+            form = MemberCommentForm(initial={"message_type": selected_type})
+        elif action == "delete":
             delete_type = request.POST.get("delete_type", "win")
             delete_id = request.POST.get("delete_id", "")
             if delete_type not in COMMENT_MODEL_MAP:
@@ -171,22 +276,61 @@ def profile(request):
         "can_add_comment": can_add_comment,
         "feedback_message": feedback_message,
         "editing_comment": editing_comment,
+        "profile_member_name": current_member_name,
+        "profile_display_name": profile_display_name,
+        "allowed_themes": allowed_themes,
+        "allowed_difficulties": allowed_difficulties,
+        "member_tier": member_tier,
     }
     return render(request, "gamehome/profile.html", context)
 
 
 def leaderboard(request):
-    rows = (
-        GameScore.objects.values("user__username")
+    difficulty_options = ["all", "easy", "normal", "hard", "fiendish"]
+    selected_difficulty = request.GET.get("difficulty", "all").lower()
+    if selected_difficulty not in difficulty_options:
+        selected_difficulty = "all"
+
+    score_rows = GameScore.objects.all()
+    if selected_difficulty != "all":
+        score_rows = score_rows.filter(difficulty=selected_difficulty)
+
+    rows_raw = (
+        score_rows.values(
+            "user__username",
+            "user__member_info__gamername",
+        )
         .annotate(
             wins=Count("id", filter=Q(outcome="W")),
             losses=Count("id", filter=Q(outcome="L")),
             draws=Count("id", filter=Q(outcome="D")),
             total=Count("id"),
         )
+        .filter(Q(wins__gt=0) | Q(draws__gt=0))
         .order_by("-wins", "-draws", "losses", "user__username")
     )
-    return render(request, "gamehome/leaderboard.html", {"rows": rows})
+
+    rows = []
+    for row in rows_raw:
+        total = row["total"]
+        wins = row["wins"]
+        draws = row["draws"]
+        row["display_name"] = (
+            row.get("user__member_info__gamername")
+            or row.get("user__username")
+        )
+        row["win_percentage"] = (wins / total * 100) if total else 0
+        row["total_percentage"] = (
+            ((wins + draws) / total * 100) if total else 0
+        )
+        rows.append(row)
+
+    context = {
+        "rows": rows,
+        "selected_difficulty": selected_difficulty,
+        "difficulty_options": difficulty_options,
+    }
+    return render(request, "gamehome/leaderboard.html", context)
 
 
 @csrf_exempt

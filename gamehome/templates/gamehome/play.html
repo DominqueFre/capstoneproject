@@ -1,42 +1,77 @@
 {% extends "gamehome/base.html" %}
 {% load static %}
 {% block content %}
+  <p class="member-tier">Tier: {{ member_tier|title }}</p>
   <div class="controls">
-    <label>Difficulty:
-      <select id="difficulty">
-        <option value="easy">Easy</option>
-        <option value="normal">Normal</option>
-        <option value="hard">Hard</option>
-        <option value="fiendish">Fiendish</option>
-      </select>
-    </label>
-    <label>Theme:
-      <select id="theme">
-        <option value="traditional">Traditional</option>
-        <option value="robot">Robot</option>
-        <option value="flowers">Flowers</option>
-        <option value="fantasy">Fantasy</option>
-      </select>
-    </label>
+    <div class="difficulty-picker" aria-label="Difficulty selector">
+      <span>Difficulty:</span>
+      <input id="difficulty" type="hidden" value="{{ allowed_difficulties.0|default:'easy' }}">
+      <div class="difficulty-button-bar" role="group" aria-label="Choose difficulty">
+        {% if "easy" in allowed_difficulties %}
+          <button type="button" class="difficulty-btn {% if allowed_difficulties.0 == 'easy' %}is-selected{% endif %}" data-difficulty="easy">Easy</button>
+        {% endif %}
+        {% if "normal" in allowed_difficulties %}
+          <button type="button" class="difficulty-btn {% if allowed_difficulties.0 == 'normal' %}is-selected{% endif %}" data-difficulty="normal">Normal</button>
+        {% endif %}
+        {% if "hard" in allowed_difficulties %}
+          <button type="button" class="difficulty-btn {% if allowed_difficulties.0 == 'hard' %}is-selected{% endif %}" data-difficulty="hard">Hard</button>
+        {% endif %}
+        {% if "fiendish" in allowed_difficulties %}
+          <button type="button" class="difficulty-btn {% if allowed_difficulties.0 == 'fiendish' %}is-selected{% endif %}" data-difficulty="fiendish">Fiendish</button>
+        {% endif %}
+      </div>
+    </div>
+    <div class="theme-picker" aria-label="Theme selector">
+      <span>Theme:</span>
+      <input id="theme" type="hidden" value="{{ allowed_themes.0|default:'traditional' }}">
+      <div class="theme-button-bar" role="group" aria-label="Choose game theme">
+        {% if "traditional" in allowed_themes %}
+          <button type="button" class="theme-btn {% if allowed_themes.0 == 'traditional' %}is-selected{% endif %}" data-theme="traditional">Traditional</button>
+        {% endif %}
+        {% if "robot" in allowed_themes %}
+          <button type="button" class="theme-btn {% if allowed_themes.0 == 'robot' %}is-selected{% endif %}" data-theme="robot">Robot</button>
+        {% endif %}
+        {% if "flowers" in allowed_themes %}
+          <button type="button" class="theme-btn {% if allowed_themes.0 == 'flowers' %}is-selected{% endif %}" data-theme="flowers">Flowers</button>
+        {% endif %}
+        {% if "fantasy" in allowed_themes %}
+          <button type="button" class="theme-btn {% if allowed_themes.0 == 'fantasy' %}is-selected{% endif %}" data-theme="fantasy">Fantasy</button>
+        {% endif %}
+      </div>
+    </div>
     <button id="resetBtn" type="button">Reset</button>
   </div>
   {% if not user.is_authenticated %}
     <p>Sign in to save your scores.</p>
   {% endif %}
 
-  <p id="status">Your turn (X)</p>
-  <div id="tossControls" class="toss-controls" hidden>
-    <span>Pick for toss:</span>
-    <button id="pickHeadsBtn" type="button">Heads</button>
-    <button id="pickTailsBtn" type="button">Tails</button>
-  </div>
-  <div id="boardFrame" class="board-frame" aria-hidden="true">
-    <div id="board" class="board" aria-label="tic tac toe board"></div>
+  <p id="status" class="status-announcer">Reset starts a toss. Pick Heads or Tails when prompted.</p>
+  <div class="play-layout">
+    <aside id="playerStatus" class="side-status side-status-player" aria-live="polite"></aside>
+    <div class="play-render">
+      <div id="boardFrame" class="board-frame" aria-hidden="true" style="background-image: url('{% static 'gamehome/images/game_traditional_gameboard.png' %}');">
+        <div id="board" class="board" aria-label="tic tac toe board"></div>
+      </div>
+      <div class="coin-column">
+        <div id="coinIndicator" class="coin-indicator" aria-hidden="true">
+          <img id="coinIndicatorImg" src="{% static 'gamehome/images/game_traditional_coin_head.png' %}" alt="coin toss result">
+        </div>
+        <div id="tossControls" class="toss-controls" hidden>
+          <button id="pickHeadsBtn" type="button">Heads</button>
+          <span>or</span>
+          <button id="pickTailsBtn" type="button">Tails</button>
+        </div>
+      </div>
+    </div>
+    <aside id="computerStatus" class="side-status side-status-computer" aria-live="polite"></aside>
   </div>
 
   <script>
     window.GAME_CAN_SAVE_SCORE = {{ user.is_authenticated|yesno:"true,false" }};
     window.GAME_LOGIN_URL = "{% url 'account_login' %}";
+    window.GAME_DISPLAY_NAME = "{{ profile_display_name|default:''|escapejs }}";
+    window.GAME_ALLOWED_THEMES = {{ allowed_themes|safe }};
+    window.GAME_ALLOWED_DIFFICULTIES = {{ allowed_difficulties|safe }};
     window.GAME_THEME_ASSETS = {
       traditional: {
         board: "{% static 'gamehome/images/game_traditional_gameboard.png' %}",

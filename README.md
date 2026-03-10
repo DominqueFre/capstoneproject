@@ -268,6 +268,7 @@ Information – the game can be played without logging in, but some functionalit
 | |Casual User |New Member/Novice |	Seasoned*|	Master*|
 |--|--|----|-------------|--|
 Member status	|Site access	|Register	|30 games & < 20% L’s	|50 games & < 10% L’s
+Display name|No|Yes|Yes|Yes|
 Difficulty|	Easy	|Normal	|Hard	|Fiendish
 Themes	|Traditional	|Fantasy	|Robots	|Flowers
 Game messages	|No	|Yes|As Member|As Member	
