@@ -18,6 +18,7 @@ const quickEditButtons = document.querySelectorAll(".edit-comment-btn");
 const commentTypeButtons = document.querySelectorAll(".comment-type-btn");
 const commentTypePanels = document.querySelectorAll("[data-message-list]");
 const commentFeedbackMessageEl = document.getElementById("commentFeedbackMessage");
+const helpPopovers = Array.from(document.querySelectorAll("[data-help]"));
 
 const PROFILE_STORAGE_KEYS = {
   difficulty: "ttt.defaultDifficulty",
@@ -203,6 +204,55 @@ function quickEditComment(event) {
   commentTextEl.focus();
 }
 
+function setupHelpPopovers() {
+  if (!helpPopovers.length) {
+    return;
+  }
+
+  const closeAll = (except) => {
+    helpPopovers.forEach((help) => {
+      if (help === except) {
+        return;
+      }
+      help.classList.remove("is-open");
+      const btn = help.querySelector(".bar-help-btn");
+      if (btn) {
+        btn.setAttribute("aria-expanded", "false");
+      }
+    });
+  };
+
+  helpPopovers.forEach((help) => {
+    const btn = help.querySelector(".bar-help-btn");
+    if (!btn) {
+      return;
+    }
+
+    btn.addEventListener("click", () => {
+      const willOpen = !help.classList.contains("is-open");
+      closeAll(help);
+      help.classList.toggle("is-open", willOpen);
+      btn.setAttribute("aria-expanded", willOpen ? "true" : "false");
+    });
+  });
+
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) {
+      return;
+    }
+    if (!target.closest("[data-help]")) {
+      closeAll();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeAll();
+    }
+  });
+}
+
 if (profileForm) {
   profileForm.addEventListener("submit", savePreferences);
 }
@@ -288,4 +338,5 @@ if (commentFeedbackMessageEl) {
   }
 }
 
+setupHelpPopovers();
 loadPreferences();

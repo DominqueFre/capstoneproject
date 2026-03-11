@@ -19,7 +19,6 @@
     <input id="displayName" name="display_name" type="text" maxlength="20" value="{{ profile_member_name }}" placeholder="e.g. Player One">
 
     <div class="profile-pref-picker" aria-label="Default difficulty selector">
-      <span>Default difficulty:</span>
       <input id="defaultDifficulty" name="defaultDifficulty" type="hidden" value="{{ allowed_difficulties.0|default:'easy' }}">
       <div class="profile-button-bar" role="group" aria-label="Choose default difficulty">
         {% if "easy" in allowed_difficulties %}
@@ -35,10 +34,23 @@
           <button type="button" class="profile-pref-btn profile-difficulty-btn {% if allowed_difficulties.0 == 'fiendish' %}is-selected{% endif %}" data-difficulty="fiendish">Fiendish</button>
         {% endif %}
       </div>
+      <div class="bar-help" data-help>
+        <button
+          type="button"
+          class="bar-help-btn"
+          aria-label="About default difficulty setting"
+          aria-expanded="false"
+          aria-controls="profileDifficultyHelpPanel"
+        >
+          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        </button>
+        <div id="profileDifficultyHelpPanel" class="bar-help-panel" role="note">
+          Sets the default game difficulty when you open a match. You can still change it before each game.
+        </div>
+      </div>
     </div>
 
     <div class="profile-pref-picker" aria-label="Default theme selector">
-      <span>Default theme:</span>
       <input id="defaultTheme" name="defaultTheme" type="hidden" value="{{ allowed_themes.0|default:'traditional' }}">
       <div class="profile-button-bar" role="group" aria-label="Choose default theme">
         {% if "traditional" in allowed_themes %}
@@ -53,6 +65,20 @@
         {% if "fantasy" in allowed_themes %}
           <button type="button" class="profile-pref-btn profile-theme-btn {% if allowed_themes.0 == 'fantasy' %}is-selected{% endif %}" data-theme="fantasy">Fantasy</button>
         {% endif %}
+      </div>
+      <div class="bar-help" data-help>
+        <button
+          type="button"
+          class="bar-help-btn"
+          aria-label="About default theme setting"
+          aria-expanded="false"
+          aria-controls="profileThemeHelpPanel"
+        >
+          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        </button>
+        <div id="profileThemeHelpPanel" class="bar-help-panel" role="note">
+          Sets your default visual theme for boards, pieces, and coin art when a game starts.
+        </div>
       </div>
     </div>
 
@@ -82,7 +108,6 @@
     <form id="commentForm" class="comment-form" method="post">
       {% csrf_token %}
       <div class="profile-pref-picker" aria-label="Message type selector">
-        <span>Message type:</span>
         <input type="hidden" name="message_type" id="id_message_type" value="{{ selected_type }}">
         <div class="profile-button-bar" role="group" aria-label="Choose message type">
           {% for value, label in form.message_type.field.choices %}
@@ -95,6 +120,20 @@
               {{ label }}
             </a>
           {% endfor %}
+        </div>
+        <div class="bar-help" data-help>
+          <button
+            type="button"
+            class="bar-help-btn"
+            aria-label="About message type settings"
+            aria-expanded="false"
+            aria-controls="messageTypeHelpPanel"
+          >
+            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+          </button>
+          <div id="messageTypeHelpPanel" class="bar-help-panel" role="note">
+            Message type chooses which set of custom comments you are editing, such as win, lose, or draw messages.
+          </div>
         </div>
       </div>
 

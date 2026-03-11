@@ -2,18 +2,18 @@
 {% block content %}
 <section class="container-fluid px-0">
   <div class="row justify-content-center">
-    <div class="col-12 col-md-11 col-lg-10">
+    <div class="col-12 col-md-11 ">
       <div class="card shadow-sm border-0">
-        <div class="card-body p-3 p-md-4">
+        <div class="card-body p-3 p-md-4 leaderboard-display-area">
 
-          <h1 class="h3 mb-3 text-center">Leaderboard</h1>
+          <h1 class="h3 mb-3 text-center leaderboard-title">Leaderboard</h1>
 
-          <form method="get" class="mb-3 d-flex justify-content-center" aria-label="Filter leaderboard by difficulty">
+          <form method="get" class="mb-3 d-flex justify-content-center leaderboard-filter-bar" aria-label="Filter leaderboard by difficulty">
             <div class="d-flex flex-wrap align-items-center gap-2">
-              <div class="btn-group" role="group" aria-label="Leaderboard difficulty filter">
+              <div class="difficulty-button-bar leaderboard-button-bar" role="group" aria-label="Leaderboard difficulty filter">
                 {% for option in difficulty_options %}
                 <button type="submit" name="difficulty" value="{{ option }}"
-                  class="btn btn-sm {% if selected_difficulty == option %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                  class="difficulty-btn {% if selected_difficulty == option %}is-selected{% endif %}">
                   {% if option == "all" %}All{% else %}{{ option|title }}{% endif %}
                 </button>
                 {% endfor %}
