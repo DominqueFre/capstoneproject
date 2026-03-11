@@ -325,8 +325,32 @@ def leaderboard(request):
         )
         rows.append(row)
 
+    rows.sort(
+        key=lambda row: (
+            -row["total_percentage"],
+            -row["win_percentage"],
+            row["display_name"].lower(),
+        )
+    )
+
+    for index, row in enumerate(rows, start=1):
+        row["position"] = index
+
+    top_rows = rows[:20]
+
+    current_user_row = None
+    if request.user.is_authenticated:
+        current_user_row = next(
+            (
+                row for row in rows
+                if row.get("user__username") == request.user.username
+            ),
+            None,
+        )
+
     context = {
-        "rows": rows,
+        "rows": top_rows,
+        "current_user_row": current_user_row,
         "selected_difficulty": selected_difficulty,
         "difficulty_options": difficulty_options,
     }

@@ -39,13 +39,12 @@
         {% endif %}
       </div>
     </div>
-    <button id="resetBtn" type="button">Reset</button>
   </div>
   {% if not user.is_authenticated %}
     <p>Sign in to save your scores.</p>
   {% endif %}
 
-  <p id="status" class="status-announcer">Reset starts a toss. Pick Heads or Tails when prompted.</p>
+  <p id="status" class="status-announcer">Press Start to begin. Pick Heads or Tails when prompted.</p>
   <div class="play-layout">
     <aside id="playerStatus" class="side-status side-status-player" aria-live="polite"></aside>
     <div class="play-render">
@@ -57,6 +56,7 @@
           <img id="coinIndicatorImg" src="{% static 'gamehome/images/game_traditional_coin_head.png' %}" alt="coin toss result">
         </div>
         <div id="tossControls" class="toss-controls" hidden>
+          <button id="startBtn" type="button">Start</button>
           <button id="pickHeadsBtn" type="button">Heads</button>
           <span>or</span>
           <button id="pickTailsBtn" type="button">Tails</button>

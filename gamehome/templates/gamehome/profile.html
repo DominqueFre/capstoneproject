@@ -70,7 +70,7 @@
     <p>Each message type can store up to {{ max_comments_per_type }} comments.</p>
 
     {% if feedback_message %}
-      <p class="comment-feedback">{{ feedback_message }}</p>
+      <p id="commentFeedbackMessage" class="comment-feedback">{{ feedback_message }}</p>
     {% endif %}
 
     {% if form.non_field_errors %}
@@ -81,8 +81,22 @@
 
     <form id="commentForm" class="comment-form" method="post">
       {% csrf_token %}
-      <label for="id_message_type">Message type</label>
-      {{ form.message_type }}
+      <div class="profile-pref-picker" aria-label="Message type selector">
+        <span>Message type:</span>
+        <input type="hidden" name="message_type" id="id_message_type" value="{{ selected_type }}">
+        <div class="profile-button-bar" role="group" aria-label="Choose message type">
+          {% for value, label in form.message_type.field.choices %}
+            <a
+              href="?type={{ value }}"
+              class="profile-pref-btn comment-type-btn {% if selected_type == value %}is-selected{% endif %}"
+              data-message-type="{{ value }}"
+              aria-current="{% if selected_type == value %}page{% endif %}"
+            >
+              {{ label }}
+            </a>
+          {% endfor %}
+        </div>
+      </div>
 
       <div id="commentEditorWrap" {% if not can_add_comment %}hidden{% endif %}>
         <label for="id_comment_text">Comment</label>
@@ -111,40 +125,46 @@
       <h3>Your saved comments</h3>
 
       {% for message_type, rows in comments_by_type.items %}
-        <h4>
-          {{ message_type|title }} ({{ rows|length }}/{{ max_comments_per_type }})
-        </h4>
-        {% if rows %}
-          <ul class="comment-list">
-            {% for row in rows %}
-              <li>
-                <span>{{ row.text }}</span>
-                <a href="?type={{ message_type }}&edit={{ row.id }}">Edit</a>
-                <button
-                  type="button"
-                  class="edit-comment-btn"
-                  data-message-type="{{ message_type }}"
-                  data-comment-id="{{ row.id }}"
-                  data-comment-text="{{ row.text|escape }}"
-                  aria-label="Quick edit comment"
-                >
-                  <i class="fa-solid fa-pen" aria-hidden="true"></i>
-                </button>
-                <form method="post" class="delete-comment-form">
-                  {% csrf_token %}
-                  <input type="hidden" name="action" value="delete">
-                  <input type="hidden" name="delete_type" value="{{ message_type }}">
-                  <input type="hidden" name="delete_id" value="{{ row.id }}">
-                  <button type="submit" aria-label="Delete comment">
-                    <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+        <div
+          class="comment-type-panel"
+          data-message-list="{{ message_type }}"
+          {% if selected_type != message_type %}hidden{% endif %}
+        >
+          <h4>
+            {{ message_type|title }} ({{ rows|length }}/{{ max_comments_per_type }})
+          </h4>
+          {% if rows %}
+            <ul class="comment-list">
+              {% for row in rows %}
+                <li>
+                  <span>{{ row.text }}</span>
+                  <a href="?type={{ message_type }}&edit={{ row.id }}">Edit</a>
+                  <button
+                    type="button"
+                    class="edit-comment-btn"
+                    data-message-type="{{ message_type }}"
+                    data-comment-id="{{ row.id }}"
+                    data-comment-text="{{ row.text|escape }}"
+                    aria-label="Quick edit comment"
+                  >
+                    <i class="fa-solid fa-pen" aria-hidden="true"></i>
                   </button>
-                </form>
-              </li>
-            {% endfor %}
-          </ul>
-        {% else %}
-          <p>No comments saved for this type yet.</p>
-        {% endif %}
+                  <form method="post" class="delete-comment-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="delete_type" value="{{ message_type }}">
+                    <input type="hidden" name="delete_id" value="{{ row.id }}">
+                    <button type="submit" aria-label="Delete comment">
+                      <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                    </button>
+                  </form>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p>No comments saved for this type yet.</p>
+          {% endif %}
+        </div>
       {% endfor %}
     </div>
   </section>

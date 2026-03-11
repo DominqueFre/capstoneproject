@@ -12,9 +12,25 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Tic Tac Toe</title>
+  <script>
+    (function () {
+      var t = localStorage.getItem('ttt.defaultTheme');
+      var allowed = ['robot', 'fantasy', 'traditional', 'flowers'];
+      if (t && allowed.indexOf(t) !== -1) {
+        document.documentElement.dataset.theme = t;
+      }
+    })();
+  </script>
   <link rel="icon" type="image/png" href="{% static 'gamehome/favicon/game_favicon.png' %}">
   <link rel="shortcut icon" type="image/png" href="{% static 'gamehome/favicon/game_favicon.png' %}">
-  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Zen+Dots&family=Cormorant:ital,wght@0,300..700;1,300..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Macondo&family=Quintessential&family=Playwrite+US+Trad:wght@100..400&display=swap" rel="stylesheet">
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" 
+rel="stylesheet" 
+integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" 
+crossorigin="anonymous">
 
   <link rel="stylesheet" href="{% static 'gamehome/css/style.css' %}">
 </head>
@@ -38,6 +54,9 @@
   </main>
  <!-- Font Awesome kit Java Scripts so pop it at the end to build last-->
   <script src="https://kit.fontawesome.com/d5991e788a.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" 
+  integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" 
+  crossorigin="anonymous"></script>
 </body>
 
 </html>

@@ -3,7 +3,7 @@ const boardFrameEl = document.getElementById("boardFrame");
 const statusEl = document.getElementById("status");
 const playerStatusEl = document.getElementById("playerStatus");
 const computerStatusEl = document.getElementById("computerStatus");
-const resetBtn = document.getElementById("resetBtn");
+const startBtn = document.getElementById("startBtn");
 const difficultyEl = document.getElementById("difficulty");
 const difficultyButtons = document.querySelectorAll(".difficulty-btn");
 const themeEl = document.getElementById("theme");
@@ -55,8 +55,6 @@ let isHumanTurn = true;
 let tossPicker = "player";
 let hasGameStarted = false;
 let activeStatusSide = "player";
-let canResetFromCoin = false;
-let canResetFromGlobalClick = false;
 
 const wins = [
   [0,1,2],[3,4,5],[6,7,8],
@@ -167,9 +165,29 @@ function randomizePieceAssignment(theme) {
   } while (computerPieceIndex === playerPieceIndex);
 }
 
-function showTossControls(show) {
-  if (tossControlsEl) {
-    tossControlsEl.hidden = !show;
+function setTossControlsMode(mode) {
+  if (!tossControlsEl) {
+    return;
+  }
+
+  const showStart = mode === "start";
+  const showPick = mode === "pick";
+
+  tossControlsEl.hidden = mode === "none";
+
+  if (startBtn) {
+    startBtn.hidden = !showStart;
+  }
+  if (pickHeadsBtn) {
+    pickHeadsBtn.hidden = !showPick;
+  }
+  if (pickTailsBtn) {
+    pickTailsBtn.hidden = !showPick;
+  }
+
+  const tossOrLabel = tossControlsEl.querySelector("span");
+  if (tossOrLabel) {
+    tossOrLabel.hidden = !showPick;
   }
 }
 
@@ -226,19 +244,6 @@ function setCoinIndicatorImage(src, altText) {
   coinIndicatorImgEl.src = src;
   coinIndicatorImgEl.alt = altText;
   coinIndicatorEl.hidden = false;
-}
-
-function setCoinResetState(isReady) {
-  canResetFromCoin = isReady;
-  if (!coinIndicatorEl) {
-    return;
-  }
-
-  coinIndicatorEl.classList.toggle("is-reset-ready", isReady);
-  coinIndicatorEl.setAttribute(
-    "title",
-    isReady ? "Click coin to start next game" : "Coin toss"
-  );
 }
 
 function sleep(ms) {
@@ -319,7 +324,7 @@ async function resolveToss(picker, pickedSide) {
   const humanStarts = picker === "player" ? pickerWins : !pickerWins;
   const pickerLabel = picker === "player" ? "You" : "Computer";
 
-  showTossControls(false);
+  setTossControlsMode("none");
   await animateCoinToss(theme, toss.tossLabel);
   setStatus(
     `${pickerLabel} picked ${pickedSide}. Toss: ${toss.tossLabel}. ${humanStarts ? "You start." : "Computer starts."}`,
@@ -337,12 +342,12 @@ function beginCoinTossFlow() {
   isHumanTurn = false;
 
   if (tossPicker === "player") {
-    showTossControls(true);
+    setTossControlsMode("pick");
     setStatus("New round: pick Heads or Tails to start the toss.", "player");
     return;
   }
 
-  showTossControls(false);
+  setTossControlsMode("none");
   const computerPick = Math.random() < 0.5 ? "heads" : "tails";
   setStatus(`Computer picks ${computerPick}. Tossing...`, "computer");
   setTimeout(() => {
@@ -386,13 +391,12 @@ function applySavedPreferences() {
 function endGame(resultText, outcome) {
   gameOver = true;
   hasGameStarted = false;
-  setCoinResetState(true);
-  canResetFromGlobalClick = false;
-  setTimeout(() => {
-    canResetFromGlobalClick = true;
-  }, 0);
+  if (startBtn) {
+    startBtn.textContent = "Play Again";
+  }
+  setTossControlsMode("start");
   setThemeSelectable(true);
-  setStatus(`${resultText} Click anywhere to start the next game.`, inferStatusSide(resultText));
+  setStatus(`${resultText} Press Start for the next game.`, inferStatusSide(resultText));
   postScore(outcome).catch(() => {});
 }
 
@@ -567,7 +571,7 @@ function aiMove() {
 
 async function postScore(outcome) {
   if (!canSaveScore) {
-    setStatus(`${statusEl.textContent} Sign in to save score (${loginUrl}).`, activeStatusSide);
+    setStatus(`${statusEl.textContent} Why not register or sign in and make your way up the Leaderboard!`, activeStatusSide);
     return;
   }
 
@@ -585,12 +589,11 @@ async function postScore(outcome) {
   }
 }
 
-function reset() {
+function startGame() {
   board = Array(9).fill("");
   gameOver = false;
   hasGameStarted = false;
-  setCoinResetState(false);
-  canResetFromGlobalClick = false;
+  setTossControlsMode("none");
   setThemeSelectable(false);
   const theme = themeEl ? themeEl.value : "traditional";
   randomizePieceAssignment(theme);
@@ -603,8 +606,7 @@ function initializeFirstVisitState() {
   gameOver = true;
   isHumanTurn = false;
   hasGameStarted = false;
-  showTossControls(false);
-  setCoinResetState(false);
+  setTossControlsMode("start");
   setThemeSelectable(true);
 
   const theme = themeEl ? themeEl.value : "traditional";
@@ -612,10 +614,16 @@ function initializeFirstVisitState() {
   setCoinIndicatorImage(themeCoin.coinHead, "coin");
   renderBoard();
   updateThemeButtons();
-  setStatus("Choose a theme, then press Reset to start.", "player");
+  if (startBtn) {
+    startBtn.textContent = "Start";
+  }
+
+  setStatus("Choose a theme, then press Start to begin.", "player");
 }
 
-resetBtn.addEventListener("click", reset);
+if (startBtn) {
+  startBtn.addEventListener("click", startGame);
+}
 if (themeButtons.length && themeEl) {
   themeButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -629,6 +637,7 @@ if (themeButtons.length && themeEl) {
       }
 
       themeEl.value = nextTheme;
+      document.documentElement.dataset.theme = nextTheme;
       updateThemeButtons();
       renderBoard();
       const themeCoin = getThemeAssets(nextTheme);
@@ -655,19 +664,5 @@ if (pickHeadsBtn) {
 if (pickTailsBtn) {
   pickTailsBtn.addEventListener("click", () => onPlayerPick("tails"));
 }
-if (coinIndicatorEl) {
-  coinIndicatorEl.addEventListener("click", () => {
-    if (!canResetFromCoin) {
-      return;
-    }
-    reset();
-  });
-}
-document.addEventListener("click", () => {
-  if (!canResetFromGlobalClick) {
-    return;
-  }
-  reset();
-});
 applySavedPreferences();
 initializeFirstVisitState();

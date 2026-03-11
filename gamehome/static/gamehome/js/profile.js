@@ -15,6 +15,9 @@ const commentLimitMessageEl = document.getElementById("commentLimitMessage");
 const saveCommentBtnEl = document.getElementById("saveCommentBtn");
 const clearEditBtn = document.getElementById("clearEditBtn");
 const quickEditButtons = document.querySelectorAll(".edit-comment-btn");
+const commentTypeButtons = document.querySelectorAll(".comment-type-btn");
+const commentTypePanels = document.querySelectorAll("[data-message-list]");
+const commentFeedbackMessageEl = document.getElementById("commentFeedbackMessage");
 
 const PROFILE_STORAGE_KEYS = {
   difficulty: "ttt.defaultDifficulty",
@@ -127,6 +130,38 @@ function updateCommentEditorVisibility() {
   }
 }
 
+function updateCommentTypeButtons() {
+  if (!messageTypeEl || !commentTypeButtons.length) {
+    return;
+  }
+
+  const selectedType = messageTypeEl.value;
+  commentTypeButtons.forEach((btn) => {
+    const value = btn.getAttribute("data-message-type") || "win";
+    const isSelected = value === selectedType;
+    btn.classList.toggle("is-selected", isSelected);
+    btn.setAttribute("aria-pressed", isSelected ? "true" : "false");
+  });
+}
+
+function updateVisibleCommentList() {
+  if (!messageTypeEl || !commentTypePanels.length) {
+    return;
+  }
+
+  const selectedType = messageTypeEl.value;
+  commentTypePanels.forEach((panel) => {
+    const panelType = panel.getAttribute("data-message-list");
+    panel.hidden = panelType !== selectedType;
+  });
+}
+
+function applySelectedCommentType() {
+  updateCommentTypeButtons();
+  updateVisibleCommentList();
+  updateCommentEditorVisibility();
+}
+
 function clearEditState() {
   if (!commentIdEl || !commentTextEl) {
     return;
@@ -137,7 +172,7 @@ function clearEditState() {
   if (saveCommentBtnEl) {
     saveCommentBtnEl.textContent = "Add comment";
   }
-  updateCommentEditorVisibility();
+  applySelectedCommentType();
 }
 
 function quickEditComment(event) {
@@ -163,6 +198,8 @@ function quickEditComment(event) {
   if (commentLimitMessageEl) {
     commentLimitMessageEl.hidden = true;
   }
+  updateCommentTypeButtons();
+  updateVisibleCommentList();
   commentTextEl.focus();
 }
 
@@ -207,7 +244,23 @@ if (messageTypeEl) {
     if (saveCommentBtnEl) {
       saveCommentBtnEl.textContent = "Add comment";
     }
-    updateCommentEditorVisibility();
+    applySelectedCommentType();
+  });
+}
+
+if (commentTypeButtons.length && messageTypeEl) {
+  commentTypeButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const value = btn.getAttribute("data-message-type") || "win";
+      messageTypeEl.value = value;
+      if (commentIdEl) {
+        commentIdEl.value = "";
+      }
+      if (saveCommentBtnEl) {
+        saveCommentBtnEl.textContent = "Add comment";
+      }
+      applySelectedCommentType();
+    });
   });
 }
 
@@ -222,7 +275,17 @@ if (quickEditButtons.length) {
 }
 
 if (commentFormEl) {
-  updateCommentEditorVisibility();
+  applySelectedCommentType();
+}
+
+if (commentFeedbackMessageEl) {
+  const feedbackText = (commentFeedbackMessageEl.textContent || "").trim();
+  const shouldAutoHide = /\b(saved|deleted|updated)\b/i.test(feedbackText);
+  if (shouldAutoHide) {
+    window.setTimeout(() => {
+      commentFeedbackMessageEl.hidden = true;
+    }, 20000);
+  }
 }
 
 loadPreferences();

@@ -292,14 +292,20 @@ ERD
  Sources
  |Item|Source|Usage|Comment|
 |--|--|--|--|
-|Wireframe|Balsamiq|Screen, tablet and mobile view||
+|Wireframe|Balsamiq|Screen, tablet and mobile views of main screens||
 |ERD|dbdiagram.io|updated sample code||
 |||||
 |Images|Freepik|AI generated|Altered as required|
+|Images|Craiyon|AI generated|Altered as required|
 |||||
 |Repository|Git Hub|Repository hosting service||
 |Hosting Platform|Heroku|Platform hosting service||
 |IDE|VSCode|||
+|Image Storage|Cloudinairy||User avatar|
+|Database|PostGresSQL|||
+|Framework|Django|||
 |||||
 
 Final to do's - add mubering - see if can link if not auto
+
+
