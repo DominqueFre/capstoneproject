@@ -21,6 +21,119 @@ const allowedThemes = Array.isArray(window.GAME_ALLOWED_THEMES)
 const allowedDifficulties = Array.isArray(window.GAME_ALLOWED_DIFFICULTIES)
   ? window.GAME_ALLOWED_DIFFICULTIES
   : ["easy"];
+const userMessageSets = window.GAME_USER_MESSAGES || {};
+const userMessagesReady = Boolean(window.GAME_USER_MESSAGES_READY);
+const profileDisplayName = (window.GAME_DISPLAY_NAME || "").trim();
+
+const computerMessageSets = {
+  win: [
+    "Congratulations! You win!",
+    "Well done! You are the champion!",
+    "You did it! Victory is yours!",
+    "Amazing! You are the winner!",
+    "Great job! You have won the game!",
+    "Fantastic! You are the master of this game!",
+    "You are simply the best.",
+    "I look forward to getting the chance to win...sometime!",
+    "You're a winning machine.",
+    "You're a superstar",
+    "You make me dizzy.",
+    "Even the best players lose sometimes."
+  ],
+  lose: [
+    "Better luck next time! Try again.",
+    "Don't give up! Play again to win.",
+    "So close! Play again to claim victory.",
+    "Keep trying! You'll get it next time.",
+    "Don't worry, it's just a game! Play again to win.",
+    "Almost had it! Play again to see if you can win this time.",
+    "Another day, another flawless victory... for me.",
+    "Keep your chin up.",
+    "This is just a learning opportunity.",
+    "You were a tough adversary.",
+    "Losing is part of the game!",
+    "You played with your heart."
+  ],
+  draw: [
+    "It's a draw! Try again.",
+    "No winner this time. Play again!",
+    "It's a tie! Give it another shot.",
+    "Stalemate! Play again to break the tie.",
+    "It's a draw! Who will win next time?",
+    "What a great game! It's a draw. Try again to see who will win next time.",
+    "It's a draw.",
+    "Stalemate.",
+    "We're on a level pegging.",
+    "I'll get you next time.",
+    "Room for improvement on both sides.",
+    "No losers here!",
+    "What a closely fought battle.",
+    "Another tie!",
+    "A tie!",
+    "I'm having such a good time.",
+    "I don't want to stop at all."
+  ],
+  move: [
+    "Your turn! Make your move.",
+    "Off you go.",
+    "Think carefully! Your move can change the game.",
+    "The game is heating up! Make your move.",
+    "It's getting intense! Choose your next move wisely.",
+    "The board is filling up! Make your move before it's too late.",
+    "The game is in full swing! Place your counter!",
+    "Every move counts! Choose wisely and see if you can be the smart one.",
+    "Time to play!",
+    "If only we could both win!",
+    "Let's see who comes out on top!",
+    "Your move.",
+    "I have lots of patience.",
+    "This is a tough one to call.",
+    "Your go.",
+    "I've made my move.",
+    "Waiting on you now.",
+    "Just waiting...",
+    "Done.",
+    "Ready.",
+    "OK, time to rock on.",
+    "It's time to move it, move it.",
+    "Push the button.",
+    "Don't stop now.",
+    "Keep it going.",
+    "Be kind.",
+    "Don't suppose you fancy letting me win one?",
+    "All moves are good moves.",
+    "Click away.",
+    "The clock is ticking.",
+    "The board calls.",
+    "Where will you go next?",
+    "Go for it.",
+    "It's all you.",
+    "The ball's in your court.",
+    "It's your play now.",
+    "Boss calls the shots, you choose your slot.",
+    "Bop it.",
+    "Es tu turno.",
+    "C'est ton tour.",
+    "Du bist dran.",
+    "E il tuo turno.",
+    "Eich tro chi yw hi.",
+    "I think, therefore I have taken my turn.",
+    "One small step for me, a giant step for mankind.",
+    "This game is like a box of chocolates.",
+    "Actions speak louder than words, take your turn!",
+    "To choose or not to choose... please choose.",
+    "Carpe diem.",
+    "Y.O.L.O.",
+    "Break a leg.",
+    "Easy, peasy, lemon squeezy.",
+    "Don't bite off more than you can chew.",
+    "What's your move?",
+    "If you win, pigs might fly.",
+    "A stitch in time saves nine.",
+    "Mind your p's and q's.",
+    "Don't throw the baby out with the bath water."
+  ]
+};
 
 const PROFILE_STORAGE_KEYS = {
   difficulty: "ttt.defaultDifficulty",
@@ -55,6 +168,7 @@ let isHumanTurn = true;
 let tossPicker = "player";
 let hasGameStarted = false;
 let activeStatusSide = "player";
+let userMessageHintShown = false;
 
 const wins = [
   [0,1,2],[3,4,5],[6,7,8],
@@ -109,12 +223,38 @@ function full() {
   return board.every(c => c !== "");
 }
 
-function getTurnMessage() {
-  const profileDisplayName = (window.GAME_DISPLAY_NAME || "").trim();
-  if (profileDisplayName) {
-    return `${profileDisplayName}, your turn (X)`;
+function pickRandomMessage(pool, fallback) {
+  if (!Array.isArray(pool) || pool.length === 0) {
+    return fallback;
   }
-  return "Your turn (X)";
+  return pool[Math.floor(Math.random() * pool.length)] || fallback;
+}
+
+function getComputerMessage(type, fallback) {
+  const pool = computerMessageSets[type] || [];
+  return pickRandomMessage(pool, fallback);
+}
+
+function getUserMessage(type) {
+  const pool = userMessageSets[type];
+  if (!Array.isArray(pool) || pool.length === 0) {
+    return "";
+  }
+  return pickRandomMessage(pool, "");
+}
+
+function getPlayerTurnMessage() {
+  return getComputerMessage("move", "Your turn (X).");
+}
+
+function getPlayerMoveReactionMessage() {
+  const userMsg = getUserMessage("move");
+  if (userMsg) return userMsg;
+  return getComputerMessage("move", "Your turn (X).");
+}
+
+function getComputerTurnMessage() {
+  return getComputerMessage("move", "Computer turn...");
 }
 
 function inferStatusSide(message) {
@@ -133,14 +273,35 @@ function setStatus(message, side) {
   }
 
   if (playerStatusEl && computerStatusEl) {
-    if (resolvedSide === "computer") {
-      computerStatusEl.textContent = message;
-      playerStatusEl.textContent = "";
-    } else {
-      playerStatusEl.textContent = message;
-      computerStatusEl.textContent = "";
-    }
+    const target = resolvedSide === "computer" ? computerStatusEl : playerStatusEl;
+    const item = document.createElement("div");
+    item.className = "status-item";
+    item.textContent = message;
+    target.prepend(item);
   }
+}
+
+function clearStatusPanels() {
+  if (playerStatusEl) {
+    playerStatusEl.innerHTML = "";
+  }
+  if (computerStatusEl) {
+    computerStatusEl.innerHTML = "";
+  }
+}
+
+function showUserMessageHint() {
+  const hasAnyUserMessages = ["win", "lose", "draw", "move"].some(
+    type => Array.isArray(userMessageSets[type]) && userMessageSets[type].length > 0
+  );
+  if (userMessageHintShown || !canSaveScore || hasAnyUserMessages) {
+    return;
+  }
+  userMessageHintShown = true;
+  setStatus(
+    "Tip: add your own messages on your Profile page and they'll appear here during the game.",
+    "player"
+  );
 }
 
 function randomizePieceAssignment(theme) {
@@ -305,14 +466,14 @@ function startTurnAfterToss(humanStarts) {
       if (gameOver) {
         return;
       }
-      setStatus("Computer turn...", "computer");
+      setStatus(getComputerTurnMessage(), "computer");
       ensureComputerOpeningMove();
     }, 500);
     return;
   }
 
   setTimeout(() => {
-    setStatus(getTurnMessage(), "player");
+    setStatus(getPlayerTurnMessage(), "player");
   }, 500);
 }
 
@@ -344,6 +505,7 @@ function beginCoinTossFlow() {
   if (tossPicker === "player") {
     setTossControlsMode("pick");
     setStatus("New round: pick Heads or Tails to start the toss.", "player");
+    showUserMessageHint();
     return;
   }
 
@@ -396,6 +558,21 @@ function endGame(resultText, outcome) {
   }
   setTossControlsMode("start");
   setThemeSelectable(true);
+
+  if (outcome === "W") {
+    setStatus(getComputerMessage("win", "You win!"), "computer");
+  } else if (outcome === "L") {
+    setStatus(getComputerMessage("lose", "Computer wins!"), "computer");
+  } else {
+    setStatus(getComputerMessage("draw", "Draw!"), "computer");
+  }
+
+  const userType = outcome === "W" ? "win" : outcome === "L" ? "lose" : "draw";
+  const userMessage = getUserMessage(userType);
+  if (userMessage) {
+    setStatus(userMessage, "player");
+  }
+
   setStatus(`${resultText} Press Start for the next game.`, inferStatusSide(resultText));
   postScore(outcome).catch(() => {});
 }
@@ -545,7 +722,7 @@ function humanMove(idx) {
   }
 
   isHumanTurn = false;
-  setStatus("Computer turn...", "computer");
+  setStatus(getComputerTurnMessage(), "computer");
   setTimeout(aiMove, 300);
 }
 
@@ -566,12 +743,12 @@ function aiMove() {
   }
 
   isHumanTurn = true;
-  setStatus(getTurnMessage(), "player");
+  setStatus(getPlayerMoveReactionMessage(), "player");
 }
 
 async function postScore(outcome) {
   if (!canSaveScore) {
-    setStatus(`${statusEl.textContent} Why not register or sign in and make your way up the Leaderboard!`, activeStatusSide);
+    setStatus("Why not register or sign in and make your way up the Leaderboard!", "player");
     return;
   }
 
@@ -585,7 +762,7 @@ async function postScore(outcome) {
 
   const data = await res.json();
   if (!data.ok) {
-    setStatus(`${statusEl.textContent} Score not saved: ${data.error}`, activeStatusSide);
+    setStatus(`Score not saved: ${data.error}`, activeStatusSide);
   }
 }
 
@@ -593,6 +770,7 @@ function startGame() {
   board = Array(9).fill("");
   gameOver = false;
   hasGameStarted = false;
+  clearStatusPanels();
   setTossControlsMode("none");
   setThemeSelectable(false);
   const theme = themeEl ? themeEl.value : "traditional";
@@ -606,6 +784,7 @@ function initializeFirstVisitState() {
   gameOver = true;
   isHumanTurn = false;
   hasGameStarted = false;
+  clearStatusPanels();
   setTossControlsMode("start");
   setThemeSelectable(true);
 
@@ -619,6 +798,7 @@ function initializeFirstVisitState() {
   }
 
   setStatus("Choose a theme, then press Start to begin.", "player");
+  showUserMessageHint();
 }
 
 if (startBtn) {

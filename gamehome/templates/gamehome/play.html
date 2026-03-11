@@ -69,7 +69,10 @@
 
   <p id="status" class="status-announcer">Press Start to begin. Pick Heads or Tails when prompted.</p>
   <div class="play-layout">
-    <aside id="playerStatus" class="side-status side-status-player" aria-live="polite"></aside>
+    <div class="side-status side-status-player">
+      <p class="side-status-title">You</p>
+      <aside id="playerStatus" class="side-status-messages" aria-live="polite"></aside>
+    </div>
     <div class="play-render">
       <div id="boardFrame" class="board-frame" aria-hidden="true" style="background-image: url('{% static 'gamehome/images/game_traditional_gameboard.png' %}');">
         <div id="board" class="board" aria-label="tic tac toe board"></div>
@@ -86,7 +89,10 @@
         </div>
       </div>
     </div>
-    <aside id="computerStatus" class="side-status side-status-computer" aria-live="polite"></aside>
+    <div class="side-status side-status-computer">
+      <p class="side-status-title">Computer</p>
+      <aside id="computerStatus" class="side-status-messages" aria-live="polite"></aside>
+    </div>
   </div>
 
   <script>
@@ -95,6 +101,8 @@
     window.GAME_DISPLAY_NAME = "{{ profile_display_name|default:''|escapejs }}";
     window.GAME_ALLOWED_THEMES = {{ allowed_themes|safe }};
     window.GAME_ALLOWED_DIFFICULTIES = {{ allowed_difficulties|safe }};
+    window.GAME_USER_MESSAGES = {{ game_user_messages|safe }};
+    window.GAME_USER_MESSAGES_READY = {{ game_user_messages_ready|yesno:"true,false" }};
     window.GAME_THEME_ASSETS = {
       traditional: {
         board: "{% static 'gamehome/images/game_traditional_gameboard.png' %}",

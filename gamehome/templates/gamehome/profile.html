@@ -2,218 +2,205 @@
 {% load static %}
 
 {% block content %}
-  <h1>Profile</h1>
-  <p>
-    Welcome to the profile page {{ profile_display_name }}. You have entered the
-    inner sanctum. You can now change your game play messages to something a bit
-    more fun and interesting. I hope you enjoy the extra features, now that
-    you've decided to enter the fascinating world of tic tac toe.
-  </p>
-  <p>Display name is saved to your membership profile. Theme and difficulty defaults are saved in this browser.</p>
-  <p class="member-tier">Tier: {{ member_tier|title }}</p>
+<h1>Profile</h1>
+<p>
+  Welcome to the profile page {{ profile_display_name }}. You are a {{ member_tier|title }} player.You have entered the
+  inner sanctum. You can now change your game play messages to something a bit
+  more fun and interesting. I hope you enjoy the extra features, now that
+  you've decided to enter the fascinating world of tic tac toe.
+</p>
+<p>Theme and difficulty set here are saved in the browser, so you may need to reselect on other devices.</p>
+<form id="profileForm" class="profile-form" method="post">
+  {% csrf_token %}
+  <input type="hidden" name="action" value="save_profile">
+  <label for="displayName">Display name</label>
+  <input id="displayName" name="display_name" type="text" maxlength="20" value="{{ profile_member_name }}"
+    placeholder="e.g. Player One">
 
-  <form id="profileForm" class="profile-form" method="post">
+  <div class="profile-pref-picker" aria-label="Default difficulty selector">
+    <input id="defaultDifficulty" name="defaultDifficulty" type="hidden"
+      value="{{ allowed_difficulties.0|default:'easy' }}">
+    <div class="profile-button-bar" role="group" aria-label="Choose default difficulty">
+      {% if "easy" in allowed_difficulties %}
+      <button type="button"
+        class="profile-pref-btn profile-difficulty-btn {% if allowed_difficulties.0 == 'easy' %}is-selected{% endif %}"
+        data-difficulty="easy">Easy</button>
+      {% endif %}
+      {% if "normal" in allowed_difficulties %}
+      <button type="button"
+        class="profile-pref-btn profile-difficulty-btn {% if allowed_difficulties.0 == 'normal' %}is-selected{% endif %}"
+        data-difficulty="normal">Normal</button>
+      {% endif %}
+      {% if "hard" in allowed_difficulties %}
+      <button type="button"
+        class="profile-pref-btn profile-difficulty-btn {% if allowed_difficulties.0 == 'hard' %}is-selected{% endif %}"
+        data-difficulty="hard">Hard</button>
+      {% endif %}
+      {% if "fiendish" in allowed_difficulties %}
+      <button type="button"
+        class="profile-pref-btn profile-difficulty-btn {% if allowed_difficulties.0 == 'fiendish' %}is-selected{% endif %}"
+        data-difficulty="fiendish">Fiendish</button>
+      {% endif %}
+    </div>
+    <div class="bar-help" data-help>
+      <button type="button" class="bar-help-btn" aria-label="About default difficulty setting" aria-expanded="false"
+        aria-controls="profileDifficultyHelpPanel">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+      </button>
+      <div id="profileDifficultyHelpPanel" class="bar-help-panel" role="note">
+        Sets the default game difficulty when you open a match. You can still change it before each game.
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-pref-picker" aria-label="Default theme selector">
+    <input id="defaultTheme" name="defaultTheme" type="hidden" value="{{ allowed_themes.0|default:'traditional' }}">
+    <div class="profile-button-bar" role="group" aria-label="Choose default theme">
+      {% if "traditional" in allowed_themes %}
+      <button type="button"
+        class="profile-pref-btn profile-theme-btn {% if allowed_themes.0 == 'traditional' %}is-selected{% endif %}"
+        data-theme="traditional">Traditional</button>
+      {% endif %}
+      {% if "robot" in allowed_themes %}
+      <button type="button"
+        class="profile-pref-btn profile-theme-btn {% if allowed_themes.0 == 'robot' %}is-selected{% endif %}"
+        data-theme="robot">Robot</button>
+      {% endif %}
+      {% if "flowers" in allowed_themes %}
+      <button type="button"
+        class="profile-pref-btn profile-theme-btn {% if allowed_themes.0 == 'flowers' %}is-selected{% endif %}"
+        data-theme="flowers">Flowers</button>
+      {% endif %}
+      {% if "fantasy" in allowed_themes %}
+      <button type="button"
+        class="profile-pref-btn profile-theme-btn {% if allowed_themes.0 == 'fantasy' %}is-selected{% endif %}"
+        data-theme="fantasy">Fantasy</button>
+      {% endif %}
+    </div>
+    <div class="bar-help" data-help>
+      <button type="button" class="bar-help-btn" aria-label="About default theme setting" aria-expanded="false"
+        aria-controls="profileThemeHelpPanel">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+      </button>
+      <div id="profileThemeHelpPanel" class="bar-help-panel" role="note">
+        Sets your default visual theme for boards, pieces, and coin art when a game starts.
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-actions">
+    <button type="submit">Save preferences</button>
+    <button id="resetPreferences" type="button">Reset to defaults</button>
+    <a href="{% url 'gamehome:home' %}">Go to game</a>
+  </div>
+</form>
+
+<p id="profileMessage" aria-live="polite"></p>
+
+<section class="comment-section">
+  <h2>Message Comments</h2>
+  {% if feedback_message %}
+  <p id="commentFeedbackMessage" class="comment-feedback">{{ feedback_message }}</p>
+  {% endif %}
+
+  {% if form.non_field_errors %}
+  <div class="comment-errors">
+    {{ form.non_field_errors }}
+  </div>
+  {% endif %}
+
+  <form id="commentForm" class="comment-form" method="post">
     {% csrf_token %}
-    <input type="hidden" name="action" value="save_profile">
-    <label for="displayName">Display name</label>
-    <input id="displayName" name="display_name" type="text" maxlength="20" value="{{ profile_member_name }}" placeholder="e.g. Player One">
-
-    <div class="profile-pref-picker" aria-label="Default difficulty selector">
-      <input id="defaultDifficulty" name="defaultDifficulty" type="hidden" value="{{ allowed_difficulties.0|default:'easy' }}">
-      <div class="profile-button-bar" role="group" aria-label="Choose default difficulty">
-        {% if "easy" in allowed_difficulties %}
-          <button type="button" class="profile-pref-btn profile-difficulty-btn {% if allowed_difficulties.0 == 'easy' %}is-selected{% endif %}" data-difficulty="easy">Easy</button>
-        {% endif %}
-        {% if "normal" in allowed_difficulties %}
-          <button type="button" class="profile-pref-btn profile-difficulty-btn {% if allowed_difficulties.0 == 'normal' %}is-selected{% endif %}" data-difficulty="normal">Normal</button>
-        {% endif %}
-        {% if "hard" in allowed_difficulties %}
-          <button type="button" class="profile-pref-btn profile-difficulty-btn {% if allowed_difficulties.0 == 'hard' %}is-selected{% endif %}" data-difficulty="hard">Hard</button>
-        {% endif %}
-        {% if "fiendish" in allowed_difficulties %}
-          <button type="button" class="profile-pref-btn profile-difficulty-btn {% if allowed_difficulties.0 == 'fiendish' %}is-selected{% endif %}" data-difficulty="fiendish">Fiendish</button>
-        {% endif %}
+    <div class="profile-pref-picker" aria-label="Message type selector">
+      <input type="hidden" name="message_type" id="id_message_type" value="{{ selected_type }}">
+      <div class="profile-button-bar" role="group" aria-label="Choose message type">
+        {% for value, label in form.message_type.field.choices %}
+        <a href="?type={{ value }}"
+          class="profile-pref-btn comment-type-btn {% if selected_type == value %}is-selected{% endif %}"
+          data-message-type="{{ value }}" aria-current="{% if selected_type == value %}page{% endif %}">
+          {{ label }}
+        </a>
+        {% endfor %}
       </div>
       <div class="bar-help" data-help>
-        <button
-          type="button"
-          class="bar-help-btn"
-          aria-label="About default difficulty setting"
-          aria-expanded="false"
-          aria-controls="profileDifficultyHelpPanel"
-        >
+        <button type="button" class="bar-help-btn" aria-label="About message type settings" aria-expanded="false"
+          aria-controls="messageTypeHelpPanel">
           <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
         </button>
-        <div id="profileDifficultyHelpPanel" class="bar-help-panel" role="note">
-          Sets the default game difficulty when you open a match. You can still change it before each game.
+        <div id="messageTypeHelpPanel" class="bar-help-panel" role="note">
+          Message type chooses which set of custom comments you are editing, such as win, lose, or draw messages. 
+          Each message type can store up to {{ max_comments_per_type }} comments.
         </div>
       </div>
     </div>
 
-    <div class="profile-pref-picker" aria-label="Default theme selector">
-      <input id="defaultTheme" name="defaultTheme" type="hidden" value="{{ allowed_themes.0|default:'traditional' }}">
-      <div class="profile-button-bar" role="group" aria-label="Choose default theme">
-        {% if "traditional" in allowed_themes %}
-          <button type="button" class="profile-pref-btn profile-theme-btn {% if allowed_themes.0 == 'traditional' %}is-selected{% endif %}" data-theme="traditional">Traditional</button>
-        {% endif %}
-        {% if "robot" in allowed_themes %}
-          <button type="button" class="profile-pref-btn profile-theme-btn {% if allowed_themes.0 == 'robot' %}is-selected{% endif %}" data-theme="robot">Robot</button>
-        {% endif %}
-        {% if "flowers" in allowed_themes %}
-          <button type="button" class="profile-pref-btn profile-theme-btn {% if allowed_themes.0 == 'flowers' %}is-selected{% endif %}" data-theme="flowers">Flowers</button>
-        {% endif %}
-        {% if "fantasy" in allowed_themes %}
-          <button type="button" class="profile-pref-btn profile-theme-btn {% if allowed_themes.0 == 'fantasy' %}is-selected{% endif %}" data-theme="fantasy">Fantasy</button>
-        {% endif %}
-      </div>
-      <div class="bar-help" data-help>
-        <button
-          type="button"
-          class="bar-help-btn"
-          aria-label="About default theme setting"
-          aria-expanded="false"
-          aria-controls="profileThemeHelpPanel"
-        >
-          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+    <div id="commentEditorWrap" {% if not can_add_comment %}hidden{% endif %}>
+      <label for="id_comment_text">Comment</label>
+      {{ form.comment_text }}
+      {{ form.comment_id }}
+      {% if form.comment_text.errors %}
+      <div class="comment-errors">{{ form.comment_text.errors }}</div>
+      {% endif %}
+
+      <div class="profile-actions">
+        <button id="saveCommentBtn" type="submit">
+          {% if editing_comment %}Update{% else %}Add{% endif %}
         </button>
-        <div id="profileThemeHelpPanel" class="bar-help-panel" role="note">
-          Sets your default visual theme for boards, pieces, and coin art when a game starts.
-        </div>
+        <button id="clearEditBtn" type="button">Clear</button>
       </div>
     </div>
 
-    <div class="profile-actions">
-      <button type="submit">Save preferences</button>
-      <button id="resetPreferences" type="button">Reset to defaults</button>
-      <a href="{% url 'gamehome:home' %}">Go to game</a>
-    </div>
+    <p id="commentLimitMessage" {% if can_add_comment %}hidden{% endif %}>
+      You already entered {{ max_comments_per_type }} comments for this type.
+      Select one below to edit it.
+    </p>
   </form>
 
-  <p id="profileMessage" aria-live="polite"></p>
+  {{ comment_counts|json_script:"comment-counts-data" }}
+  <div class="comment-lists">
+    <h3>Your saved comments</h3>
 
-  <section class="comment-section">
-    <h2>Message Comments</h2>
-    <p>Each message type can store up to {{ max_comments_per_type }} comments.</p>
-
-    {% if feedback_message %}
-      <p id="commentFeedbackMessage" class="comment-feedback">{{ feedback_message }}</p>
-    {% endif %}
-
-    {% if form.non_field_errors %}
-      <div class="comment-errors">
-        {{ form.non_field_errors }}
-      </div>
-    {% endif %}
-
-    <form id="commentForm" class="comment-form" method="post">
-      {% csrf_token %}
-      <div class="profile-pref-picker" aria-label="Message type selector">
-        <input type="hidden" name="message_type" id="id_message_type" value="{{ selected_type }}">
-        <div class="profile-button-bar" role="group" aria-label="Choose message type">
-          {% for value, label in form.message_type.field.choices %}
-            <a
-              href="?type={{ value }}"
-              class="profile-pref-btn comment-type-btn {% if selected_type == value %}is-selected{% endif %}"
-              data-message-type="{{ value }}"
-              aria-current="{% if selected_type == value %}page{% endif %}"
-            >
-              {{ label }}
-            </a>
-          {% endfor %}
-        </div>
-        <div class="bar-help" data-help>
-          <button
-            type="button"
-            class="bar-help-btn"
-            aria-label="About message type settings"
-            aria-expanded="false"
-            aria-controls="messageTypeHelpPanel"
-          >
-            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+    {% for message_type, rows in comments_by_type.items %}
+    <div class="comment-type-panel" data-message-list="{{ message_type }}" {% if selected_type != message_type %}hidden{% endif %}>
+      <h4>
+        {{ message_type|title }} ({{ rows|length }}/{{ max_comments_per_type }})
+      </h4>
+      {% if rows %}
+      <ul class="comment-list">
+        {% for row in rows %}
+        <li>
+          <span>{{ row.text }}</span>
+          <a href="?type={{ message_type }}&edit={{ row.id }}">Edit</a>
+          <button type="button" class="edit-comment-btn" data-message-type="{{ message_type }}"
+            data-comment-id="{{ row.id }}" data-comment-text="{{ row.text|escape }}" aria-label="Quick edit comment">
+            <i class="fa-solid fa-pen" aria-hidden="true"></i>
           </button>
-          <div id="messageTypeHelpPanel" class="bar-help-panel" role="note">
-            Message type chooses which set of custom comments you are editing, such as win, lose, or draw messages.
-          </div>
-        </div>
-      </div>
-
-      <div id="commentEditorWrap" {% if not can_add_comment %}hidden{% endif %}>
-        <label for="id_comment_text">Comment</label>
-        {{ form.comment_text }}
-        {{ form.comment_id }}
-        {% if form.comment_text.errors %}
-          <div class="comment-errors">{{ form.comment_text.errors }}</div>
-        {% endif %}
-
-        <div class="profile-actions">
-          <button id="saveCommentBtn" type="submit">
-            {% if editing_comment %}Update{% else %}Add{% endif %}
-          </button>
-          <button id="clearEditBtn" type="button">Clear</button>
-        </div>
-      </div>
-
-      <p id="commentLimitMessage" {% if can_add_comment %}hidden{% endif %}>
-        You already entered {{ max_comments_per_type }} comments for this type.
-        Select one below to edit it.
-      </p>
-    </form>
-
-    {{ comment_counts|json_script:"comment-counts-data" }}
-    <div class="comment-lists">
-      <h3>Your saved comments</h3>
-
-      {% for message_type, rows in comments_by_type.items %}
-        <div
-          class="comment-type-panel"
-          data-message-list="{{ message_type }}"
-          {% if selected_type != message_type %}hidden{% endif %}
-        >
-          <h4>
-            {{ message_type|title }} ({{ rows|length }}/{{ max_comments_per_type }})
-          </h4>
-          {% if rows %}
-            <ul class="comment-list">
-              {% for row in rows %}
-                <li>
-                  <span>{{ row.text }}</span>
-                  <a href="?type={{ message_type }}&edit={{ row.id }}">Edit</a>
-                  <button
-                    type="button"
-                    class="edit-comment-btn"
-                    data-message-type="{{ message_type }}"
-                    data-comment-id="{{ row.id }}"
-                    data-comment-text="{{ row.text|escape }}"
-                    aria-label="Quick edit comment"
-                  >
-                    <i class="fa-solid fa-pen" aria-hidden="true"></i>
-                  </button>
-                  <form method="post" class="delete-comment-form">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="delete">
-                    <input type="hidden" name="delete_type" value="{{ message_type }}">
-                    <input type="hidden" name="delete_id" value="{{ row.id }}">
-                    <button type="submit" aria-label="Delete comment">
-                      <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
-                    </button>
-                  </form>
-                </li>
-              {% endfor %}
-            </ul>
-          {% else %}
-            <p>No comments saved for this type yet.</p>
-          {% endif %}
-        </div>
-      {% endfor %}
+          <form method="post" class="delete-comment-form">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="delete">
+            <input type="hidden" name="delete_type" value="{{ message_type }}">
+            <input type="hidden" name="delete_id" value="{{ row.id }}">
+            <button type="submit" aria-label="Delete comment">
+              <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+            </button>
+          </form>
+        </li>
+        {% endfor %}
+      </ul>
+        {% else %}
+      <p>No comments saved for this type yet.</p>
+      {% endif %}
     </div>
-  </section>
+    {% endfor %}
+  </div>
+</section>
 
-  <script>
-    window.PROFILE_ALLOWED_THEMES = {{ allowed_themes|safe }};
-    window.PROFILE_ALLOWED_DIFFICULTIES = {{ allowed_difficulties|safe }};
-    window.PROFILE_DISPLAY_NAME = "{{ profile_member_name|default:''|escapejs }}";
-    window.PROFILE_SAVE_URL = "{% url 'gamehome:profile' %}";
-  </script>
+<script>
+  window.PROFILE_ALLOWED_THEMES = {{ allowed_themes | safe }};
+  window.PROFILE_ALLOWED_DIFFICULTIES = {{ allowed_difficulties | safe }};
+  window.PROFILE_DISPLAY_NAME = "{{ profile_member_name|default:''|escapejs }}";
+  window.PROFILE_SAVE_URL = "{% url 'gamehome:profile' %}";
+</script>
 
-  <script src="{% static 'gamehome/js/profile.js' %}"></script>
+<script src="{% static 'gamehome/js/profile.js' %}"></script>
 {% endblock %}

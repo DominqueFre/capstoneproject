@@ -136,6 +136,14 @@ nav { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
   cursor: pointer;
 }
 
+.bar-help-btn i,
+.bar-help-btn svg {
+  display: block;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
+}
+
 .bar-help-btn:hover,
 .bar-help-btn:focus-visible {
   background: var(--theme-accent, #204f9f);
@@ -271,14 +279,62 @@ nav { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
   border: 1px solid var(--theme-status-border, #cfd7e8);
   border-radius: 12px;
   background: var(--theme-status-bg, #f7f9ff);
-  color: var(--theme-status-text, #222233);
   font-family: var(--theme-font-display, Arial, sans-serif);
   font-weight: 600;
   line-height: 1.3;
   margin-top: clamp(1.2rem, 5vw, 4rem);
+  display: flex;
+  flex-direction: column;
 }
 
-.side-status:empty {
+.side-status-title {
+  margin: 0 0 0.4rem 0;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--theme-status-border, #cfd7e8);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  opacity: 0.75;
+  flex-shrink: 0;
+}
+
+.side-status-player .side-status-title {
+  color: var(--theme-accent, #204f9f);
+}
+
+.side-status-computer .side-status-title {
+  color: var(--theme-status-text, #222233);
+}
+
+.side-status-messages {
+  display: grid;
+  gap: 0.35rem;
+  max-height: min(54vh, 510px);
+  overflow-y: auto;
+  flex: 1;
+}
+
+.side-status-player .status-item {
+  color: var(--theme-accent, #204f9f);
+}
+
+.side-status-computer .status-item {
+  color: var(--theme-status-text, #222233);
+}
+
+.side-status .status-item {
+  padding: 0.35rem 0.45rem;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--theme-status-bg, #f7f9ff) 84%, white 16%);
+}
+
+.side-status .status-item:only-child {
+  background: transparent;
+  padding: 0;
+}
+
+.side-status:has(.side-status-messages:empty) {
   border-style: dashed;
   opacity: 0.55;
 }
@@ -372,6 +428,11 @@ nav { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
     margin-top: 0;
   }
 
+  .side-status-messages {
+    max-height: none;
+    overflow: hidden;
+  }
+
   .side-status-computer {
     order: 3;
   }
@@ -395,6 +456,14 @@ nav { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
     position: static;
     transform: none;
     margin-top: 0.75rem;
+  }
+
+  .side-status .status-item {
+    display: none;
+  }
+
+  .side-status .status-item:first-child {
+    display: block;
   }
 }
 
@@ -455,6 +524,13 @@ html[data-theme="robot"] .leaderboard-display-area {
 
 html[data-theme="flowers"] .leaderboard-display-area {
   background-image: url("../images/game_flowers_leaderboard.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+html[data-theme="traditional"] .leaderboard-display-area {
+  background-image: url("../images/game_traditional_leaderboard.png");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;

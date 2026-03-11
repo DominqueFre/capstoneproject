@@ -42,6 +42,34 @@ TIER_TO_DIFFICULTIES = {
 }
 
 
+def get_user_message_sets(user):
+    empty_sets = {"win": [], "lose": [], "draw": [], "move": []}
+    if not user.is_authenticated:
+        return empty_sets, False
+
+    message_sets = {}
+    all_filled = True
+
+    for key, (model_class, comment_field) in COMMENT_MODEL_MAP.items():
+        rows = model_class.objects.filter(user=user).values_list(
+            comment_field,
+            flat=True,
+        )
+        cleaned = [
+            text.strip()
+            for text in rows
+            if isinstance(text, str) and text.strip()
+        ]
+        message_sets[key] = cleaned
+        if len(cleaned) < MAX_COMMENTS_PER_TYPE:
+            all_filled = False
+
+    for key in ("win", "lose", "draw", "move"):
+        message_sets.setdefault(key, [])
+
+    return message_sets, all_filled
+
+
 def get_member_access(user):
     allowed_themes = TIER_TO_THEMES["guest"]
     allowed_difficulties = TIER_TO_DIFFICULTIES["guest"]
@@ -76,10 +104,16 @@ def play(request):
         request.user
     )
 
+    user_message_sets, user_messages_ready = get_user_message_sets(
+        request.user
+    )
+
     context = {
         "allowed_themes": allowed_themes,
         "allowed_difficulties": allowed_difficulties,
         "member_tier": member_tier,
+        "game_user_messages": json.dumps(user_message_sets),
+        "game_user_messages_ready": user_messages_ready,
         "profile_display_name": (
             getattr(
                 getattr(request.user, "member_info", None),
