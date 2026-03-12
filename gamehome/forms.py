@@ -29,12 +29,7 @@ class MemberAvatarForm(forms.ModelForm):
         model = MemberAvatar
         fields = ["avatar_image"]
         widgets = {
-            "avatar_image": forms.URLInput(
-                attrs={
-                    "placeholder": "Enter image URL from Cloudinary",
-                    "readonly": "readonly",
-                }
-            ),
+            "avatar_image": forms.HiddenInput(),
         }
         labels = {
             "avatar_image": "Avatar Image URL",
@@ -53,11 +48,13 @@ class MemberChoiceForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        tier = kwargs.pop('tier', 'novice')
         super().__init__(*args, **kwargs)
-        # Update choices to include "Selection" option for Seasoned+
-        self.fields['choice'].choices = [
-            ("Random", "Random"),
-            ("X", "X"),
-            ("O", "O"),
-            ("Selection", "Selected from gallery"),
+        # All users get Standard and Global Random; seasoned/master get Selection
+        base_choices = [
+            ("Standard", "Standard (random within theme)"),
+            ("Random", "Global random (all themes)"),
         ]
+        if tier in ('seasoned', 'master'):
+            base_choices.append(("Selection", "Selected from gallery"))
+        self.fields['choice'].choices = base_choices

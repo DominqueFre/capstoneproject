@@ -81,22 +81,16 @@ class MemberAvatar(models.Model):
 
 class MemberChoice(models.Model):
     CHOICE_CHOICES = [
-        ("Random", "Random"),
-        ("X", "X"),
-        ("O", "O"),
-        ("Selection", "Selection"),
+        ("Standard", "Standard (random within theme)"),
+        ("Random", "Global random (all themes)"),
+        ("Selection", "Selected from gallery"),
     ]
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="choice")
-    choice = models.CharField(max_length=20, choices=CHOICE_CHOICES, default="Random")
+    choice = models.CharField(max_length=20, choices=CHOICE_CHOICES, default="Standard")
     piece_identifier = models.CharField(
         max_length=50,
         blank=True,
         null=True,
         help_text="Stores selected piece identifier (e.g., 'robot_0', 'avatar', 'traditional_1')"
     )
-
-    def clean(self):
-        member = getattr(self.user, "member_info", None)
-        if not member or member.status not in {"seasoned", "master"}:
-            raise ValidationError("Choice is only available to seasoned and master players.")

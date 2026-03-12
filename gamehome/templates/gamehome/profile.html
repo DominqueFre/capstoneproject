@@ -99,6 +99,12 @@
 <p id="profileMessage" aria-live="polite"></p>
 </form>
 
+<script src="{% static 'gamehome/js/piece_choice.js' %}"></script>
+<script>
+  window.SAVED_PIECE_IDENTIFIER = "{{ choice_form.instance.piece_identifier|default:'' }}";
+  window.AVATAR_IMAGE_URL = "{{ avatar_form.avatar_image.value|default:'' }}";
+</script>
+
 <div class="profile-blocks">
 
 <div class="preferences-block">
@@ -108,8 +114,9 @@
 <div class="avatar-block">
 {% if member_tier == "seasoned" or member_tier == "master" %}
 <section class="avatar-section">
-  <h2>Avatar <small>(Seasoned+)</small></h2>
-  <p>Upload your custom avatar image to use as your game piece.</p>
+  <!-- Avatar available to seasoned and master tier users only -->
+  <h2>Avatar</h2>
+  <p>Upload your custom avatar image to add it to your available piece choices and random pool.</p>
   <form id="avatarForm" class="avatar-form" method="post">
     {% csrf_token %}
     <input type="hidden" name="action" value="save_avatar">
@@ -136,9 +143,8 @@
       </div>
     </div>
     <button type="button" id="openCloudinaryWidget" class="profile-pref-btn">Upload Image</button>
-    <button type="submit" class="profile-pref-btn">Save Avatar URL</button>
     {% if has_avatar %}
-    <p class="avatar-preview">Avatar uploaded: <strong>{{ avatar_form.avatar_image.value }}</strong></p>
+    <p class="avatar-preview">Avatar saved and available for random or gallery selection.</p>
     {% endif %}
   </form>
 </section>
@@ -156,11 +162,19 @@
   <form id="choiceForm" class="choice-form" method="post">
     {% csrf_token %}
     <input type="hidden" name="action" value="save_choice">
-    <div class="choice-options">
+    <div class="choice-options" id="pieceChoiceOptions">
       {{ choice_form.choice }}
       {% if choice_form.choice.errors %}
       <div class="form-errors">{{ choice_form.choice.errors }}</div>
       {% endif %}
+      <span id="selectedPieceImageContainer" style="vertical-align: middle; margin-left: 1em;"></span>
+    </div>
+    <!-- Removed text prompt, replaced by image above -->
+    <div id="changeSelectedAvatarContainer" style="display:none; margin-top: 0.5em;">
+      <label>
+        <input type="radio" name="change_selected_avatar" id="changeSelectedAvatarRadio" value="change">
+        Change selected avatar
+      </label>
     </div>
     <div class="choice-help" data-help>
       <button type="button" class="bar-help-btn" aria-label="About game piece choice" aria-expanded="false"
@@ -168,12 +182,9 @@
         <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
       </button>
       <div id="choiceHelpPanel" class="bar-help-panel" role="note">
-        <strong>Random:</strong> A random piece from your current theme will be selected each game.<br>
-        <strong>X or O:</strong> Always play with your chosen piece regardless of theme.
+        <strong>Random:</strong> Your piece will be drawn from the full global pool of built-in images, and your avatar will be included if you have uploaded one.
         {% if member_tier == "seasoned" or member_tier == "master" %}
-        {% if has_avatar %}
-        <br><strong>Custom Avatar:</strong> Your uploaded avatar will be used as your game piece.
-        {% endif %}
+        <br><strong>Selected from gallery:</strong> Use one specific piece as your own piece and keep the computer on a different image.
         {% endif %}
       </div>
     </div>
@@ -182,9 +193,9 @@
 </section>
 
 {% if member_tier == "seasoned" or member_tier == "master" %}
-<section class="thumbnail-gallery-section">
-  <h2>Piece Gallery <small>(Seasoned+)</small></h2>
-  <p>Browse and select your preferred game piece. Click any piece to select it.</p>
+<section class="thumbnail-gallery-section" id="thumbnailGallerySection" style="display:none;">
+  <h2>Piece Gallery</h2>
+  <p>Browse and select your preferred game piece. Click any piece to select it. Then Save.</p>
 
   <div class="gallery-container">
     <!-- Avatar Gallery (if uploaded) -->
@@ -212,6 +223,13 @@
           <img src="{% static 'gamehome/images/game_traditional_gamepiece_0.png' %}" alt="Traditional piece 0"
             class="thumbnail-image {% if choice_form.instance.piece_identifier == 'traditional_0' %}is-selected{% endif %}" />
           <span class="thumbnail-label">Piece 1</span>
+        </button>
+        <button type="button" class="thumbnail-item" data-piece-id="traditional_1"
+          data-piece-image="{% static 'gamehome/images/game_traditional_gamepiece_1.png' %}"
+          aria-label="Traditional piece 1">
+          <img src="{% static 'gamehome/images/game_traditional_gamepiece_1.png' %}" alt="Traditional piece 1"
+            class="thumbnail-image {% if choice_form.instance.piece_identifier == 'traditional_1' %}is-selected{% endif %}" />
+          <span class="thumbnail-label">Piece 2</span>
         </button>
       </div>
     </div>
@@ -280,15 +298,6 @@
 
   <p id="galleryMessage" class="gallery-message" aria-live="polite"></p>
 
-  <form id="resetChoiceForm" class="reset-choice-form" method="post">
-    {% csrf_token %}
-    <input type="hidden" name="action" value="reset_choice">
-    <div class="reset-actions">
-      <button type="submit" class="profile-pref-btn reset-btn">
-        <i class="fa-solid fa-redo" aria-hidden="true"></i> Reset to Default (Random)
-      </button>
-    </div>
-  </form>
 </section>
 {% endif %}
 
@@ -364,7 +373,6 @@
         {% for row in rows %}
         <li>
           <span>{{ row.text }}</span>
-          <a href="?type={{ message_type }}&edit={{ row.id }}">Edit</a>
           <button type="button" class="edit-comment-btn" data-message-type="{{ message_type }}"
             data-comment-id="{{ row.id }}" data-comment-text="{{ row.text|escape }}" aria-label="Quick edit comment">
             <i class="fa-solid fa-pen" aria-hidden="true"></i>
@@ -405,8 +413,9 @@
   document.addEventListener('DOMContentLoaded', function () {
     const openCloudinaryBtn = document.getElementById('openCloudinaryWidget');
     const avatarImageInput = document.getElementById('id_avatar_image');
+    const avatarForm = document.getElementById('avatarForm');
     
-    if (openCloudinaryBtn && avatarImageInput && window.cloudinary) {
+    if (openCloudinaryBtn && avatarImageInput && avatarForm && window.cloudinary) {
       openCloudinaryBtn.addEventListener('click', function (e) {
         e.preventDefault();
         
@@ -424,18 +433,16 @@
           },
           function (error, result) {
             if (!error && result && result.event === 'success') {
-              // Update the hidden input with the image URL
               avatarImageInput.value = result.info.secure_url;
-              
-              // Show preview
-              const form = openCloudinaryBtn.closest('.avatar-form');
-              let preview = form.querySelector('.avatar-preview');
+
+              let preview = avatarForm.querySelector('.avatar-preview');
               if (!preview) {
                 preview = document.createElement('p');
                 preview.className = 'avatar-preview';
-                form.appendChild(preview);
+                avatarForm.appendChild(preview);
               }
-              preview.innerHTML = 'Avatar uploaded: <strong>' + result.info.secure_url + '</strong>';
+              preview.textContent = 'Avatar uploaded. Saving to your profile...';
+              avatarForm.submit();
             }
           }
         );

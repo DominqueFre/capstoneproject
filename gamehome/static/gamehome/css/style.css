@@ -1,6 +1,24 @@
-* { box-sizing: border-box; }
-
-html, body { margin: 0; }
+/* Profile page comment icon colors */
+.comment-list .edit-comment-btn .fa-pen {
+  color: var(--theme-accent, #204f9f);
+  transition: color 0.2s;
+}
+.comment-list .edit-comment-btn:hover .fa-pen,
+.comment-list .edit-comment-btn:focus .fa-pen {
+  color: var(--theme-accent-text, #ffffff);
+  background: var(--theme-accent, #204f9f);
+  border-radius: 50%;
+}
+.comment-list .delete-comment-form .fa-trash-can {
+  color: #b91c1c;
+  transition: color 0.2s;
+}
+.comment-list .delete-comment-form button:hover .fa-trash-can,
+.comment-list .delete-comment-form button:focus .fa-trash-can {
+  color: #fff;
+  background: #b91c1c;
+  border-radius: 50%;
+}
 
 :root {
   --page-bg: #7b0003;

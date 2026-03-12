@@ -110,12 +110,47 @@ def play(request):
         request.user
     )
 
+    game_piece_preference = None
+    if request.user.is_authenticated:
+        avatar_obj = MemberAvatar.objects.filter(user=request.user).first()
+        choice_obj = MemberChoice.objects.filter(user=request.user).first()
+        # Determine the correct choice for serialization
+        if choice_obj:
+            is_selection = (
+                choice_obj.choice == "Selection"
+                and choice_obj.piece_identifier
+            )
+            if is_selection:
+                choice_val = "Selection"
+                piece_identifier = choice_obj.piece_identifier
+            elif choice_obj.choice == "Standard":
+                choice_val = "Standard"
+                piece_identifier = None
+            else:
+                choice_val = "Random"
+                piece_identifier = None
+        else:
+            choice_val = "Standard"
+            piece_identifier = None
+        game_piece_preference = json.dumps(
+            {
+                "choice": choice_val,
+                "pieceIdentifier": piece_identifier,
+                "avatarImage": (
+                    avatar_obj.avatar_image
+                    if avatar_obj and avatar_obj.avatar_image
+                    else None
+                ),
+            }
+        )
+
     context = {
         "allowed_themes": allowed_themes,
         "allowed_difficulties": allowed_difficulties,
         "member_tier": member_tier,
         "game_user_messages": json.dumps(user_message_sets),
         "game_user_messages_ready": user_messages_ready,
+        "game_piece_preference": game_piece_preference,
         "profile_display_name": (
             getattr(
                 getattr(request.user, "member_info", None),
@@ -147,8 +182,16 @@ def profile(request):
     avatar_obj, _ = MemberAvatar.objects.get_or_create(user=request.user)
     choice_obj, _ = MemberChoice.objects.get_or_create(user=request.user)
 
+    if choice_obj.choice not in {"Random", "Selection"}:
+        choice_obj.choice = "Random"
+        choice_obj.piece_identifier = None
+        choice_obj.save(update_fields=["choice", "piece_identifier"])
+    elif choice_obj.choice == "Selection" and not choice_obj.piece_identifier:
+        choice_obj.choice = "Random"
+        choice_obj.save(update_fields=["choice"])
+
     avatar_form = MemberAvatarForm(instance=avatar_obj)
-    choice_form = MemberChoiceForm(instance=choice_obj)
+    choice_form = MemberChoiceForm(instance=choice_obj, tier=member_tier)
 
     current_member_name = getattr(
         getattr(request.user, "member_info", None),
@@ -199,14 +242,38 @@ def profile(request):
             avatar_form = MemberAvatarForm(request.POST, instance=avatar_obj)
             if avatar_form.is_valid():
                 avatar_form.save()
-                feedback_message = "Avatar URL saved."
+                avatar_form = MemberAvatarForm(instance=avatar_obj)
+                feedback_message = "Avatar saved."
             else:
-                feedback_message = "Failed to save avatar URL."
+                feedback_message = "Failed to save avatar."
         elif action == "save_choice":
-            choice_form = MemberChoiceForm(request.POST, instance=choice_obj)
+            choice_form = MemberChoiceForm(
+                request.POST, instance=choice_obj, tier=member_tier
+            )
             if choice_form.is_valid():
-                choice_form.save()
-                feedback_message = "Game piece choice saved."
+                saved_choice = choice_form.save(commit=False)
+                if saved_choice.choice == "Selection":
+                    if not choice_obj.piece_identifier:
+                        feedback_message = (
+                            "Choose a gallery piece before saving a "
+                            "selected piece."
+                        )
+                    else:
+                        saved_choice.save()
+                        choice_form = MemberChoiceForm(
+                            instance=saved_choice, tier=member_tier
+                        )
+                        feedback_message = "Selected piece preference saved."
+                else:
+                    saved_choice.piece_identifier = None
+                    saved_choice.save()
+                    choice_form = MemberChoiceForm(
+                        instance=saved_choice, tier=member_tier
+                    )
+                    feedback_message = (
+                        "Random preference saved. Your piece will be chosen "
+                        "from the global image pool when you play."
+                    )
             else:
                 feedback_message = "Failed to save game piece choice."
         elif action == "save_gallery_piece":
@@ -218,6 +285,9 @@ def profile(request):
                 choice_obj.choice = "Selection"
                 choice_obj.full_clean()
                 choice_obj.save()
+                choice_form = MemberChoiceForm(
+                    instance=choice_obj, tier=member_tier
+                )
                 feedback_message = f"Piece {selected_piece_id} selected!"
             else:
                 feedback_message = "Please select a piece first."
@@ -226,9 +296,12 @@ def profile(request):
             choice_obj.piece_identifier = None
             choice_obj.full_clean()
             choice_obj.save()
+            choice_form = MemberChoiceForm(
+                instance=choice_obj,
+                tier=member_tier,
+            )
             feedback_message = (
-                "Game piece choice reset to Random using "
-                "current theme rules."
+                "Game piece choice reset to Random using the global pool."
             )
         elif action == "delete":
             delete_type = request.POST.get("delete_type", "win")

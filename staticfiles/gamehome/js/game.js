@@ -141,6 +141,7 @@ const PROFILE_STORAGE_KEYS = {
 };
 
 const themeAssets = window.GAME_THEME_ASSETS || {};
+const piecePreference = window.GAME_PIECE_PREFERENCE || null;
 
 function getThemeAssets(theme) {
   const safeTheme = allowedThemes.includes(theme) ? theme : "traditional";
@@ -158,12 +159,62 @@ function getThemeAssets(theme) {
   };
 }
 
+function getThemePieceEntries(theme) {
+  const assets = themeAssets[theme] || {};
+  return (Array.isArray(assets.pieces) ? assets.pieces : []).map(
+    (url, index) => ({
+      id: `${theme}_${index}`,
+      url,
+    })
+  );
+}
+
+function getGlobalPieceEntries() {
+  const themeOrder = ["traditional", "robot", "fantasy", "flowers"];
+  const entries = themeOrder.flatMap((theme) => getThemePieceEntries(theme));
+
+  if (piecePreference && piecePreference.avatarImage) {
+    entries.push({
+      id: "avatar",
+      url: piecePreference.avatarImage,
+    });
+  }
+
+  return entries;
+}
+
+function pickRandomEntry(pool) {
+  if (!Array.isArray(pool) || pool.length === 0) {
+    return null;
+  }
+
+  return pool[Math.floor(Math.random() * pool.length)] || null;
+}
+
+function getPlayerEntry(theme) {
+  if (!piecePreference) {
+    return pickRandomEntry(getThemePieceEntries(theme));
+  }
+
+  if (piecePreference.choice === "Selection" && piecePreference.pieceIdentifier) {
+    return getGlobalPieceEntries().find(
+      (entry) => entry.id === piecePreference.pieceIdentifier
+    ) || null;
+  }
+
+  if (piecePreference.choice === "Random") {
+    return pickRandomEntry(getGlobalPieceEntries());
+  }
+
+  return pickRandomEntry(getThemePieceEntries(theme));
+}
+
 let board = Array(9).fill("");
 let gameOver = false;
 const PLAYER_MARK = "X";
 const COMPUTER_MARK = "O";
-let playerPieceIndex = 0;
-let computerPieceIndex = 1;
+let playerPieceAsset = "";
+let computerPieceAsset = "";
 let isHumanTurn = true;
 let tossPicker = "player";
 let hasGameStarted = false;
@@ -190,21 +241,19 @@ function renderBoard() {
     cell.className = "cell";
     cell.type = "button";
 
-    const piecePool = assets.pieces;
-    const pieceIndex = value === PLAYER_MARK ? playerPieceIndex : computerPieceIndex;
-    const pieceAsset = piecePool[pieceIndex];
+    const pieceAsset = value === PLAYER_MARK ? playerPieceAsset : computerPieceAsset;
 
     if (value === PLAYER_MARK && pieceAsset) {
       const piece = document.createElement("img");
       piece.className = "piece-img";
       piece.src = pieceAsset;
-      piece.alt = `${theme} player piece`;
+      piece.alt = "player piece";
       cell.appendChild(piece);
     } else if (value === COMPUTER_MARK && pieceAsset) {
       const piece = document.createElement("img");
       piece.className = "piece-img";
       piece.src = pieceAsset;
-      piece.alt = `${theme} computer piece`;
+      piece.alt = "computer piece";
       cell.appendChild(piece);
     } else {
       cell.textContent = value;
@@ -304,26 +353,25 @@ function showUserMessageHint() {
   );
 }
 
-function randomizePieceAssignment(theme) {
-  const assets = getThemeAssets(theme);
-  const piecePool = assets.pieces;
+function assignPieceAssets(theme) {
+  const playerEntry = getPlayerEntry(theme);
+  const playerId = playerEntry ? playerEntry.id : null;
 
-  if (piecePool.length === 0) {
-    playerPieceIndex = 0;
-    computerPieceIndex = 0;
-    return;
+  let computerPool;
+  if (piecePreference && piecePreference.choice === "Random") {
+    computerPool = getGlobalPieceEntries();
+  } else {
+    // For Selection or no preference, use only the current theme
+    computerPool = getThemePieceEntries(theme);
   }
 
-  playerPieceIndex = Math.floor(Math.random() * piecePool.length);
+  const filteredComputerPool = computerPool.filter(
+    (entry) => entry.id !== playerId
+  );
+  const computerEntry = pickRandomEntry(filteredComputerPool) || playerEntry;
 
-  if (piecePool.length === 1) {
-    computerPieceIndex = playerPieceIndex;
-    return;
-  }
-
-  do {
-    computerPieceIndex = Math.floor(Math.random() * piecePool.length);
-  } while (computerPieceIndex === playerPieceIndex);
+  playerPieceAsset = playerEntry ? playerEntry.url : "";
+  computerPieceAsset = computerEntry ? computerEntry.url : playerPieceAsset;
 }
 
 function setTossControlsMode(mode) {
@@ -774,7 +822,7 @@ function startGame() {
   setTossControlsMode("none");
   setThemeSelectable(false);
   const theme = themeEl ? themeEl.value : "traditional";
-  randomizePieceAssignment(theme);
+  assignPieceAssets(theme);
   renderBoard();
   beginCoinTossFlow();
 }
@@ -788,9 +836,21 @@ function initializeFirstVisitState() {
   setTossControlsMode("start");
   setThemeSelectable(true);
 
-  const theme = themeEl ? themeEl.value : "traditional";
+  // Use saved default theme if available and allowed
+  const savedTheme = window.localStorage.getItem(PROFILE_STORAGE_KEYS.theme);
+  let theme = (themeEl && themeEl.value) || "traditional";
+  if (
+    savedTheme &&
+    themeAssets[savedTheme] &&
+    allowedThemes.includes(savedTheme)
+  ) {
+    theme = savedTheme;
+    if (themeEl) themeEl.value = savedTheme;
+  }
+
   const themeCoin = getThemeAssets(theme);
   setCoinIndicatorImage(themeCoin.coinHead, "coin");
+  assignPieceAssets(theme);
   renderBoard();
   updateThemeButtons();
   if (startBtn) {
@@ -819,6 +879,8 @@ if (themeButtons.length && themeEl) {
       themeEl.value = nextTheme;
       document.documentElement.dataset.theme = nextTheme;
       updateThemeButtons();
+      // Always re-assign piece assets so global random is respected
+      assignPieceAssets(nextTheme);
       renderBoard();
       const themeCoin = getThemeAssets(nextTheme);
       setCoinIndicatorImage(themeCoin.coinHead, "coin");

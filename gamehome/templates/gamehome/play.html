@@ -111,6 +111,7 @@
     window.GAME_ALLOWED_DIFFICULTIES = {{ allowed_difficulties|safe }};
     window.GAME_USER_MESSAGES = {{ game_user_messages|safe }};
     window.GAME_USER_MESSAGES_READY = {{ game_user_messages_ready|yesno:"true,false" }};
+    window.GAME_PIECE_PREFERENCE = {{ game_piece_preference|default:'null'|safe }};
     window.GAME_THEME_ASSETS = {
       traditional: {
         board: "{% static 'gamehome/images/game_traditional_gameboard.png' %}",
