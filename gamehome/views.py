@@ -7,7 +7,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-from .forms import MemberCommentForm
+from .forms import MemberCommentForm, MemberAvatarForm, MemberChoiceForm
 from .models import (
     GameScore,
     MemberDrawPost,
@@ -15,6 +15,8 @@ from .models import (
     MemberLosePost,
     MemberMovePost,
     MemberWinPost,
+    MemberAvatar,
+    MemberChoice,
 )
 
 
@@ -141,6 +143,13 @@ def profile(request):
     editing_comment = None
     form = MemberCommentForm(initial={"message_type": selected_type})
 
+    # Initialize avatar and choice forms
+    avatar_obj, _ = MemberAvatar.objects.get_or_create(user=request.user)
+    choice_obj, _ = MemberChoice.objects.get_or_create(user=request.user)
+
+    avatar_form = MemberAvatarForm(instance=avatar_obj)
+    choice_form = MemberChoiceForm(instance=choice_obj)
+
     current_member_name = getattr(
         getattr(request.user, "member_info", None),
         "gamername",
@@ -186,6 +195,41 @@ def profile(request):
                 feedback_message = "Display name saved."
 
             form = MemberCommentForm(initial={"message_type": selected_type})
+        elif action == "save_avatar":
+            avatar_form = MemberAvatarForm(request.POST, instance=avatar_obj)
+            if avatar_form.is_valid():
+                avatar_form.save()
+                feedback_message = "Avatar URL saved."
+            else:
+                feedback_message = "Failed to save avatar URL."
+        elif action == "save_choice":
+            choice_form = MemberChoiceForm(request.POST, instance=choice_obj)
+            if choice_form.is_valid():
+                choice_form.save()
+                feedback_message = "Game piece choice saved."
+            else:
+                feedback_message = "Failed to save game piece choice."
+        elif action == "save_gallery_piece":
+            selected_piece_id = request.POST.get(
+                "selected_piece_id", ""
+            ).strip()
+            if selected_piece_id:
+                choice_obj.piece_identifier = selected_piece_id
+                choice_obj.choice = "Selection"
+                choice_obj.full_clean()
+                choice_obj.save()
+                feedback_message = f"Piece {selected_piece_id} selected!"
+            else:
+                feedback_message = "Please select a piece first."
+        elif action == "reset_choice":
+            choice_obj.choice = "Random"
+            choice_obj.piece_identifier = None
+            choice_obj.full_clean()
+            choice_obj.save()
+            feedback_message = (
+                "Game piece choice reset to Random using "
+                "current theme rules."
+            )
         elif action == "delete":
             delete_type = request.POST.get("delete_type", "win")
             delete_id = request.POST.get("delete_id", "")
@@ -315,6 +359,9 @@ def profile(request):
         "allowed_themes": allowed_themes,
         "allowed_difficulties": allowed_difficulties,
         "member_tier": member_tier,
+        "avatar_form": avatar_form,
+        "choice_form": choice_form,
+        "has_avatar": bool(avatar_obj.avatar_image),
     }
     return render(request, "gamehome/profile.html", context)
 

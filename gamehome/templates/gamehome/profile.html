@@ -1,7 +1,9 @@
 {% extends "gamehome/base.html" %}
 {% load static %}
+{% block body_class %}profile-page{% endblock %}
 
 {% block content %}
+<section class="profile-content">
 <h1>Profile</h1>
 <p>
   Welcome to the profile page {{ profile_display_name }}. You are a {{ member_tier|title }} player.You have entered the
@@ -88,14 +90,207 @@
     </div>
   </div>
 
-  <div class="profile-actions">
+  <div class="profile-actions profile-pref-actions">
     <button type="submit">Save preferences</button>
     <button id="resetPreferences" type="button">Reset to defaults</button>
-    <a href="{% url 'gamehome:home' %}">Go to game</a>
   </div>
 </form>
 
 <p id="profileMessage" aria-live="polite"></p>
+</form>
+
+<div class="profile-blocks">
+
+<div class="preferences-block">
+
+</div>
+
+<div class="avatar-block">
+{% if member_tier == "seasoned" or member_tier == "master" %}
+<section class="avatar-section">
+  <h2>Avatar <small>(Seasoned+)</small></h2>
+  <p>Upload your custom avatar image to use as your game piece.</p>
+  <form id="avatarForm" class="avatar-form" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="save_avatar">
+    <div class="avatar-input-wrapper">
+      {{ avatar_form.avatar_image }}
+      {% if avatar_form.avatar_image.errors %}
+      <div class="form-errors">{{ avatar_form.avatar_image.errors }}</div>
+      {% endif %}
+    </div>
+    <div class="avatar-help" data-help>
+      <button type="button" class="bar-help-btn" aria-label="About avatar requirements" aria-expanded="false"
+        aria-controls="avatarHelpPanel">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+      </button>
+      <div id="avatarHelpPanel" class="bar-help-panel" role="note">
+        <strong>Avatar Requirements:</strong>
+        <ul>
+          <li>Image must be square (1:1 aspect ratio)</li>
+          <li>Minimum size: 64x64 pixels</li>
+          <li>Recommended size: 200x200 pixels</li>
+          <li>Supported formats: PNG, JPG, GIF</li>
+          <li>Maximum file size: 2MB</li>
+        </ul>
+      </div>
+    </div>
+    <button type="button" id="openCloudinaryWidget" class="profile-pref-btn">Upload Image</button>
+    <button type="submit" class="profile-pref-btn">Save Avatar URL</button>
+    {% if has_avatar %}
+    <p class="avatar-preview">Avatar uploaded: <strong>{{ avatar_form.avatar_image.value }}</strong></p>
+    {% endif %}
+  </form>
+</section>
+{% else %}
+<div style="min-height: 100px;"></div>
+{% endif %}
+
+</div>
+
+</div>
+
+<section class="piece-choice-section">
+  <h2>Game Piece Choice</h2>
+  <p>Select your default game piece or keep it random.</p>
+  <form id="choiceForm" class="choice-form" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="save_choice">
+    <div class="choice-options">
+      {{ choice_form.choice }}
+      {% if choice_form.choice.errors %}
+      <div class="form-errors">{{ choice_form.choice.errors }}</div>
+      {% endif %}
+    </div>
+    <div class="choice-help" data-help>
+      <button type="button" class="bar-help-btn" aria-label="About game piece choice" aria-expanded="false"
+        aria-controls="choiceHelpPanel">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+      </button>
+      <div id="choiceHelpPanel" class="bar-help-panel" role="note">
+        <strong>Random:</strong> A random piece from your current theme will be selected each game.<br>
+        <strong>X or O:</strong> Always play with your chosen piece regardless of theme.
+        {% if member_tier == "seasoned" or member_tier == "master" %}
+        {% if has_avatar %}
+        <br><strong>Custom Avatar:</strong> Your uploaded avatar will be used as your game piece.
+        {% endif %}
+        {% endif %}
+      </div>
+    </div>
+    <button type="submit" class="profile-pref-btn">Save Piece Choice</button>
+  </form>
+</section>
+
+{% if member_tier == "seasoned" or member_tier == "master" %}
+<section class="thumbnail-gallery-section">
+  <h2>Piece Gallery <small>(Seasoned+)</small></h2>
+  <p>Browse and select your preferred game piece. Click any piece to select it.</p>
+
+  <div class="gallery-container">
+    <!-- Avatar Gallery (if uploaded) -->
+    {% if has_avatar %}
+    <div class="gallery-group">
+      <h3>Your Avatar</h3>
+      <div class="thumbnail-grid">
+        <button type="button" class="thumbnail-item" data-piece-id="avatar"
+          data-piece-image="{{ avatar_form.avatar_image.value }}" aria-label="Your uploaded avatar">
+          <img src="{{ avatar_form.avatar_image.value }}" alt="Your avatar"
+            class="thumbnail-image {% if choice_form.instance.piece_identifier == 'avatar' %}is-selected{% endif %}" />
+          <span class="thumbnail-label">Avatar</span>
+        </button>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Traditional Theme Pieces -->
+    <div class="gallery-group">
+      <h3>Traditional</h3>
+      <div class="thumbnail-grid">
+        <button type="button" class="thumbnail-item" data-piece-id="traditional_0"
+          data-piece-image="{% static 'gamehome/images/game_traditional_gamepiece_0.png' %}"
+          aria-label="Traditional piece">
+          <img src="{% static 'gamehome/images/game_traditional_gamepiece_0.png' %}" alt="Traditional piece 0"
+            class="thumbnail-image {% if choice_form.instance.piece_identifier == 'traditional_0' %}is-selected{% endif %}" />
+          <span class="thumbnail-label">Piece 1</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Robot Theme Pieces -->
+    <div class="gallery-group">
+      <h3>Robot</h3>
+      <div class="thumbnail-grid">
+        {% for i in "0123456789" %}
+        <button type="button" class="thumbnail-item" data-piece-id="robot_{{ i }}"
+          data-piece-image="{% static 'gamehome/images/game_robot_gamepiece_' %}{{ i }}.png"
+          aria-label="Robot piece {{ i }}">
+          <img src="{% static 'gamehome/images/game_robot_gamepiece_' %}{{ i }}.png"
+            alt="Robot piece {{ i }}"
+            class="thumbnail-image {% if choice_form.instance.piece_identifier == 'robot_'|add:i %}is-selected{% endif %}" />
+          <span class="thumbnail-label">{{ i }}</span>
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Fantasy Theme Pieces -->
+    <div class="gallery-group">
+      <h3>Fantasy</h3>
+      <div class="thumbnail-grid">
+        {% for i in "0123456789" %}
+        <button type="button" class="thumbnail-item" data-piece-id="fantasy_{{ i }}"
+          data-piece-image="{% static 'gamehome/images/game_fantasy_gamepiece_' %}{{ i }}.png"
+          aria-label="Fantasy piece {{ i }}">
+          <img src="{% static 'gamehome/images/game_fantasy_gamepiece_' %}{{ i }}.png"
+            alt="Fantasy piece {{ i }}"
+            class="thumbnail-image {% if choice_form.instance.piece_identifier == 'fantasy_'|add:i %}is-selected{% endif %}" />
+          <span class="thumbnail-label">{{ i }}</span>
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Flowers Theme Pieces -->
+    <div class="gallery-group">
+      <h3>Flowers</h3>
+      <div class="thumbnail-grid">
+        {% for i in "0123456789" %}
+        <button type="button" class="thumbnail-item" data-piece-id="flowers_{{ i }}"
+          data-piece-image="{% static 'gamehome/images/game_flowers_gamepiece_' %}{{ i }}.png"
+          aria-label="Flowers piece {{ i }}">
+          <img src="{% static 'gamehome/images/game_flowers_gamepiece_' %}{{ i }}.png"
+            alt="Flowers piece {{ i }}"
+            class="thumbnail-image {% if choice_form.instance.piece_identifier == 'flowers_'|add:i %}is-selected{% endif %}" />
+          <span class="thumbnail-label">{{ i }}</span>
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <form id="gallerySelectionForm" class="gallery-selection-form" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="save_gallery_piece">
+    <input type="hidden" name="selected_piece_id" id="selectedPieceId" value="">
+    <div class="gallery-actions">
+      <button type="submit" class="profile-pref-btn" id="saveGalleryBtn" disabled>Save Selected Piece</button>
+      <button type="button" class="profile-pref-btn" id="clearGalleryBtn">Clear Selection</button>
+    </div>
+  </form>
+
+  <p id="galleryMessage" class="gallery-message" aria-live="polite"></p>
+
+  <form id="resetChoiceForm" class="reset-choice-form" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="reset_choice">
+    <div class="reset-actions">
+      <button type="submit" class="profile-pref-btn reset-btn">
+        <i class="fa-solid fa-redo" aria-hidden="true"></i> Reset to Default (Random)
+      </button>
+    </div>
+  </form>
+</section>
+{% endif %}
 
 <section class="comment-section">
   <h2>Message Comments</h2>
@@ -135,7 +330,6 @@
     </div>
 
     <div id="commentEditorWrap" {% if not can_add_comment %}hidden{% endif %}>
-      <label for="id_comment_text">Comment</label>
       {{ form.comment_text }}
       {{ form.comment_id }}
       {% if form.comment_text.errors %}
@@ -194,6 +388,7 @@
     {% endfor %}
   </div>
 </section>
+</section>
 
 <script>
   window.PROFILE_ALLOWED_THEMES = {{ allowed_themes | safe }};
@@ -202,5 +397,69 @@
   window.PROFILE_SAVE_URL = "{% url 'gamehome:profile' %}";
 </script>
 
+<!-- Cloudinary Upload Widget -->
+<script src="https://upload-widget.cloudinary.com/latest/CloudinaryUploadWidget.min.js" type="text/javascript"></script>
+
+<script>
+  // Cloudinary Widget Integration
+  document.addEventListener('DOMContentLoaded', function () {
+    const openCloudinaryBtn = document.getElementById('openCloudinaryWidget');
+    const avatarImageInput = document.getElementById('id_avatar_image');
+    
+    if (openCloudinaryBtn && avatarImageInput && window.cloudinary) {
+      openCloudinaryBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        
+        // Initialize Cloudinary upload widget
+        cloudinary.openUploadWidget(
+          {
+            cloudName: 'domin',  // Replace with actual cloud name
+            uploadPreset: 'ttt_avatar',  // Create this preset in Cloudinary
+            clientAllowedFormats: ['png', 'jpg', 'jpeg', 'gif'],
+            maxFileSize: 2000000,  // 2MB
+            multiple: false,
+            autoMinimize: true,
+            folder: 'ttt-avatars/',
+            resourceType: 'image'
+          },
+          function (error, result) {
+            if (!error && result && result.event === 'success') {
+              // Update the hidden input with the image URL
+              avatarImageInput.value = result.info.secure_url;
+              
+              // Show preview
+              const form = openCloudinaryBtn.closest('.avatar-form');
+              let preview = form.querySelector('.avatar-preview');
+              if (!preview) {
+                preview = document.createElement('p');
+                preview.className = 'avatar-preview';
+                form.appendChild(preview);
+              }
+              preview.innerHTML = 'Avatar uploaded: <strong>' + result.info.secure_url + '</strong>';
+            }
+          }
+        );
+      });
+    }
+    
+    // Help panel toggle functionality
+    const helpButtons = document.querySelectorAll('.bar-help-btn');
+    helpButtons.forEach(button => {
+      button.addEventListener('click', function (e) {
+        e.preventDefault();
+        const isExpanded = this.getAttribute('aria-expanded') === 'true';
+        const panelId = this.getAttribute('aria-controls');
+        const panel = document.getElementById(panelId);
+        
+        if (panel) {
+          this.setAttribute('aria-expanded', !isExpanded);
+          panel.hidden = isExpanded;
+        }
+      });
+    });
+  });
+</script>
+
+<script src="{% static 'gamehome/js/gallery.js' %}"></script>
 <script src="{% static 'gamehome/js/profile.js' %}"></script>
 {% endblock %}

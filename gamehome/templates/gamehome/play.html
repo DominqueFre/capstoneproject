@@ -1,7 +1,14 @@
 {% extends "gamehome/base.html" %}
 {% load static %}
+{% block body_class %}play-viewport{% endblock %}
 {% block content %}
+  <section class="play-screen">
   <p class="member-tier">Welcome, you are a {{ member_tier|title }} player.</p>
+  <button class="controls-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#gameControlsWrapper" aria-controls="gameControlsWrapper" aria-expanded="true" aria-label="Toggle settings">
+    <i class="fa-solid fa-sliders" aria-hidden="true"></i>
+    <span>Settings</span>
+  </button>
+  <div id="gameControlsWrapper" class="collapse show">
   <div class="controls">
     <div class="difficulty-picker" aria-label="Difficulty selector">
       <input id="difficulty" type="hidden" value="{{ allowed_difficulties.0|default:'easy' }}">
@@ -66,6 +73,7 @@
       </div>
     </div>
   </div>
+  </div>
 
   <p id="status" class="status-announcer">Press Start to begin. Pick Heads or Tails when prompted.</p>
   <div class="play-layout">
@@ -77,21 +85,21 @@
       <div id="boardFrame" class="board-frame" aria-hidden="true" style="background-image: url('{% static 'gamehome/images/game_traditional_gameboard.png' %}');">
         <div id="board" class="board" aria-label="tic tac toe board"></div>
       </div>
-      <div class="coin-column">
-        <div id="coinIndicator" class="coin-indicator" aria-hidden="true">
-          <img id="coinIndicatorImg" src="{% static 'gamehome/images/game_traditional_coin_head.png' %}" alt="coin toss result">
-        </div>
-        <div id="tossControls" class="toss-controls" hidden>
-          <button id="startBtn" type="button">Start</button>
-          <button id="pickHeadsBtn" type="button">Heads</button>
-          <span>or</span>
-          <button id="pickTailsBtn" type="button">Tails</button>
-        </div>
-      </div>
     </div>
     <div class="side-status side-status-computer">
       <p class="side-status-title">Computer</p>
       <aside id="computerStatus" class="side-status-messages" aria-live="polite"></aside>
+    </div>
+    <div class="coin-column">
+      <div id="coinIndicator" class="coin-indicator" aria-hidden="true">
+        <img id="coinIndicatorImg" src="{% static 'gamehome/images/game_traditional_coin_head.png' %}" alt="coin toss result">
+      </div>
+      <div id="tossControls" class="toss-controls" hidden>
+        <button id="startBtn" type="button">Start</button>
+        <button id="pickHeadsBtn" type="button">Heads</button>
+        <span>or</span>
+        <button id="pickTailsBtn" type="button">Tails</button>
+      </div>
     </div>
   </div>
 
@@ -203,4 +211,5 @@
   </script>
 
   <script src="{% static 'gamehome/js/game.js' %}"></script>
+  </section>
 {% endblock %}

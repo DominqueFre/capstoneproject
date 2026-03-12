@@ -151,10 +151,35 @@ function updateVisibleCommentList() {
   }
 
   const selectedType = messageTypeEl.value;
+  let foundSelectedPanel = false;
   commentTypePanels.forEach((panel) => {
     const panelType = panel.getAttribute("data-message-list");
+    if (panelType === selectedType) {
+      foundSelectedPanel = true;
+    }
     panel.hidden = panelType !== selectedType;
   });
+
+  // Fallback: if selected type is missing/invalid, show first available panel.
+  if (!foundSelectedPanel) {
+    const firstPanel = commentTypePanels[0];
+    const firstType = firstPanel.getAttribute("data-message-list") || "win";
+    messageTypeEl.value = firstType;
+    commentTypePanels.forEach((panel) => {
+      panel.hidden = panel !== firstPanel;
+    });
+  }
+}
+
+function syncSelectedTypeInUrl(selectedType) {
+  if (!selectedType || !window.history || !window.history.replaceState) {
+    return;
+  }
+
+  const url = new URL(window.location.href);
+  url.searchParams.set("type", selectedType);
+  url.searchParams.delete("edit");
+  window.history.replaceState({}, "", url.toString());
 }
 
 function applySelectedCommentType() {
@@ -300,7 +325,8 @@ if (messageTypeEl) {
 
 if (commentTypeButtons.length && messageTypeEl) {
   commentTypeButtons.forEach((btn) => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", (event) => {
+      event.preventDefault();
       const value = btn.getAttribute("data-message-type") || "win";
       messageTypeEl.value = value;
       if (commentIdEl) {
@@ -310,6 +336,7 @@ if (commentTypeButtons.length && messageTypeEl) {
         saveCommentBtnEl.textContent = "Add comment";
       }
       applySelectedCommentType();
+      syncSelectedTypeInUrl(value);
     });
   });
 }

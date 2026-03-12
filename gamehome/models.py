@@ -84,11 +84,17 @@ class MemberChoice(models.Model):
         ("Random", "Random"),
         ("X", "X"),
         ("O", "O"),
-
+        ("Selection", "Selection"),
     ]
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="choice")
     choice = models.CharField(max_length=20, choices=CHOICE_CHOICES, default="Random")
+    piece_identifier = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        help_text="Stores selected piece identifier (e.g., 'robot_0', 'avatar', 'traditional_1')"
+    )
 
     def clean(self):
         member = getattr(self.user, "member_info", None)
