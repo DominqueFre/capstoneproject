@@ -192,7 +192,8 @@ function pickRandomEntry(pool) {
 }
 
 function getPlayerEntry(theme) {
-  if (!piecePreference) {
+  if (!piecePreference || piecePreference.choice === "Standard") {
+    // Standard: random within theme
     return pickRandomEntry(getThemePieceEntries(theme));
   }
 
@@ -203,9 +204,11 @@ function getPlayerEntry(theme) {
   }
 
   if (piecePreference.choice === "Random") {
+    // Global random
     return pickRandomEntry(getGlobalPieceEntries());
   }
 
+  // Fallback to standard
   return pickRandomEntry(getThemePieceEntries(theme));
 }
 
@@ -358,10 +361,16 @@ function assignPieceAssets(theme) {
   const playerId = playerEntry ? playerEntry.id : null;
 
   let computerPool;
-  if (piecePreference && piecePreference.choice === "Random") {
-    computerPool = getGlobalPieceEntries();
+  if (piecePreference) {
+    if (piecePreference.choice === "Random") {
+      // If player is global random, computer is also global random (but not same piece)
+      computerPool = getGlobalPieceEntries();
+    } else {
+      // For Standard or Selection, computer is theme-random (not same as player)
+      computerPool = getThemePieceEntries(theme);
+    }
   } else {
-    // For Selection or no preference, use only the current theme
+    // Default: Standard (theme-random)
     computerPool = getThemePieceEntries(theme);
   }
 

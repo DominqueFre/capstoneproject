@@ -318,11 +318,4 @@ Non-Negotiable Requirements”.
 
 “Follow the Non-Negotiable Requirements in README before editing.”
 
-1. Upon reaching the level of Seasoned the user will be able to upload their own avatar image - the information icon next to it will provide information as to the image requirements that must be fulfulled.  When uploading the image it will be possible to also select the image as the user's only play piece.  Cloudinairy has been included in the installed apps to aid this.
-2. Upon registering the user will be able to set the game piece selelction to random for themselves - this means that the random selection of avatar/gamepiece during gameplay is no longer restricted to the theme being played.  If the user has an avatar uploaded, this will be included in the random selection.
-3. Upon achieving Seasoned status the user will be able to pick any game-piece, including their uploaded avatar, if they have one, by scrolling through the images in thumbnail form and selecting it.
-4. The user will be able to select or reset this to a default status. Using the current gameplay rules.(Random themed game-pieces are used in game play) 
 
-
-Avatar	|No	|No	|Yes	|As Seasoned
-Avatar selection	|Default	|Random	|Selection	|As Seasoned

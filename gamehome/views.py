@@ -182,8 +182,8 @@ def profile(request):
     avatar_obj, _ = MemberAvatar.objects.get_or_create(user=request.user)
     choice_obj, _ = MemberChoice.objects.get_or_create(user=request.user)
 
-    if choice_obj.choice not in {"Random", "Selection"}:
-        choice_obj.choice = "Random"
+    if choice_obj.choice not in {"Standard", "Random", "Selection"}:
+        choice_obj.choice = "Standard"
         choice_obj.piece_identifier = None
         choice_obj.save(update_fields=["choice", "piece_identifier"])
     elif choice_obj.choice == "Selection" and not choice_obj.piece_identifier:

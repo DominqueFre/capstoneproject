@@ -1,38 +1,3 @@
-// Alt descriptions for all game piece images
-const GAME_PIECE_ALTS = {
-  "game_traditional_gamepiece_0": "ornate 0, gold and turquoise",
-  "game_traditional_gamepiece_1": "ornate X, gold, engraved",
-  "game_robot_gamepiece_0": "cute light blue robot",
-  "game_robot_gamepiece_1": "cute orange robot",
-  "game_robot_gamepiece_2": "relentless, fierce dog robot",
-  "game_robot_gamepiece_3": "green, orb, hover robot with claw",
-  "game_robot_gamepiece_4": "cute big headed robot",
-  "game_robot_gamepiece_5": "blue crawler robot",
-  "game_robot_gamepiece_6": "red dual antennaed robot",
-  "game_robot_gamepiece_7": "multi-armed silver humanoid robot",
-  "game_robot_gamepiece_8": "waving turquoise robot",
-  "game_robot_gamepiece_9": "small silver robot",
-  "game_fantasy_gamepiece_0": "wizard, holding a wooden staff",
-  "game_fantasy_gamepiece_1": "witch, holding a blue bubbling potion",
-  "game_fantasy_gamepiece_2": "young, female adventurer",
-  "game_fantasy_gamepiece_3": "woodcutter, holding a fearsome axe",
-  "game_fantasy_gamepiece_4": "a young girl, holding a broom",
-  "game_fantasy_gamepiece_5": "elf in green cloak",
-  "game_fantasy_gamepiece_6": "portly king wearing a crown",
-  "game_fantasy_gamepiece_7": "princess in pink gown",
-  "game_fantasy_gamepiece_8": "green dragon",
-  "game_fantasy_gamepiece_9": "brown dragon",
-  "game_flowers_gamepiece_0": "red rose",
-  "game_flowers_gamepiece_1": "yellow and white daffodil",
-  "game_flowers_gamepiece_2": "purple pansy",
-  "game_flowers_gamepiece_3": "poppy",
-  "game_flowers_gamepiece_4": "daisy",
-  "game_flowers_gamepiece_5": "lily of the valley",
-  "game_flowers_gamepiece_6": "pink tulip",
-  "game_flowers_gamepiece_7": "peony",
-  "game_flowers_gamepiece_8": "dahlia",
-  "game_flowers_gamepiece_9": "sunflower"
-};
 // Piece Choice and Gallery Visibility Logic
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -110,9 +75,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (url) {
           const img = document.createElement('img');
           img.src = url;
-          // Use alt from dictionary, fallback to generic
-          const altKey = window.SAVED_PIECE_IDENTIFIER ? `game_${window.SAVED_PIECE_IDENTIFIER.replace(/_.*/, '_gamepiece_')}${window.SAVED_PIECE_IDENTIFIER.split('_').pop()}` : '';
-          img.alt = GAME_PIECE_ALTS[altKey] || 'Selected game piece';
+          img.alt = 'Selected piece';
           img.style.height = '2.4em'; // 3x typical 0.8em radio label font
           img.style.verticalAlign = 'middle';
           img.style.marginLeft = '0.5em';
@@ -125,11 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
       // Show gallery
       if (thumbnailGallerySection) {
         thumbnailGallerySection.style.display = '';
-        if (typeof window.attachGalleryListeners === 'function') {
-          window.attachGalleryListeners();
-        } else {
-          console.warn('attachGalleryListeners is not defined on window. Gallery will not be interactive.');
-        }
+        if (window.attachGalleryListeners) window.attachGalleryListeners();
       }
       if (changeSelectedAvatarContainer) changeSelectedAvatarContainer.style.display = 'none';
     } else if (choice === 'Selection' && pieceSaved && !changeMode) {
@@ -141,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (thumbnailGallerySection) thumbnailGallerySection.style.display = 'none';
       if (changeSelectedAvatarContainer) changeSelectedAvatarContainer.style.display = 'none';
       changeMode = false;
-      // Removed reference to undefined changeSelectedAvatarRadio
+      if (changeSelectedAvatarRadio) changeSelectedAvatarRadio.checked = false;
     }
   }
   // Expose globally for gallery.js
@@ -161,11 +120,8 @@ document.addEventListener('DOMContentLoaded', function () {
       .then(res => res.json())
       .then(data => {
         if (data.ok) {
-          console.log('[PieceChoice] AJAX response:', data);
           window.SAVED_PIECE_IDENTIFIER = data.piece_identifier || '';
-          window.CURRENT_PIECE_CHOICE = data.choice || '';
-          console.log('[PieceChoice] window.CURRENT_PIECE_CHOICE after save:', window.CURRENT_PIECE_CHOICE);
-          setInitialPieceChoice();
+          updateGalleryVisibility();
         } else {
           // If error is 'piece_identifier required for Selection', open gallery for first selection, no alert
           if (data.error && data.error.includes('piece_identifier required for Selection')) {
@@ -233,9 +189,7 @@ document.addEventListener('DOMContentLoaded', function () {
       wrapper.className = 'piece-choice-avatar-bg';
       const img = document.createElement('img');
       img.src = url;
-      // Use alt from dictionary, fallback to generic
-      const altKey = pieceId ? `game_${pieceId.replace(/_.*/, '_gamepiece_')}${pieceId.split('_').pop()}` : '';
-      img.alt = GAME_PIECE_ALTS[altKey] || 'Selected game piece';
+      img.alt = 'Selected piece';
       img.style.height = '1.2em'; // Match heading font size
       img.style.verticalAlign = 'middle';
       img.style.borderRadius = '0.2em';
@@ -283,24 +237,13 @@ document.addEventListener('DOMContentLoaded', function () {
   // Initial state: highlight correct button and set hidden input
   function setInitialPieceChoice() {
     let initial = 'Standard';
-    if (window.CURRENT_PIECE_CHOICE) {
-      initial = window.CURRENT_PIECE_CHOICE;
-    } else if (window.SAVED_PIECE_IDENTIFIER) {
-      initial = 'Selection';
-    }
-    // Always highlight 'Selected' if a piece is saved and no explicit choice is set
-    if (!window.CURRENT_PIECE_CHOICE && window.SAVED_PIECE_IDENTIFIER) {
-      initial = 'Selection';
-    }
+    if (window.CURRENT_PIECE_CHOICE) initial = window.CURRENT_PIECE_CHOICE;
+    else if (window.SAVED_PIECE_IDENTIFIER) initial = 'Selected';
     pieceChoiceBtns.forEach(b => {
       if (b.dataset.choice === initial) b.classList.add('is-selected');
       else b.classList.remove('is-selected');
     });
     if (pieceChoiceHiddenInput) pieceChoiceHiddenInput.value = initial;
-    // Always show the selected piece image if a piece is saved
-    if (window.SAVED_PIECE_IDENTIFIER) {
-      showPieceChoiceHeadingImage(window.SAVED_PIECE_IDENTIFIER);
-    }
     updateGalleryVisibility();
   }
   setInitialPieceChoice();
