@@ -105,15 +105,16 @@ document.addEventListener('DOMContentLoaded', function () {
     // Update selected piece image
     if (selectedPieceImageContainer) {
       selectedPieceImageContainer.innerHTML = '';
-      if (choice === 'Selection' && pieceSaved && !changeMode && window.SAVED_PIECE_IDENTIFIER) {
+      // Always show the selected piece if set, unless gallery is open for selection
+      if (window.SAVED_PIECE_IDENTIFIER && !(choice === 'Selection' && changeMode)) {
         const url = getPieceImageUrl(window.SAVED_PIECE_IDENTIFIER);
         if (url) {
           const img = document.createElement('img');
           img.src = url;
           // Use alt from dictionary, fallback to generic
-          const altKey = window.SAVED_PIECE_IDENTIFIER ? `game_${window.SAVED_PIECE_IDENTIFIER.replace(/_.*/, '_gamepiece_')}${window.SAVED_PIECE_IDENTIFIER.split('_').pop()}` : '';
+          const altKey = `game_${window.SAVED_PIECE_IDENTIFIER.replace(/_.*/, '_gamepiece_')}${window.SAVED_PIECE_IDENTIFIER.split('_').pop()}`;
           img.alt = GAME_PIECE_ALTS[altKey] || 'Selected game piece';
-          img.style.height = '2.4em'; // 3x typical 0.8em radio label font
+          img.style.height = '2.4em';
           img.style.verticalAlign = 'middle';
           img.style.marginLeft = '0.5em';
           selectedPieceImageContainer.appendChild(img);
@@ -304,4 +305,25 @@ document.addEventListener('DOMContentLoaded', function () {
     updateGalleryVisibility();
   }
   setInitialPieceChoice();
+
+  function showGallery() {
+    const main = document.getElementById('profileMainContent');
+    const gallery = document.getElementById('thumbnailGallerySection');
+    if (main) main.style.display = 'none';
+    if (gallery) gallery.style.display = '';
+    if (typeof window.attachGalleryListeners === 'function') window.attachGalleryListeners();
+  }
+
+  function hideGalleryAndShowProfile() {
+    const main = document.getElementById('profileMainContent');
+    const gallery = document.getElementById('thumbnailGallerySection');
+    if (gallery) gallery.style.display = 'none';
+    if (main) main.style.display = '';
+    if (window.showPieceChoiceHeadingImage && typeof window.SAVED_PIECE_IDENTIFIER !== 'undefined') {
+      window.showPieceChoiceHeadingImage(window.SAVED_PIECE_IDENTIFIER);
+    }
+    if (window.updateGalleryVisibility) window.updateGalleryVisibility();
+    const heading = document.getElementById('pieceChoiceHeadingImageContainer');
+    if (heading) heading.scrollIntoView({block: 'center', behavior: 'instant'});
+  }
 });

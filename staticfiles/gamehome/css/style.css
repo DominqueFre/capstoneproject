@@ -1381,12 +1381,6 @@ html[data-theme="flowers"] .leaderboard-display-area .leaderboard-title {
   cursor: not-allowed;
 }
 
-.gallery-message {
-  text-align: center;
-  font-size: 0.9rem;
-  color: var(--theme-status-text, #222233);
-}
-
 /* Reset Choice Form Styles */
 .reset-choice-form {
   display: grid;

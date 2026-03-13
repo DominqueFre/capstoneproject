@@ -4,6 +4,7 @@
 
 {% block content %}
 <section class="profile-content">
+  <div id="profileMainContent">
   <h1>Profile</h1>
   <p>
     Welcome to the profile page {{ profile_display_name }}. You are a {{ member_tier|title }} player.You have entered
@@ -190,6 +191,7 @@
       </div>
     </form>
   </section>
+  </div> <!-- end #profileMainContent -->
 
   {% if member_tier == "seasoned" or member_tier == "master" %}
   <section class="thumbnail-gallery-section" id="thumbnailGallerySection" style="display:none;">
@@ -289,7 +291,7 @@
       <!-- Gallery actions removed: save/clear now handled by click -->
     </form>
 
-    <p id="galleryMessage" class="gallery-message" aria-live="polite"></p>
+
 
   </section>
   {% endif %}

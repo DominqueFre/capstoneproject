@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function () {
   function attachGalleryListeners() {
     const galleryItems = document.querySelectorAll('.thumbnail-item');
     const selectedPieceIdInput = document.getElementById('selectedPieceId');
-    const galleryMessage = document.getElementById('galleryMessage');
     let currentSelection = null;
 
     // Always sync highlight to saved piece when gallery is shown, but only if visible
@@ -61,47 +60,40 @@ document.addEventListener('DOMContentLoaded', function () {
               console.log('Piece choice save response:', res.status, data); // Debug log
               if (data.ok) {
                 window.SAVED_PIECE_IDENTIFIER = data.piece_identifier || '';
-                // Uncheck all radios, then check the 'Selection' radio button
-                const radios = document.querySelectorAll('input[type="radio"][name$=choice]');
-                radios.forEach(radio => { radio.checked = false; });
-                radios.forEach(radio => {
-                  if (radio.value === 'Selection') {
-                    radio.click(); // This will check the radio and fire the change event
-                  }
+                window.CURRENT_PIECE_CHOICE = 'Selection';
+                const pieceChoiceHiddenInput = document.getElementById('pieceChoiceHiddenInput');
+                if (pieceChoiceHiddenInput) pieceChoiceHiddenInput.value = 'Selection';
+                const pieceChoiceBtns = document.querySelectorAll('.piece-choice-btn');
+                pieceChoiceBtns.forEach(btn => btn.classList.remove('is-selected'));
+                pieceChoiceBtns.forEach(btn => {
+                  if (btn.dataset.choice === 'Selection') btn.classList.add('is-selected');
                 });
-                // Hide gallery and update UI via updateGalleryVisibility
-                if (typeof window.changeMode !== 'undefined') window.changeMode = false;
+                // Use the new toggle logic
+                if (window.hideGalleryAndShowProfile) window.hideGalleryAndShowProfile();
+                // Hide the gallery
                 const section = document.getElementById('thumbnailGallerySection');
                 if (section) section.style.display = 'none';
                 if (window.updateGalleryVisibility) window.updateGalleryVisibility();
-                // Show message
-                if (galleryMessage) {
-                  galleryMessage.textContent = `Saved: ${currentSelection}`;
-                  galleryMessage.style.color = 'var(--theme-accent, #204f9f)';
+                if (window.showPieceChoiceHeadingImage && typeof window.SAVED_PIECE_IDENTIFIER !== 'undefined') {
+                  window.showPieceChoiceHeadingImage(window.SAVED_PIECE_IDENTIFIER);
                 }
+                // Scroll to the heading/image container to show update
+                const heading = document.getElementById('pieceChoiceHeadingImageContainer');
+                if (heading) heading.scrollIntoView({block: 'center', behavior: 'instant'});
               } else {
                 let errorMsg = 'Failed to save: ' + (data.error || 'Unknown error');
                 if (res.status === 401) {
                   errorMsg = 'You must be logged in to save your piece selection.';
-                }
-                if (galleryMessage) {
-                  galleryMessage.textContent = errorMsg;
-                  galleryMessage.style.color = '#9b1c1c';
                 }
                 alert(errorMsg); // Show error to user
               }
             })
             .catch(err => {
               console.error('Piece choice save error:', err);
-              if (galleryMessage) {
-                galleryMessage.textContent = 'Network or server error while saving.';
-                galleryMessage.style.color = '#9b1c1c';
-              }
-              alert('Network or server error while saving.');
+              if (window.updateGalleryVisibility) window.updateGalleryVisibility();
             })
             .finally(() => {
-              // Always update UI after save attempt
-              if (window.updateGalleryVisibility) window.updateGalleryVisibility();
+              // No-op: all UI updates now handled in .then()
             });
         } else {
           // Fallback: always update UI

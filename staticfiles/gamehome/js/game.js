@@ -1,3 +1,48 @@
+// Import or define the alt text dictionary for game pieces
+// If this file is loaded after piece_choice.js, this will already be defined
+if (typeof GAME_PIECE_ALTS === 'undefined') {
+  window.GAME_PIECE_ALTS = {
+    "game_traditional_gamepiece_0": "ornate 0, gold and turquoise",
+    "game_traditional_gamepiece_1": "ornate X, gold, engraved",
+    "game_robot_gamepiece_0": "cute light blue robot",
+    "game_robot_gamepiece_1": "cute orange robot",
+    "game_robot_gamepiece_2": "relentless, fierce dog robot",
+    "game_robot_gamepiece_3": "green, orb, hover robot with claw",
+    "game_robot_gamepiece_4": "cute big headed robot",
+    "game_robot_gamepiece_5": "blue crawler robot",
+    "game_robot_gamepiece_6": "red dual antennaed robot",
+    "game_robot_gamepiece_7": "multi-armed silver humanoid robot",
+    "game_robot_gamepiece_8": "waving turquoise robot",
+    "game_robot_gamepiece_9": "small silver robot",
+    "game_fantasy_gamepiece_0": "wizard, holding a wooden staff",
+    "game_fantasy_gamepiece_1": "witch, holding a blue bubbling potion",
+    "game_fantasy_gamepiece_2": "young, female adventurer",
+    "game_fantasy_gamepiece_3": "woodcutter, holding a fearsome axe",
+    "game_fantasy_gamepiece_4": "a young girl, holding a broom",
+    "game_fantasy_gamepiece_5": "elf in green cloak",
+    "game_fantasy_gamepiece_6": "portly king wearing a crown",
+    "game_fantasy_gamepiece_7": "princess in pink gown",
+    "game_fantasy_gamepiece_8": "green dragon",
+    "game_fantasy_gamepiece_9": "brown dragon",
+    "game_flowers_gamepiece_0": "red rose",
+    "game_flowers_gamepiece_1": "yellow and white daffodil",
+    "game_flowers_gamepiece_2": "purple pansy",
+    "game_flowers_gamepiece_3": "poppy",
+    "game_flowers_gamepiece_4": "daisy",
+    "game_flowers_gamepiece_5": "lily of the valley",
+    "game_flowers_gamepiece_6": "pink tulip",
+    "game_flowers_gamepiece_7": "peony",
+    "game_flowers_gamepiece_8": "dahlia",
+    "game_flowers_gamepiece_9": "sunflower"
+  };
+}
+
+// Board position labels for accessibility
+const BOARD_POSITION_LABELS = [
+  "top left", "top middle", "top right",
+  "middle left", "centre", "middle right",
+  "bottom left", "bottom middle", "bottom right"
+];
 const boardEl = document.getElementById("board");
 const boardFrameEl = document.getElementById("boardFrame");
 const statusEl = document.getElementById("status");
@@ -245,18 +290,26 @@ function renderBoard() {
     cell.type = "button";
 
     const pieceAsset = value === PLAYER_MARK ? playerPieceAsset : computerPieceAsset;
+    let pieceId = null;
+    if (value === PLAYER_MARK && playerPieceAsset) {
+      // Try to extract the piece id from the asset URL
+      pieceId = (playerPieceAsset.match(/game_(\w+)_gamepiece_(\d+)/) || []).slice(0, 3).join('_');
+    } else if (value === COMPUTER_MARK && computerPieceAsset) {
+      pieceId = (computerPieceAsset.match(/game_(\w+)_gamepiece_(\d+)/) || []).slice(0, 3).join('_');
+    }
 
-    if (value === PLAYER_MARK && pieceAsset) {
+    if ((value === PLAYER_MARK || value === COMPUTER_MARK) && pieceAsset) {
       const piece = document.createElement("img");
       piece.className = "piece-img";
       piece.src = pieceAsset;
-      piece.alt = "player piece";
-      cell.appendChild(piece);
-    } else if (value === COMPUTER_MARK && pieceAsset) {
-      const piece = document.createElement("img");
-      piece.className = "piece-img";
-      piece.src = pieceAsset;
-      piece.alt = "computer piece";
+      // Compose alt text: piece description + board position
+      let altText = "";
+      if (pieceId && window.GAME_PIECE_ALTS[pieceId]) {
+        altText = window.GAME_PIECE_ALTS[pieceId] + ", " + BOARD_POSITION_LABELS[idx];
+      } else {
+        altText = (value === PLAYER_MARK ? "player piece" : "computer piece") + ", " + BOARD_POSITION_LABELS[idx];
+      }
+      piece.alt = altText;
       cell.appendChild(piece);
     } else {
       cell.textContent = value;
