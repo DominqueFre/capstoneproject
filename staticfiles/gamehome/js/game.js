@@ -1,3 +1,5 @@
+
+const coinStatusMessageEl = document.getElementById("coinStatusMessage");
 // Import or define the alt text dictionary for game pieces
 // If this file is loaded after piece_choice.js, this will already be defined
 if (typeof GAME_PIECE_ALTS === 'undefined') {
@@ -460,8 +462,18 @@ function setTossControlsMode(mode) {
   if (tossOrLabel) {
     tossOrLabel.hidden = !showPick;
   }
-}
 
+  // Update coin status message for each mode
+    if (coinStatusMessageEl) {
+      if (mode === "start") {
+        coinStatusMessageEl.textContent = "";
+        coinStatusMessageEl.classList.remove("d-none");
+      } else if (mode === "pick") {
+        coinStatusMessageEl.textContent = "";
+        coinStatusMessageEl.classList.add("d-none");
+      }
+  }
+}
 function setThemeSelectable(canSelect) {
   if (themeEl) {
     themeEl.disabled = !canSelect;
@@ -544,6 +556,11 @@ function ensureComputerOpeningMove(remainingAttempts = 3) {
 }
 
 async function animateCoinToss(theme, finalTossLabel) {
+  // Show status, hide Play Again button
+  if (coinStatusMessageEl) coinStatusMessageEl.classList.remove("d-none");
+  if (coinStatusMessageEl) {
+    coinStatusMessageEl.textContent = "Spinning";
+  }
   const assets = getThemeAssets(theme);
   const head = assets.coinHead;
   const tail = assets.coinTail;
@@ -564,7 +581,15 @@ async function animateCoinToss(theme, finalTossLabel) {
   const finalImage = finalTossLabel === "Heads" ? head : tail;
   setCoinIndicatorImage(finalImage, `${finalTossLabel} coin`);
   coinIndicatorImgEl.classList.remove("flipping");
-}
+
+  // Show result message after spinning
+  if (coinStatusMessageEl) {
+    coinStatusMessageEl.textContent = `It's ${finalTossLabel}`;
+    coinStatusMessageEl.classList.remove("d-none");
+  }
+  
+  }
+
 
 function startTurnAfterToss(humanStarts) {
   isHumanTurn = humanStarts;
@@ -667,6 +692,9 @@ function endGame(resultText, outcome) {
     startBtn.textContent = "Play Again";
   }
   setTossControlsMode("start");
+  if (coinStatusMessageEl) {
+    coinStatusMessageEl.classList.add("d-none");
+  }
   setThemeSelectable(true);
 
   if (outcome === "W") {
@@ -679,10 +707,7 @@ function endGame(resultText, outcome) {
 
   const userType = outcome === "W" ? "win" : outcome === "L" ? "lose" : "draw";
   const userMessage = getUserMessage(userType);
-  if (userMessage) {
-    setStatus(userMessage, "player");
-  }
-
+    if (coinStatusMessageEl) coinStatusMessageEl.classList.add("d-none");
   setStatus(`${resultText} Press Start for the next game.`, inferStatusSide(resultText));
   postScore(outcome).catch(() => {});
 }

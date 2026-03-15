@@ -1,3 +1,19 @@
+/* Utility: d-none for display none */
+.d-none { display: none !important; }
+/* Piece gallery button: use theme control background */
+.thumbnail-item {
+  background: var(--theme-control-bg, #f4f4f4) !important;
+  border-radius: 10px;
+  padding: 0.18em;
+  border: none;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+/* Piece gallery images: use theme control background */
+.thumbnail-image {
+  background: var(--theme-control-bg, #f4f4f4);
+  border-radius: 8px;
+  padding: 0.15em;
+}
 /* Shared theme variables */
 :root {
   --page-bg: beige;
@@ -109,14 +125,13 @@ html[data-theme="flowers"] {
 }
 /* Profile page comment icon colors */
 .comment-list .edit-comment-btn .fa-pen {
-  color: var(--theme-accent);
+  color: var(--theme-control-text);
   transition: color 0.2s;
 }
 .comment-list .edit-comment-btn:hover .fa-pen,
 .comment-list .edit-comment-btn:focus .fa-pen {
   color: var(--theme-accent-text);
   background: var(--theme-accent);
-  border-radius: 50%;
 }
 .comment-list .delete-comment-form .fa-trash-can {
   color: #b91c1c;
@@ -126,8 +141,6 @@ html[data-theme="flowers"] {
 .comment-list .delete-comment-form button:focus .fa-trash-can {
   color: #fff;
   background: #b91c1c;
-  border-radius: 10%;
-  /* trash bin radius on hover obscures image and is not helpful change to 10% */
 }
 
 html, body {
@@ -299,7 +312,7 @@ body.play-viewport main {
   right: 0;
   top: calc(100% + 0.4rem);
   z-index: 40;
-  width: min(320px, 78vw);
+  width: min(25rem, 78vw);
   padding: 0.6rem 0.7rem;
   border-radius: 10px;
   border: 1px solid var(--theme-status-border, #cfd7e8);

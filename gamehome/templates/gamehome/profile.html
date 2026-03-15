@@ -7,14 +7,13 @@
   <div id="profileMainContent">
   <h1>Profile</h1>
   <p>
-    Welcome to the profile page {{ profile_display_name }}. You are a {{ member_tier|title }} player.You have entered
-    the
-    inner sanctum. You can now change your game play messages to something a bit
-    more fun and interesting. I hope you enjoy the extra features, now that
-    you've decided to enter the fascinating world of tic tac toe.
+    Welcome to the profile page {{ profile_display_name }}.  You are a {{ member_tier|title }} 
+    player.  You have entered
+    the inner sanctum. You can now change your game play messages to something a bit
+    more fun and interesting. I hope you enjoy the extra features.
   </p>
   <!-- Move this p element below to information -->
-  <p>Theme and difficulty set here are saved in the browser, so you may need to reselect on other devices.</p>
+ 
   <form id="profileForm" class="profile-form" method="post">
     {% csrf_token %}
     <input type="hidden" name="action" value="save_profile">
@@ -54,6 +53,7 @@
         </button>
         <div id="profileDifficultyHelpPanel" class="bar-help-panel" role="note">
           Sets the default game difficulty when you open a match. You can still change it before each game.
+          Difficulty settings are saved in the browser, so you may need to reselect on other devices.
         </div>
       </div>
     </div>
@@ -89,6 +89,7 @@
         </button>
         <div id="profileThemeHelpPanel" class="bar-help-panel" role="note">
           Sets your default visual theme for boards, pieces, and coin art when a game starts.
+          Theme settings are saved in the browser, so you may need to reselect on other devices.
         </div>
       </div>
     </div>
@@ -122,7 +123,7 @@
             <div class="form-errors">{{ avatar_form.avatar_image.errors }}</div>
             {% endif %}
           </div>
-          <div class="avatar-help" data-help">
+          <div class="avatar-help" data-help>
             <button type="button" class="bar-help-btn" aria-label="About avatar requirements" aria-expanded="false"
               aria-controls="avatarHelpPanel">
               <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
@@ -163,31 +164,28 @@
         <div class="profile-button-bar piece-choice-bar" role="group" aria-label="Game piece choice">
           <button type="button" class="profile-pref-btn piece-choice-btn" data-choice="Standard" id="pieceChoiceDefault">Default</button>
           <button type="button" class="profile-pref-btn piece-choice-btn" data-choice="Random" id="pieceChoiceRandom">Random</button>
+          {% if member_tier == "seasoned" or member_tier == "master" %}
           <button type="button" class="profile-pref-btn piece-choice-btn" data-choice="Selection" id="pieceChoiceSelected">Selected</button>
           <button type="button" class="profile-pref-btn piece-choice-btn" data-choice="Change" id="pieceChoiceChangeSelected">Change Selected</button>
+          {% endif %}
+        </div>
+        <div class="choice-help" data-help">
+          <button type="button" class="bar-help-btn" aria-label="About game piece choice" aria-expanded="false"
+            aria-controls="choiceHelpPanel">
+          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+          </button>
+          <div id="choiceHelpPanel" class="bar-help-panel" role="note">
+            <strong>Random:</strong> Your piece will be drawn from the full global pool of built-in images, and your
+            avatar will be included if you have uploaded one.
+            {% if member_tier == "seasoned" or member_tier == "master" %}
+            <br><strong>Selected from gallery:</strong> Use one specific piece as your own piece and keep the computer on
+            a different image.
+            {% endif %}
+          </div>
         </div>
         {% if choice_form.choice.errors %}
         <div class="form-errors">{{ choice_form.choice.errors }}</div>
         {% endif %}
-        <!-- Removed duplicate selected piece image for improved UX -->
-      </div>
-      <!-- Removed text prompt, replaced by image above -->
-      <div id="changeSelectedAvatarContainer" class="piece-choice-change-container" style="display:none; margin-top: 0.5em;">
-        <!-- Old Change Selected Avatar radio/button removed; replaced by new Change Selected button above -->
-      </div>
-      <div class="choice-help" data-help">
-        <button type="button" class="bar-help-btn" aria-label="About game piece choice" aria-expanded="false"
-          aria-controls="choiceHelpPanel">
-          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-        </button>
-        <div id="choiceHelpPanel" class="bar-help-panel" role="note">
-          <strong>Random:</strong> Your piece will be drawn from the full global pool of built-in images, and your
-          avatar will be included if you have uploaded one.
-          {% if member_tier == "seasoned" or member_tier == "master" %}
-          <br><strong>Selected from gallery:</strong> Use one specific piece as your own piece and keep the computer on
-          a different image.
-          {% endif %}
-        </div>
       </div>
     </form>
   </section>
@@ -208,7 +206,7 @@
             data-piece-image="{{ avatar_form.avatar_image.value }}" aria-label="Your uploaded avatar">
             <img src="{{ avatar_form.avatar_image.value }}" alt="Your avatar"
               class="thumbnail-image {% if choice_form.instance.piece_identifier == 'avatar' %}is-selected{% endif %}" />
-            <span class="thumbnail-label">Avatar</span>
+            
           </button>
         </div>
       </div>
@@ -223,14 +221,14 @@
             aria-label="Traditional piece">
             <img src="{% static 'gamehome/images/game_traditional_gamepiece_0.png' %}" alt="Traditional piece 0"
               class="thumbnail-image {% if choice_form.instance.piece_identifier == 'traditional_0' %}is-selected{% endif %}" />
-            <span class="thumbnail-label">Piece 1</span>
+            
           </button>
           <button type="button" class="thumbnail-item" data-piece-id="traditional_1"
             data-piece-image="{% static 'gamehome/images/game_traditional_gamepiece_1.png' %}"
             aria-label="Traditional piece 1">
             <img src="{% static 'gamehome/images/game_traditional_gamepiece_1.png' %}" alt="Traditional piece 1"
               class="thumbnail-image {% if choice_form.instance.piece_identifier == 'traditional_1' %}is-selected{% endif %}" />
-            <span class="thumbnail-label">Piece 2</span>
+            
           </button>
         </div>
       </div>
@@ -245,7 +243,7 @@
             aria-label="Robot piece {{ i }}">
             <img src="{% static 'gamehome/images/game_robot_gamepiece_' %}{{ i }}.png" alt="Robot piece {{ i }}"
               class="thumbnail-image {% if choice_form.instance.piece_identifier == 'robot_'|add:i %}is-selected{% endif %}" />
-            <span class="thumbnail-label">{{ i }}</span>
+            
           </button>
           {% endfor %}
         </div>
@@ -261,7 +259,7 @@
             aria-label="Fantasy piece {{ i }}">
             <img src="{% static 'gamehome/images/game_fantasy_gamepiece_' %}{{ i }}.png" alt="Fantasy piece {{ i }}"
               class="thumbnail-image {% if choice_form.instance.piece_identifier == 'fantasy_'|add:i %}is-selected{% endif %}" />
-            <span class="thumbnail-label">{{ i }}</span>
+            
           </button>
           {% endfor %}
         </div>
@@ -277,7 +275,7 @@
             aria-label="Flowers piece {{ i }}">
             <img src="{% static 'gamehome/images/game_flowers_gamepiece_' %}{{ i }}.png" alt="Flowers piece {{ i }}"
               class="thumbnail-image {% if choice_form.instance.piece_identifier == 'flowers_'|add:i %}is-selected{% endif %}" />
-            <span class="thumbnail-label">{{ i }}</span>
+            
           </button>
           {% endfor %}
         </div>
@@ -356,18 +354,17 @@
 
     {{ comment_counts|json_script:"comment-counts-data" }}
     <div class="comment-lists">
-      <h3>Your saved comments</h3>
-
       {% for message_type, rows in comments_by_type.items %}
       <div class="comment-type-panel" data-message-list="{{ message_type }}" {% if selected_type != message_type %}hidden{% endif %}>
         <h4>
-          {{ message_type|title }} ({{ rows|length }}/{{ max_comments_per_type }})
+          Saved {{ message_type|title }} comments ({{ rows|length }}/{{ max_comments_per_type }})
         </h4>
         {% if rows %}
         <ul class="comment-list">
           {% for row in rows %}
           <li>
             <span>{{ row.text }}</span>
+            <div>
             <button type="button" class="edit-comment-btn" data-message-type="{{ message_type }}"
               data-comment-id="{{ row.id }}" data-comment-text="{{ row.text|escape }}" aria-label="Quick edit comment">
               <i class="fa-solid fa-pen" aria-hidden="true"></i>
@@ -381,6 +378,7 @@
                 <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
               </button>
             </form>
+            </div>
           </li>
           {% endfor %}
         </ul>
