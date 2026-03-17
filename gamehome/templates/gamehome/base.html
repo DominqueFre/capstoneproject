@@ -56,7 +56,13 @@ crossorigin="anonymous">
   </header>
   <main>
     {% block content %}{% endblock %}
+    
   </main>
+  <footer class="footer mt-auto py-3">
+      {% block footer %}
+        <p>&copy; 2026 Tic Tac Toe. All rights reserved.</p>
+      {% endblock footer %}
+    </footer>
  <!-- Font Awesome kit Java Scripts so pop it at the end to build last-->
   <script src="https://kit.fontawesome.com/d5991e788a.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" 

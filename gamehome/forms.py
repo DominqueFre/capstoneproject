@@ -32,7 +32,7 @@ class MemberAvatarForm(forms.ModelForm):
             "avatar_image": forms.HiddenInput(),
         }
         labels = {
-            "avatar_image": "Avatar Image URL",
+            "avatar_image": "Avatar Image",
         }
 
 

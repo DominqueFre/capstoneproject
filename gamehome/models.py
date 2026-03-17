@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-
+from cloudinary.models import CloudinaryField
 
 class MemberInformation(models.Model):
     STATUS_CHOICES = [
@@ -71,7 +71,7 @@ class MemberMovePost(models.Model):
 
 class MemberAvatar(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="avatar")
-    avatar_image = models.URLField(blank=True, null=True)
+    avatar_image = CloudinaryField('image', blank=True, null=True)
 
     def clean(self):
         member = getattr(self.user, "member_info", None)

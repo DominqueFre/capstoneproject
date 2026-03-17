@@ -122,34 +122,49 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
 
+    const profileContentSection = document.getElementById('profileContentSection');
+    // Debug: log class lists after every toggle
+    if (profileContentSection) {
+      console.log('[DEBUG] #profileContentSection classList:', Array.from(profileContentSection.classList));
+    } else {
+      console.warn('[DEBUG] #profileContentSection not found');
+    }
+    if (thumbnailGallerySection) {
+      console.log('[DEBUG] #thumbnailGallerySection classList:', Array.from(thumbnailGallerySection.classList));
+    } else {
+      console.warn('[DEBUG] #thumbnailGallerySection not found');
+    }
+
     if (choice === 'Selection' && (!pieceSaved || changeMode)) {
-      // Show gallery
+      // Show gallery, hide main content
       if (thumbnailGallerySection) {
-        thumbnailGallerySection.style.display = '';
+        thumbnailGallerySection.classList.remove('d-none');
         if (typeof window.attachGalleryListeners === 'function') {
           window.attachGalleryListeners();
         } else {
           console.warn('attachGalleryListeners is not defined on window. Gallery will not be interactive.');
         }
       }
-      if (changeSelectedAvatarContainer) changeSelectedAvatarContainer.style.display = 'none';
-    } else if (choice === 'Selection' && pieceSaved && !changeMode) {
-      // Hide gallery, show change radio
-      if (thumbnailGallerySection) thumbnailGallerySection.style.display = 'none';
-      if (changeSelectedAvatarContainer) changeSelectedAvatarContainer.style.display = '';
+      if (profileContentSection) profileContentSection.classList.add('d-none');
     } else {
-      // Hide everything
-      if (thumbnailGallerySection) thumbnailGallerySection.style.display = 'none';
-      if (changeSelectedAvatarContainer) changeSelectedAvatarContainer.style.display = 'none';
+      // Hide gallery, show main content
+      if (thumbnailGallerySection) thumbnailGallerySection.classList.add('d-none');
+      if (profileContentSection) profileContentSection.classList.remove('d-none');
       changeMode = false;
-      // Removed reference to undefined changeSelectedAvatarRadio
+    }
+    // Debug: log class lists after toggling
+    if (profileContentSection) {
+      console.log('[DEBUG][AFTER] #profileContentSection classList:', Array.from(profileContentSection.classList));
+    }
+    if (thumbnailGallerySection) {
+      console.log('[DEBUG][AFTER] #thumbnailGallerySection classList:', Array.from(thumbnailGallerySection.classList));
     }
   }
   // Expose globally for gallery.js
   window.updateGalleryVisibility = updateGalleryVisibility;
 
   // Save piece choice via AJAX
-  function savePieceChoiceAJAX(choice, pieceIdentifier) {
+  function savePieceChoiceAJAX(choice, pieceIdentifier, skipInit, callback) {
     fetch('/api/piece-choice/', {
       method: 'POST',
       headers: {
@@ -166,7 +181,8 @@ document.addEventListener('DOMContentLoaded', function () {
           window.SAVED_PIECE_IDENTIFIER = data.piece_identifier || '';
           window.CURRENT_PIECE_CHOICE = data.choice || '';
           console.log('[PieceChoice] window.CURRENT_PIECE_CHOICE after save:', window.CURRENT_PIECE_CHOICE);
-          setInitialPieceChoice();
+          if (!skipInit) setInitialPieceChoice();
+          if (typeof callback === 'function') callback(true);
         } else {
           // If error is 'piece_identifier required for Selection', open gallery for first selection, no alert
           if (data.error && data.error.includes('piece_identifier required for Selection')) {
@@ -175,9 +191,13 @@ document.addEventListener('DOMContentLoaded', function () {
           } else if (window.alert) {
             alert('Failed to save piece choice: ' + (data.error || 'Unknown error'));
           }
+          if (typeof callback === 'function') callback(false);
         }
       });
   }
+
+  // Expose globally for gallery.js
+  window.savePieceChoiceAJAX = savePieceChoiceAJAX;
 
   // Listen for piece choice button clicks
   pieceChoiceBtns.forEach(btn => {
@@ -245,6 +265,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  // Expose globally so gallery.js can call it
+  window.showPieceChoiceHeadingImage = showPieceChoiceHeadingImage;
+
   // Listen for gallery save
 
   if (gallerySelectionForm) {
@@ -253,10 +276,10 @@ document.addEventListener('DOMContentLoaded', function () {
       changeMode = false;
       const selected = gallerySelectionForm.querySelector('.thumbnail-item.is-selected');
       if (selected) {
-        // Save Selection choice with selected piece
-        savePieceChoiceAJAX('Selection', selected.dataset.pieceId);
+        // Save Selection choice with selected piece, skip setInitialPieceChoice
+        savePieceChoiceAJAX('Selection', selected.dataset.pieceId, true);
       }
-      setTimeout(updateGalleryVisibility, 100); // after save
+      // No longer call updateGalleryVisibility here; hideGalleryAndShowProfile will handle UI update.
     });
   }
 
@@ -307,23 +330,39 @@ document.addEventListener('DOMContentLoaded', function () {
   setInitialPieceChoice();
 
   function showGallery() {
-    const main = document.getElementById('profileMainContent');
+    const main = document.getElementById('profileContentSection');
     const gallery = document.getElementById('thumbnailGallerySection');
-    if (main) main.style.display = 'none';
-    if (gallery) gallery.style.display = '';
+    console.log('[showGallery] called. main:', main, 'gallery:', gallery);
+    if (main) {
+      main.classList.add('d-none');
+      console.log('[showGallery] Hiding profileMainContent');
+    }
+    if (gallery) {
+      gallery.classList.remove('d-none');
+      console.log('[showGallery] Showing thumbnailGallerySection, d-none removed');
+    }
     if (typeof window.attachGalleryListeners === 'function') window.attachGalleryListeners();
   }
 
   function hideGalleryAndShowProfile() {
-    const main = document.getElementById('profileMainContent');
+    const main = document.getElementById('profileContentSection');
     const gallery = document.getElementById('thumbnailGallerySection');
-    if (gallery) gallery.style.display = 'none';
-    if (main) main.style.display = '';
+    console.log('[hideGalleryAndShowProfile] called. main:', main, 'gallery:', gallery);
+    if (gallery) {
+      gallery.classList.add('d-none');
+      console.log('[hideGalleryAndShowProfile] Hiding thumbnailGallerySection, d-none added');
+    }
+    if (main) {
+      main.classList.remove('d-none');
+      console.log('[hideGalleryAndShowProfile] Showing profileContentSection, d-none removed');
+    }
     if (window.showPieceChoiceHeadingImage && typeof window.SAVED_PIECE_IDENTIFIER !== 'undefined') {
       window.showPieceChoiceHeadingImage(window.SAVED_PIECE_IDENTIFIER);
     }
-    if (window.updateGalleryVisibility) window.updateGalleryVisibility();
+    // Do NOT call updateGalleryVisibility here, to avoid re-hiding the profile section immediately after showing it.
     const heading = document.getElementById('pieceChoiceHeadingImageContainer');
     if (heading) heading.scrollIntoView({block: 'center', behavior: 'instant'});
   }
+  // Expose globally for gallery.js
+  window.hideGalleryAndShowProfile = hideGalleryAndShowProfile;
 });

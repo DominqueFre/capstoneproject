@@ -2,7 +2,9 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
+from django.http import (
+    JsonResponse,
+)
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -389,7 +391,7 @@ def profile(request):
         edit_id = request.GET.get("edit")
         if (
             edit_id
-            and edit_id.isdigit()
+            and edit_id.isdigit()            
             and selected_type in COMMENT_MODEL_MAP
         ):
             model_class, comment_field = COMMENT_MODEL_MAP[selected_type]
@@ -545,3 +547,6 @@ def submit_score(request):
         return JsonResponse({"ok": True, "score_id": score.id})
     except json.JSONDecodeError:
         return JsonResponse({"ok": False, "error": "invalid JSON"}, status=400)
+
+
+

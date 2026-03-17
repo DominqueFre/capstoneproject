@@ -325,8 +325,8 @@ theme-status-bg to be used as the background for the play area game squares
 
 Play screen
 
-border-box sizing used as default 
-**Large Device**
+border-box sizing used as default (can be over ridden if necessary)
+**Large Device / Tablet Landscape View**
 Nav bar at top
 (a) difficulty-picker button bar       (b) theme-picker button bar 
 These appear (a) top left hand side of screen and (b) top right hand of screen 
@@ -337,7 +337,7 @@ These appear (a) top left hand side of screen and (b) top right hand of screen
 (f) Coin plus controls ( 2.5 columns wide margin left and right 10%/0.25 columns defined container size)
  (e) and (f) are in the same column - coin takes up full width - and appears below (e), (e) will take up the remainder of the available height of the column.
 
-**Tablet**
+**Tablet portrait view**
 Nav bar at top (to be centred)
 (a) difficulty-picker button bar        
 (b) theme-picker button bar
@@ -359,3 +359,10 @@ These (a) are collapsed and appear top left of screen one under the other, when 
 (c) side-status-player  (9 columns wide)
 (e) side status computer (9 columns wide)
 (c) and (e) appear below the play-render area with (c) to the left and (e) to the right - a max height will be required to keep this on screen.  
+
+
+
+
+
+Other items
+When does the screen refesh new functionality when user achieves status etc. 
