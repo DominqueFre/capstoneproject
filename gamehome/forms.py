@@ -25,6 +25,10 @@ class MemberCommentForm(forms.Form):
 
 
 class MemberAvatarForm(forms.ModelForm):
+
+    # New field for backend upload (not model-bound)
+    avatar_upload = forms.ImageField(required=False, label="Upload Avatar Image")
+
     class Meta:
         model = MemberAvatar
         fields = ["avatar_image"]

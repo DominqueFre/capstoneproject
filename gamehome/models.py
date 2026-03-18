@@ -73,6 +73,9 @@ class MemberAvatar(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="avatar")
     avatar_image = CloudinaryField('image', blank=True, null=True)
 
+    # New field for secure backend uploads (Cloudinary public_id)
+    avatar_public_id = models.CharField(max_length=255, blank=True, null=True, help_text="Cloudinary public_id for the user's avatar image (authenticated uploads)")
+
     def clean(self):
         member = getattr(self.user, "member_info", None)
         if not member or member.status not in {"seasoned", "master"}:

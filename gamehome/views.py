@@ -8,6 +8,7 @@ from django.http import (
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from django.conf import settings
 
 from .forms import MemberCommentForm, MemberAvatarForm, MemberChoiceForm
 from .models import (
@@ -20,7 +21,9 @@ from .models import (
     MemberAvatar,
     MemberChoice,
 )
-
+import cloudinary
+import cloudinary.uploader
+import cloudinary.utils
 
 MAX_COMMENTS_PER_TYPE = 10
 
@@ -107,6 +110,13 @@ def play(request):
     member_tier, allowed_themes, allowed_difficulties = get_member_access(
         request.user
     )
+
+    # Sync member status in database with calculated member_tier
+    if request.user.is_authenticated:
+        member_info = getattr(request.user, "member_info", None)
+        if member_info and member_info.status != member_tier:
+            member_info.status = member_tier
+            member_info.save(update_fields=["status"])
 
     user_message_sets, user_messages_ready = get_user_message_sets(
         request.user
@@ -241,11 +251,42 @@ def profile(request):
 
             form = MemberCommentForm(initial={"message_type": selected_type})
         elif action == "save_avatar":
-            avatar_form = MemberAvatarForm(request.POST, instance=avatar_obj)
+            avatar_form = MemberAvatarForm(request.POST, request.FILES, instance=avatar_obj)
             if avatar_form.is_valid():
-                avatar_form.save()
-                avatar_form = MemberAvatarForm(instance=avatar_obj)
-                feedback_message = "Avatar saved."
+                avatar_file = avatar_form.cleaned_data.get("avatar_upload")
+                if avatar_file:
+                    # Delete old avatar from Cloudinary if it exists
+                    old_public_id = avatar_obj.avatar_public_id
+                    if old_public_id:
+                        try:
+                            cloudinary.uploader.destroy(old_public_id, resource_type="image")
+                        except Exception as e:
+                            print(f"Cloudinary destroy error: {e}")
+                    try:
+                        # Upload to Cloudinary with type='authenticated'
+                        result = cloudinary.uploader.upload(
+                            avatar_file,
+                            folder="ttt-avatars/",
+                            resource_type="image",
+                            type="authenticated",
+                            public_id=None,  # Let Cloudinary generate
+                            overwrite=True,
+                            use_filename=True,
+                            unique_filename=True,
+                        )
+                        print(f"Cloudinary upload result: {result}")
+                        avatar_obj.avatar_public_id = result.get("public_id")
+                        avatar_obj.avatar_image = result.get("secure_url")
+                        avatar_obj.save(update_fields=["avatar_public_id", "avatar_image"])
+                        # Refresh from DB to ensure latest values for template
+                        avatar_obj.refresh_from_db()
+                        print(f"Avatar saved: public_id={avatar_obj.avatar_public_id}, image={avatar_obj.avatar_image}")
+                        feedback_message = "Avatar uploaded and saved securely."
+                    except Exception as e:
+                        print(f"Cloudinary upload/save error: {e}")
+                        feedback_message = f"Failed to upload avatar: {e}"
+                else:
+                    feedback_message = "No file selected for upload."
             else:
                 feedback_message = "Failed to save avatar."
         elif action == "save_choice":
@@ -420,6 +461,23 @@ def profile(request):
     if editing_comment:
         can_add_comment = True
 
+
+    # Generate signed Cloudinary URL for authenticated avatar (if present)
+    avatar_image_url = None
+    if avatar_obj.avatar_public_id:
+        import time
+        # 2 years in seconds
+        two_years_seconds = 2 * 365 * 24 * 60 * 60
+        expires_at = int(time.time()) + two_years_seconds
+        avatar_image_url, _ = cloudinary.utils.cloudinary_url(
+            avatar_obj.avatar_public_id,
+            type="authenticated",
+            secure=True,
+            sign_url=True,
+            transformation=[{"width": 200, "height": 200, "crop": "fill"}],
+            expires_at=expires_at,
+        )
+
     context = {
         "form": form,
         "selected_type": selected_type,
@@ -437,7 +495,10 @@ def profile(request):
         "avatar_form": avatar_form,
         "choice_form": choice_form,
         "has_avatar": bool(avatar_obj.avatar_image),
+        "avatar_image_url": avatar_image_url,
     }
+    context['cloudinary_cloud_name'] = settings.CLOUDINARY_CLOUD_NAME
+    context['cloudinary_upload_preset'] = settings.CLOUDINARY_UPLOAD_PRESET
     return render(request, "gamehome/profile.html", context)
 
 
@@ -544,6 +605,15 @@ def submit_score(request):
             difficulty=difficulty,
             outcome=outcome,
         )
+
+        # Sync member status in database with calculated member_tier
+        # from .views import get_member_access  not required since defined above
+        member_tier, _, _ = get_member_access(request.user)
+        member_info = getattr(request.user, "member_info", None)
+        if member_info and member_info.status != member_tier:
+            member_info.status = member_tier
+            member_info.save(update_fields=["status"])
+
         return JsonResponse({"ok": True, "score_id": score.id})
     except json.JSONDecodeError:
         return JsonResponse({"ok": False, "error": "invalid JSON"}, status=400)

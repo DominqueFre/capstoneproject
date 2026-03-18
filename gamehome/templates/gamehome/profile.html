@@ -2,7 +2,6 @@
 {% load static %}
 {% block body_class %}profile-page{% endblock %}
 {% load cloudinary %}
-{% load url from future %}
 
 {% block content %}
 <section class="profile-content" id="profileContentSection">
@@ -15,116 +14,121 @@
       more fun and interesting. I hope you enjoy the extra features.
     </p>
     <!-- Move this p element below to information -->
+    <div class="preferences-block">
+      <h2 class="mb-2">Preferences</h2>
+      <form id="profileForm" class="profile-form" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="save_profile">
+        <label for="displayName">Display name</label>
+        <input id="displayName" name="display_name" type="text" maxlength="20" value="{{ profile_member_name }}"
+          placeholder="e.g. Player One">
 
-    <form id="profileForm" class="profile-form" method="post">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="save_profile">
-      <label for="displayName">Display name</label>
-      <input id="displayName" name="display_name" type="text" maxlength="20" value="{{ profile_member_name }}"
-        placeholder="e.g. Player One">
-
-      <div class="profile-pref-picker" aria-label="Default difficulty selector">
-        <input id="defaultDifficulty" name="defaultDifficulty" type="hidden"
-          value="{{ allowed_difficulties.0|default:'easy' }}">
-        <div class="profile-button-bar" role="group" aria-label="Choose default difficulty">
-          {% if "easy" in allowed_difficulties %}
-          <button type="button"
-            class="profile-pref-btn profile-difficulty-btn {% if allowed_difficulties.0 == 'easy' %}is-selected{% endif %}"
-            data-difficulty="easy">Easy</button>
-          {% endif %}
-          {% if "normal" in allowed_difficulties %}
-          <button type="button"
-            class="profile-pref-btn profile-difficulty-btn {% if allowed_difficulties.0 == 'normal' %}is-selected{% endif %}"
-            data-difficulty="normal">Normal</button>
-          {% endif %}
-          {% if "hard" in allowed_difficulties %}
-          <button type="button"
-            class="profile-pref-btn profile-difficulty-btn {% if allowed_difficulties.0 == 'hard' %}is-selected{% endif %}"
-            data-difficulty="hard">Hard</button>
-          {% endif %}
-          {% if "fiendish" in allowed_difficulties %}
-          <button type="button"
-            class="profile-pref-btn profile-difficulty-btn {% if allowed_difficulties.0 == 'fiendish' %}is-selected{% endif %}"
-            data-difficulty="fiendish">Fiendish</button>
-          {% endif %}
-        </div>
-        <div class="bar-help" data-help>
-          <button type="button" class="bar-help-btn" aria-label="About default difficulty setting" aria-expanded="false"
-            aria-controls="profileDifficultyHelpPanel">
-            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-          </button>
-          <div id="profileDifficultyHelpPanel" class="bar-help-panel" role="note">
-            Sets the default game difficulty when you open a match. You can still change it before each game.
-            Difficulty settings are saved in the browser, so you may need to reselect on other devices.
+        <div class="profile-pref-picker" aria-label="Default difficulty selector">
+          <input id="defaultDifficulty" name="defaultDifficulty" type="hidden"
+            value="{{ allowed_difficulties.0|default:'easy' }}">
+          <div class="profile-button-bar" role="group" aria-label="Choose default difficulty">
+            {% if "easy" in allowed_difficulties %}
+            <button type="button"
+              class="profile-pref-btn profile-difficulty-btn {% if allowed_difficulties.0 == 'easy' %}is-selected{% endif %}"
+              data-difficulty="easy">Easy</button>
+            {% endif %}
+            {% if "normal" in allowed_difficulties %}
+            <button type="button"
+              class="profile-pref-btn profile-difficulty-btn {% if allowed_difficulties.0 == 'normal' %}is-selected{% endif %}"
+              data-difficulty="normal">Normal</button>
+            {% endif %}
+            {% if "hard" in allowed_difficulties %}
+            <button type="button"
+              class="profile-pref-btn profile-difficulty-btn {% if allowed_difficulties.0 == 'hard' %}is-selected{% endif %}"
+              data-difficulty="hard">Hard</button>
+            {% endif %}
+            {% if "fiendish" in allowed_difficulties %}
+            <button type="button"
+              class="profile-pref-btn profile-difficulty-btn {% if allowed_difficulties.0 == 'fiendish' %}is-selected{% endif %}"
+              data-difficulty="fiendish">Fiendish</button>
+            {% endif %}
+          </div>
+          <div class="bar-help" data-help">
+            <button type="button" class="bar-help-btn" aria-label="About default difficulty setting"
+              aria-expanded="false" aria-controls="profileDifficultyHelpPanel">
+              <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+            </button>
+            <div id="profileDifficultyHelpPanel" class="bar-help-panel" role="note">
+              Sets the default game difficulty when you open a match. You can still change it before each game.
+              Difficulty settings are saved in the browser, so you may need to reselect on other devices.
+            </div>
           </div>
         </div>
-      </div>
-      <div class="profile-pref-picker" aria-label="Default theme selector">
-        <input id="defaultTheme" name="defaultTheme" type="hidden" value="{{ allowed_themes.0|default:'traditional' }}">
-        <div class="profile-button-bar" role="group" aria-label="Choose default theme">
-          {% if "traditional" in allowed_themes %}
-          <button type="button"
-            class="profile-pref-btn profile-theme-btn {% if allowed_themes.0 == 'traditional' %}is-selected{% endif %}"
-            data-theme="traditional">Traditional</button>
-          {% endif %}
-          {% if "robot" in allowed_themes %}
-          <button type="button"
-            class="profile-pref-btn profile-theme-btn {% if allowed_themes.0 == 'robot' %}is-selected{% endif %}"
-            data-theme="robot">Robot</button>
-          {% endif %}
-          {% if "flowers" in allowed_themes %}
-          <button type="button"
-            class="profile-pref-btn profile-theme-btn {% if allowed_themes.0 == 'flowers' %}is-selected{% endif %}"
-            data-theme="flowers">Flowers</button>
-          {% endif %}
-          {% if "fantasy" in allowed_themes %}
-          <button type="button"
-            class="profile-pref-btn profile-theme-btn {% if allowed_themes.0 == 'fantasy' %}is-selected{% endif %}"
-            data-theme="fantasy">Fantasy</button>
-          {% endif %}
-        </div>
-        <div class="bar-help" data-help>
-          <button type="button" class="bar-help-btn" aria-label="About default theme setting" aria-expanded="false"
-            aria-controls="profileThemeHelpPanel">
-            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-          </button>
-          <div id="profileThemeHelpPanel" class="bar-help-panel" role="note">
-            Sets your default visual theme for boards, pieces, and coin art when a game starts.
-            Theme settings are saved in the browser, so you may need to reselect on other devices.
+        <div class="profile-pref-picker" aria-label="Default theme selector">
+          <input id="defaultTheme" name="defaultTheme" type="hidden"
+            value="{{ allowed_themes.0|default:'traditional' }}">
+          <div class="profile-button-bar" role="group" aria-label="Choose default theme">
+            {% if "traditional" in allowed_themes %}
+            <button type="button"
+              class="profile-pref-btn profile-theme-btn {% if allowed_themes.0 == 'traditional' %}is-selected{% endif %}"
+              data-theme="traditional">Traditional</button>
+            {% endif %}
+            {% if "robot" in allowed_themes %}
+            <button type="button"
+              class="profile-pref-btn profile-theme-btn {% if allowed_themes.0 == 'robot' %}is-selected{% endif %}"
+              data-theme="robot">Robot</button>
+            {% endif %}
+            {% if "flowers" in allowed_themes %}
+            <button type="button"
+              class="profile-pref-btn profile-theme-btn {% if allowed_themes.0 == 'flowers' %}is-selected{% endif %}"
+              data-theme="flowers">Flowers</button>
+            {% endif %}
+            {% if "fantasy" in allowed_themes %}
+            <button type="button"
+              class="profile-pref-btn profile-theme-btn {% if allowed_themes.0 == 'fantasy' %}is-selected{% endif %}"
+              data-theme="fantasy">Fantasy</button>
+            {% endif %}
+          </div>
+          <div class="bar-help" data-help">
+            <button type="button" class="bar-help-btn" aria-label="About default theme setting" aria-expanded="false"
+              aria-controls="profileThemeHelpPanel">
+              <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+            </button>
+            <div id="profileThemeHelpPanel" class="bar-help-panel" role="note">
+              Sets your default visual theme for boards, pieces, and coin art when a game starts.
+              Theme settings are saved in the browser, so you may need to reselect on other devices.
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="profile-actions profile-pref-actions">
-        <button type="submit">Save preferences</button>
-        <button id="resetPreferences" type="button">Reset to defaults</button>
-      </div>
-    </form>
-
-    <p id="profileMessage" aria-live="polite"></p>
-
-    </form>
-
+        <div class="profile-actions profile-pref-actions">
+          <button type="submit">Save preferences</button>
+          <button id="resetPreferences" type="button">Reset to defaults</button>
+        </div>
+      </form>
+    </div>
     <div class="profile-blocks">
 
-      <div class="preferences-block">
 
-      </div>
+
 
       <div class="avatar-block">
-        {% if member_tier == "seasoned" or member_tier == "master" %}
         <section class="avatar-section">
+          {% if member_tier == "seasoned" or member_tier == "master" %}
+          <h2 class="mb-2" style="display: flex; align-items: center; gap: 0.5em;">Upload your own Avatar
+            {% if has_avatar and avatar_image_url %}
+            <span style="display: inline-flex; align-items: center; margin-left: 1em;">
+              <img src="{{ avatar_image_url }}" alt="Current avatar"
+                style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #ccc; background: #fff;" />
+            </span>
+            {% endif %}
+          </h2>
           <!-- Avatar available to seasoned and master tier users only -->
           <form id="avatarForm" class="avatar-form" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="hidden" name="action" value="save_avatar">
             <div class="avatar-input-wrapper">
-              {{ avatar_form.avatar_image }}
-              {% if avatar_form.avatar_image.errors %}
-              <div class="form-errors">{{ avatar_form.avatar_image.errors }}</div>
+              {{ avatar_form.avatar_upload }}
+              {% if avatar_form.avatar_upload.errors %}
+              <div class="form-errors">{{ avatar_form.avatar_upload.errors }}</div>
               {% endif %}
             </div>
-            <div class="avatar-help" data-help>
+            <div class="avatar-help" data-help">
               <button type="button" class="bar-help-btn" aria-label="About avatar requirements" aria-expanded="false"
                 aria-controls="avatarHelpPanel">
                 <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
@@ -141,10 +145,7 @@
                 </ul>
               </div>
             </div>
-            <button type="button" id="openCloudinaryWidget" class="profile-pref-btn">Upload your own Avatar</button>
-            {% if has_avatar %}
-            <p class="avatar-preview">Avatar saved and available for random or gallery selection.</p>
-            {% endif %}
+            <button type="submit" class="profile-pref-btn">Upload</button>
           </form>
         </section>
         {% else %}
@@ -156,7 +157,7 @@
     </div>
 
     <section class="piece-choice-section">
-      <h2 style="display: flex; align-items: center; gap: 0.5em;">Game Piece Choice <span
+      <h2 class="mb-2" style="display: flex; align-items: center; gap: 0.5em;">Game Piece Choice <span
           id="pieceChoiceHeadingImageContainer"></span></h2>
       <form id="choiceForm" class="choice-form" method="post">
         {% csrf_token %}
@@ -201,7 +202,7 @@
 
 
   <section class="comment-section">
-    <h2>Message Comments</h2>
+    <h2 class="mb-2">Message Comments</h2>
     {% if feedback_message %}
     <p id="commentFeedbackMessage" class="comment-feedback">{{ feedback_message }}</p>
     {% endif %}
@@ -225,13 +226,12 @@
           </a>
           {% endfor %}
         </div>
-        <div class="bar-help" data-help>
+        <div class="bar-help" data-help">
           <button type="button" class="bar-help-btn" aria-label="About message type settings" aria-expanded="false"
             aria-controls="messageTypeHelpPanel">
             <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
           </button>
           <div id="messageTypeHelpPanel" class="bar-help-panel" role="note">
-            Message type chooses which set of custom comments you are editing, such as win, lose, or draw messages.
             Each message type can store up to {{ max_comments_per_type }} comments.
           </div>
         </div>
@@ -249,6 +249,7 @@
             {% if editing_comment %}Update{% else %}Add{% endif %}
           </button>
           <button id="clearEditBtn" type="button">Clear</button>
+          <button type="submit" class="profile-pref-btn">Upload</button>
         </div>
       </div>
 
@@ -300,7 +301,7 @@
 
 {% if member_tier == "seasoned" or member_tier == "master" %}
 <section class="thumbnail-gallery-section d-none" id="thumbnailGallerySection">
-  <h2>Piece Gallery</h2>
+  <h2 class="mb-2">Piece Gallery</h2>
   <p>Click on your preferred game piece.</p>
 
   <div class="gallery-container">
@@ -309,9 +310,9 @@
     <div class="gallery-group">
       <h3>Your Avatar</h3>
       <div class="thumbnail-grid">
-        <button type="button" class="thumbnail-item" data-piece-id="avatar"
-          data-piece-image="{{ avatar_form.avatar_image.value }}" aria-label="Your uploaded avatar">
-          <img src="{{ avatar_form.avatar_image.value }}" alt="Your avatar"
+        <button type="button" class="thumbnail-item" data-piece-id="avatar" data-piece-image="{{ avatar_image_url }}"
+          aria-label="Your uploaded avatar">
+          <img src="{{ avatar_image_url }}" alt="Your avatar"
             class="thumbnail-image {% if choice_form.instance.piece_identifier == 'avatar' %}is-selected{% endif %}" />
         </button>
       </div>
@@ -401,8 +402,18 @@
   window.PROFILE_SAVE_URL = "{% url 'gamehome:profile' %}";
 </script>
 
+<script src="{% static 'gamehome/js/gallery.js' %}"></script>
+<script src="{% static 'gamehome/js/piece_choice.js' %}"></script>
+<script>
+  window.CURRENT_PIECE_CHOICE = "{{ choice_form.instance.choice|default:'' }}";
+  window.SAVED_PIECE_IDENTIFIER = "{{ choice_form.instance.piece_identifier|default:'' }}";
+  window.AVATAR_IMAGE_URL = "{{ avatar_form.avatar_image.value|default:'' }}";
+</script>
+<script src="{% static 'gamehome/js/profile.js' %}"></script>
+
+
 <!-- Cloudinary Upload Widget -->
-<script src="https://upload-widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
+<!-- <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script> -->
 
 <script>
   // Cloudinary Widget Integration
@@ -418,8 +429,8 @@
         // Initialize Cloudinary upload widget
         cloudinary.openUploadWidget(
           {
-            cloudName: 'domin',  // Replace with actual cloud name
-            uploadPreset: 'ttt_avatar',  // Create this preset in Cloudinary
+            cloudName: "{{ cloudinary_cloud_name }}",
+            uploadPreset: "{{ cloudinary_upload_preset }}",
             clientAllowedFormats: ['png', 'jpg', 'jpeg', 'gif'],
             maxFileSize: 2000000,  // 2MB
             multiple: false,
@@ -463,13 +474,5 @@
   });
 </script>
 
-<script src="{% static 'gamehome/js/gallery.js' %}"></script>
-<script src="{% static 'gamehome/js/piece_choice.js' %}"></script>
-<script>
-  window.CURRENT_PIECE_CHOICE = "{{ choice_form.instance.choice|default:'' }}";
-  window.SAVED_PIECE_IDENTIFIER = "{{ choice_form.instance.piece_identifier|default:'' }}";
-  window.AVATAR_IMAGE_URL = "{{ avatar_form.avatar_image.value|default:'' }}";
-</script>
-<script src="{% static 'gamehome/js/profile.js' %}"></script>
 
 {% endblock content %}

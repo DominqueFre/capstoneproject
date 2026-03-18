@@ -123,18 +123,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const profileContentSection = document.getElementById('profileContentSection');
-    // Debug: log class lists after every toggle
-    if (profileContentSection) {
-      console.log('[DEBUG] #profileContentSection classList:', Array.from(profileContentSection.classList));
-    } else {
-      console.warn('[DEBUG] #profileContentSection not found');
-    }
-    if (thumbnailGallerySection) {
-      console.log('[DEBUG] #thumbnailGallerySection classList:', Array.from(thumbnailGallerySection.classList));
-    } else {
-      console.warn('[DEBUG] #thumbnailGallerySection not found');
-    }
-
     if (choice === 'Selection' && (!pieceSaved || changeMode)) {
       // Show gallery, hide main content
       if (thumbnailGallerySection) {
@@ -151,13 +139,6 @@ document.addEventListener('DOMContentLoaded', function () {
       if (thumbnailGallerySection) thumbnailGallerySection.classList.add('d-none');
       if (profileContentSection) profileContentSection.classList.remove('d-none');
       changeMode = false;
-    }
-    // Debug: log class lists after toggling
-    if (profileContentSection) {
-      console.log('[DEBUG][AFTER] #profileContentSection classList:', Array.from(profileContentSection.classList));
-    }
-    if (thumbnailGallerySection) {
-      console.log('[DEBUG][AFTER] #thumbnailGallerySection classList:', Array.from(thumbnailGallerySection.classList));
     }
   }
   // Expose globally for gallery.js
