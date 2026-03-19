@@ -144,15 +144,26 @@ def play(request):
         else:
             choice_val = "Standard"
             piece_identifier = None
+
+        # Generate signed Cloudinary URL for authenticated avatar (if present)
+        avatar_image_url = None
+        if avatar_obj and avatar_obj.avatar_public_id:
+            import time
+            two_years_seconds = 2 * 365 * 24 * 60 * 60
+            expires_at = int(time.time()) + two_years_seconds
+            avatar_image_url, _ = cloudinary.utils.cloudinary_url(
+                avatar_obj.avatar_public_id,
+                type="authenticated",
+                secure=True,
+                sign_url=True,
+                transformation=[{"width": 200, "height": 200, "crop": "fill"}],
+                expires_at=expires_at,
+            )
         game_piece_preference = json.dumps(
             {
                 "choice": choice_val,
                 "pieceIdentifier": piece_identifier,
-                "avatarImage": (
-                    avatar_obj.avatar_image
-                    if avatar_obj and avatar_obj.avatar_image
-                    else None
-                ),
+                "avatarImage": avatar_image_url if avatar_image_url else None,
             }
         )
 
@@ -432,7 +443,7 @@ def profile(request):
         edit_id = request.GET.get("edit")
         if (
             edit_id
-            and edit_id.isdigit()            
+            and edit_id.isdigit()
             and selected_type in COMMENT_MODEL_MAP
         ):
             model_class, comment_field = COMMENT_MODEL_MAP[selected_type]
@@ -460,7 +471,6 @@ def profile(request):
     )
     if editing_comment:
         can_add_comment = True
-
 
     # Generate signed Cloudinary URL for authenticated avatar (if present)
     avatar_image_url = None
@@ -545,6 +555,7 @@ def leaderboard(request):
     rows.sort(
         key=lambda row: (
             -row["total_percentage"],
+            -row["total"],
             -row["win_percentage"],
             row["display_name"].lower(),
         )
@@ -617,6 +628,3 @@ def submit_score(request):
         return JsonResponse({"ok": True, "score_id": score.id})
     except json.JSONDecodeError:
         return JsonResponse({"ok": False, "error": "invalid JSON"}, status=400)
-
-
-

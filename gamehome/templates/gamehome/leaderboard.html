@@ -57,10 +57,10 @@
           </div>
 
           {% if user.is_authenticated and current_user_row %}
-          <div class="leaderboard-user-summary" aria-label="Your leaderboard rank summary">
+          <div class="leaderboard-user-summary sticky-bottom" aria-label="Your leaderboard rank summary">
             <div class="leaderboard-user-summary-inner">
-              <span class="leaderboard-user-summary-label">Your position</span>
-              <table class="table mb-0 leaderboard-table leaderboard-user-summary-table">
+              <span class="leaderboard-user-summary-label ">Your position</span>
+              <table class="table mb-0 mt-2 leaderboard-table leaderboard-user-summary-table">
                 <tbody>
                   <tr>
                     <td class="leaderboard-position-col">{{ current_user_row.position }}</td>

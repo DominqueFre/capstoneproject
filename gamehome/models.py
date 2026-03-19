@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from cloudinary.models import CloudinaryField
 
+
 class MemberInformation(models.Model):
     STATUS_CHOICES = [
         ("novice", "Novice"),
@@ -10,9 +11,15 @@ class MemberInformation(models.Model):
         ("master", "Master"),
     ]
 
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="member_info")
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="member_info"
+        )
     gamername = models.CharField(max_length=20, unique=True)
-    status = models.CharField(max_length=8, choices=STATUS_CHOICES, default="novice")
+    status = models.CharField(
+        max_length=8,
+        choices=STATUS_CHOICES, default="novice")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

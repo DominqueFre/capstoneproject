@@ -1,54 +1,57 @@
 # Capstone Project
 
-## Index
-1. Steps for Django setup
-2. Steps for deployment 
-3. 
-4. AI Usage 
-5. Supporting documentation
-6. Sources
+## Table of Contents
+-[Introduction](#introduction)
+-[Initial steps for setup and deployment](#initial-steps-for-setup-and-deployment)
+    -[Steps for Django Framework setup](#steps-for-django-framework-setup)
+    -[Steps for deployment](#steps-for-deployment) 
+-[Learning Objectives](#learning-objectives)
+-[AI Usage](#ai-usage)
+-[Supporting documentation](#supporting-documentation)
+-[Sources](#sources)
 
-Initial steps for setup and deployment
+# Introduction
+    This project is a simple noughts and crosses game, with interactive features for the user to enjoy and to stimulate continued gameplay and interactions.  The game is playable and the leaderboard can be viewed without login but additional features are accessible if they do so.  Once registered and logged in, gmaeplay results are recorded and the users own score can be viewed on the leaderboard.  The user is able to access, additional levels of play , different themes, enter and save their own gamer name, upload their own avatar for play and create, read, update and delete their own win/play/draw and lose messages.  These are accessed through registering and when logged in they can gain access to further features by achieving certain levels of proficiency. Gameplay and screens are streamlined , with as few unnecessary visual and textual cues as possible to give an uncluttered screen, so the theme and gameplay are the primary impression given to user.
 
-
-## Steps for Django project setup
+# Initial steps for setup and deployment
+## Steps for Django Framework setup
     Select python version and the appropriate versions of other apps...
--Start a venv 
+- Start a venv 
     `python -m venv .venv`
--Install python version required 
--Create 
---a .python-version file
+- Install python version required 
+- Create 
+- -a .python-version file
     input version only eg. 3.12
---a env.py file 
+- -a env.py file 
     to include SECRET_KEY and DATABASE_URL
---a .gitignore 
+- -a .gitignore 
     to include env.py and .venv
---a Procfile  
+- -a Procfile  
 used in conjunction with gunicorn and Heroku to launch web wsgi processes.
 activate the venv
-    .venv/Scripts/activate
+    `source .venv/Scripts/activate`
 
 **Install**
 `pip install jjjjj~=1.23.0`
-Django              (framework)
-    (also installs asgiref, tzdata, sqlparse)
-psycopg2            (postgresql database)
-    (also installs setuptools)
-dj-database-url     (postgresql database)
-gunicorn            (web launcher heroku)
-django-summernote   (adds functionality eg filtering capability)
+- Django              (framework)
+    - (also installs asgiref, tzdata, sqlparse)
+- psycopg2            (postgresql database)
+    - (also installs setuptools)
+- dj-database-url     (postgresql database)
+- gunicorn            (web launcher heroku)
+- django-summernote   (adds functionality eg filtering capability)
     (also installs webencodings and bleach)
-whitenoise          (hmmm CSS, images )
-django-allauth      (user login)
-    (also installs many other apps ie cryptography etc.)
-django-crispy-forms
-crispy-bootstrap5
-cloudinary          (to store user images and content)
-dj3-cloudinary-storage
-urllib3             (~=1.26.20 to run with cloudinary - overwrites previous))
-setuptools          (~=80.0.0 to run with  - overwrites venv version 70 )
+- whitenoise          (static files)
+- django-allauth      (user login)
+    - (also installs many other apps ie cryptography etc.)
+- django-crispy-forms
+- crispy-bootstrap5
+- cloudinary          (to store user images)
+- dj3-cloudinary-storage
+- urllib3             (~=1.26.20 to run with cloudinary - overwrites previous))
+- setuptools          (~=80.0.0 to run with  - overwrites venv version 70 )
 
-Create a requirements.txt file
+- Create a requirements.txt file
     `pip freeze --local >requirements .txt`
 
 ### Steps for creating project 
@@ -61,6 +64,7 @@ Create a view
 Include in URL's
 
 ### Steps for setting up django's key safely
+As the env.py file is in the gitignore file this can securely hold the keys 
 In the projects settings.py file
 
 
@@ -108,46 +112,45 @@ Once installed and when a production deploy is planned run
     `python manage.py collectstatic`
 
 ### Steps for completing installation of django-allauth
-In installed apps(For controlled user login's etc without accessing admin)
+- In installed apps(For controlled user login's etc without accessing admin)
     `'django.contrib.sites',` below djoango apps
     `'allauth',`  above project apps
     `'allauth.account',`
     `'allauth.socialaccount',`
-and below the installed apps list and above middleware - add
+- Below the installed apps list and above middleware - add
 `SITE_ID = 1`
 `LOGIN_REDIRECT_URL = '/'`
 `LOGOUT_REDIRECT_URL = '/'`
-and to the end of middleware add
+- To the end of middleware add
 `'allauth.account.middleware.AccountMiddleware',`
-and below AUTH_PASSWORD_VALIDATORS add
+- Below AUTH_PASSWORD_VALIDATORS add
 `ACCOUNT_EMAIL_VERIFICATION = 'none'`
-now migration is possible
+- Now migration is possible
+`python manage.py makemigrations`
 `python manage.py migrate`
-then in the project urls.py file in alphabetical order add
+- In the project urls.py file in alphabetical order add
 `path("accounts/", include("allauth.urls")),`
-in the base.html file within the templates directory at the top but under the page links add
+- In the base.html file within the templates directory at the top but under the page links add
 `{% url 'account_login' as login_url %}`
 `{% url 'account_signup' as signup_url %}`
 `{% url 'account_logout' as logout_url %}`
-and the associated links as nav bar items
+and also the associated links as nav bar items
   see base.html file
 `pip show django-allauth`
-from the information shown take the <Location> ensuring slashes are forward facing and run the following command
+- From the information shown take the <Location> ensuring slashes are forward facing and run the following command
 `cp -r <Location>/allauth/templates/* ./templates/`
-This takes a copy of the html for the access screens so that they can be tweaked.
-login.html
-logout.html
-signup,html
+- This takes a copy of the html for the access screens so that they can be tweaked to use the base.html and it's styles.
+
 
 ### Steps for completing the installation of - django-crispy-forms and crispy-bootstrap - due to use of Bootstrap
-Add in installed apps
+- Add in installed apps
     `'crispy_forms',`
     `'crispy_bootstrap5',`
-Additional constants for settings.py file
+- Additional constants for settings.py file
 `CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"`
 `CRISPY_TEMPLATE_PACK = "bootstrap5"`
 
-In the app that will use the form
+- In the app that will use the form
 add a forms.py file
 `from .models import NameOfModel`
 `from django import forms`
@@ -156,25 +159,25 @@ add a forms.py file
     `class Meta:`
         `model = NameOfModel`
         `fields = ('body',)`
-In the views.py file
+- In the views.py file
 `from .forms import NameOfModelForm`
-then in the views.py file function that renders the page where the comment field will sit...
+- Then in the views.py file function that renders the page where the comment field will sit...
 
 In any html template that will house a form
 `{% load crispy_forms_tags %}`
 Displaying a confirmation message
 
 ### Steps for completing the installation of Cloudinary
-in installed apps below staticfiles add 
+- In installed apps below staticfiles add 
 `'cloudinary_storage',`
 and below django_summernotes add
 `'cloudinary',`
-in env.py set the default cloudinary URL and also set this in your deployment platform ie Heroku
+in env.py set the default cloudinary URL and also set this in your deployment platform ie Heroku, 
 `os.environ.setdefault(`
 `    'CLOUDINARY_URL',`
 `    'cloudinary://<key>:<secret>@dnfsa35yv'`
 `)`
-
+- Also in this case  key, secret, cloud and a file preset are stored separately, a folder name also has to be selected to send the data across to cloudinary as well as a name for it to be stored against in the database.
 
 ### Models /Views / Templates and URL's
 **Models**
@@ -187,12 +190,12 @@ Inside yyy/admin.py - register the model(s)
     `from .models import zzz`
     `admin.site.register(zzz)`
 **Views**
-(The information pulled out in the format required)
+- The information pulled out in the format required, additionally processed as equired.
 
 **Templates**
-Base html file in projectxxx/template/ directory
+- Base html file in appyyy/templates/appyyy
 imports urls that use it at the top
-useful for navbars
+useful for navbars - there are several different ways these can be setup - ensure that the settings in settings.py correspond.
 **URLs**
 (how we get about)
 **Static folder and files**
@@ -210,6 +213,43 @@ Once required the command below must be run before each commit/deploy
 Run the command 
 `python manage.py createsuperuser`
 
+
+
+
+
+
+
+
+
+
+
+
+
+## Learning Objectives
+Points of note  - rename this to Project working notes and learnings or similar ...
+LO1 -  Very few changes were required to the designed ERD  - additional items were used due to adding additional layer of securtiy for Cloudinary images and not having used Cloudinary before not being fully aware of the requirements.  
+Only one theme was shown throughout the wireframes, as each theme is essentially the same.  This was a time-saving decision as it would have in essence been duplication of work.
+
+
+
+
+A mixture of CRUD features have been included in the project, standard functionality with clear messaging is used in the User's ability to add their own comments for use in gameplay and slightly less standard functionality with onscreen visual cues to indicate success for avatar upload and selection. 
+
+The navigation login bar provides a visual clue as to login status when on display and if a superuser is logged in they have an addtional link to take them directly to the admin page. Additonal interactive content on the pages indicate logged in status such as the user or gamer name, if one has been chosen, apparent in several places such as the scoreboard, the game comments and in the profile page introduction. 
+
+L04 Testing manual etc
+
+Regular Github commits were made, and consideration of data security through use of env.py in conjunction with a gitignore file, with keys then set up in the configuration files of Heroku for hosting.  Debug was set to False for the production environment through judicious use of code and the env.py file.
+
+The application successfully deployed in Heroku.
+
+The application contains a unique data model not previously seen in the course based on the requirements of the project.  
+
+## AI Usage
+I used AI at many points throughout the project from image generation, to talking to the Cloudinary chat bot and mainly using Copilot in chats and for inline coding changes.  I regard it as a useful tool but did come across some limitations - being aware of these allows some work arounds.  It appears to have an issue with {% endblock %} if they do not have the title in the endblock , there was a near miss where it suggested deleting code that had been overwritten without considering what had been overwritten. It can be very literal on occasion. It is great at getting things started when there is a very specific list or with tasks that have well-defined parameters.  
+
+
+## Supporting Documentation
 
 _Proposed Django layout_
 - Project: game
@@ -277,7 +317,7 @@ Avatar selection	|Default	|Random	|Selection	|As Seasoned
 Scores screen	|Yes 	|Own score highlighted	|As Member	|As Member
 Scores recorded	|No	|Yes	|As Member	|As Member
 
-*Once status is achieved, can not be lost.
+* Users must maintain a score within that meets the criteria or they will lose their status.
 
 Wireframes
 
@@ -301,68 +341,27 @@ ERD
 |Repository|Git Hub|Repository hosting service||
 |Hosting Platform|Heroku|Platform hosting service||
 |IDE|VSCode|||
-|Image Storage|Cloudinairy||User avatar|
+|Image Storage|Cloudinairy|Also used AI chatbot|User avatar|
 |Database|PostGresSQL|||
 |Framework|Django|||
+|Image Editing|Microsft Photos|AI image background removal and editing||
+|||||
+|AI|Copilot|Use for coding, suggestions,queries||
+|||||
+|HTML||Code Checkers||
+|Python||Code Linters||
+|CSS||Code Checkers||
+|JavaScript||Code Checkers||
+|||||
 |||||
 
-Final to do's - add numbering - see if can link if not auto
 
+Add tests / manual checking
 
 Non-Negotiable Requirements”.
 
 - The game-play screen should take up the viewport/browser window only - no scrolling should be required of the page itself.  Elements within the page may be scrollable. This effectively limits the size of the gameboard image and game-play area wich is nested within the game-image area. This is to give the best visual impact possible.
 - The gameboard image must be fully on screen on all device sizes.
-- messages align against 
-
-
-“Follow the Non-Negotiable Requirements in README before editing.”
-
-
-Explaining layout expectations
-1st run (tweaks such as information panel sizing to be added in next run)
-theme-status-bg to be used as the background for the play area game squares
-
-Play screen
-
-border-box sizing used as default (can be over ridden if necessary)
-**Large Device / Tablet Landscape View**
-Nav bar at top
-(a) difficulty-picker button bar       (b) theme-picker button bar 
-These appear (a) top left hand side of screen and (b) top right hand of screen 
  
-(c) side-status-player  (2.5 columns wide. appears left of screen, margin left and right 10%/0.25 columns)
-(d) play-render Game area image and game-board  (6 columns max width, no margin, max height, remaining viewport height after Navbar and picker buttone bars)
-(e) side-staus-computer (2.5 columns wide margin left and right 10%/0.25 columns)
-(f) Coin plus controls ( 2.5 columns wide margin left and right 10%/0.25 columns defined container size)
- (e) and (f) are in the same column - coin takes up full width - and appears below (e), (e) will take up the remainder of the available height of the column.
-
-**Tablet portrait view**
-Nav bar at top (to be centred)
-(a) difficulty-picker button bar        
-(b) theme-picker button bar
-These (a/b) appear top left of screen one under the other
-(f) Coin plus controls ( 2.5 columns wide top right hand side same height position as the button bars - defined container size required for seamless rendering changes)
-(d) play-render Game area image and game-board  (12 columns wide)
-The play-render is below the pickers and coin row.
-(c) side-status-player  (5.5 columns wide margin left and right 0.25 columns)
-(e) side-status-computer (5.5 columns wide margin left and right 0.25 columns)
-(c) and (e) appear below the play-render area with (c) to the left and (e) to the right
-
-**Mobile - portrait view**
-Collapsed Navbar at top, centred when opened
-(a) difficulty-picker button bar        
-(a) theme-picker button bar
-These (a) are collapsed and appear top left of screen one under the other, when not collapsed.
-(f) Coin plus controls ( 2.5 columns wide top right hand side same height position as the button bars - defined container size required for seamless rendering changes)
-(d) play-render Game area image and game-board  (12 columns wide)
-(c) side-status-player  (9 columns wide)
-(e) side status computer (9 columns wide)
-(c) and (e) appear below the play-render area with (c) to the left and (e) to the right - a max height will be required to keep this on screen.  
 
 
-
-
-
-Other items
-When does the screen refesh new functionality when user achieves status etc. 
