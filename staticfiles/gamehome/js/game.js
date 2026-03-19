@@ -379,6 +379,21 @@ function setStatus(message, side) {
     statusEl.textContent = message;
   }
 
+  // Bold the active side's title for 0.1s
+  const playerTitle = document.querySelector('.side-status-player .side-status-title');
+  const computerTitle = document.querySelector('.side-status-computer .side-status-title');
+  if (playerTitle && computerTitle) {
+    playerTitle.classList.remove('is-active');
+    computerTitle.classList.remove('is-active');
+    setTimeout(() => {
+      if (resolvedSide === 'player') {
+        playerTitle.classList.add('is-active');
+      } else {
+        computerTitle.classList.add('is-active');
+      }
+    }, 100);
+  }
+
   if (playerStatusEl && computerStatusEl) {
     const target = resolvedSide === "computer" ? computerStatusEl : playerStatusEl;
     const item = document.createElement("div");

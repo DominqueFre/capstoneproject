@@ -1,3 +1,8 @@
+/* Universal site margin wrapper, theme-agnostic */
+.site-margin {
+  margin: 0.5rem;
+  box-sizing: border-box;
+}
 /* Visually balanced, full-height play area */
 .play-screen {
   display: flex;
@@ -54,12 +59,6 @@
   pointer-events: none;
 }
 
-.coin-column {
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
 /* Hide rotate overlay by default */
 .rotate-overlay {
@@ -277,6 +276,7 @@ body.play-viewport {
   flex-direction: column;
   gap: 0.5rem;
   overflow: hidden;
+  padding-bottom: 2.5rem; /* Reserve space for footer */
 }
 
 .site-nav {
@@ -542,6 +542,12 @@ body.play-viewport {
   opacity: 0.75;
   flex-shrink: 0;
   color: var(--theme-accent);
+  transition: font-weight 0.1s;
+}
+
+.side-status-title.is-active {
+  font-weight: 900;
+  opacity: 1;
 }
 
 .side-status-player .side-status-title {
@@ -604,17 +610,7 @@ body.play-viewport {
   container-type: size;
 }
 
-.coin-column {
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 0.75rem;
-  padding: 0.75rem 0;
-  background: transparent;
-  margin-top: auto;
-}
+
 
 .board-frame {
   width: min(100cqw, 100cqh);
@@ -794,14 +790,6 @@ th, td {
     display: block;
   }
 }
-@media (min-width: 897px) {
-  .controls-toggler {
-    display: none !important;
-  }
-  #gameControlsWrapper {
-    display: block !important;
-  }
-}
 
 
 
@@ -849,6 +837,13 @@ th, td {
     align-self: start;
     padding: 0.25rem 0;
     background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.75rem;
+    min-height: 0;
+    margin-top: auto;
   }
 
   .play-render {
@@ -917,16 +912,18 @@ th, td {
 }
 
 /* Desktop >1024px: always show nav links and controls; hide togglers */
+@media (min-width: 897px) {
+  .controls-toggler {
+    display: none !important;
+  }
+}
 @media (min-width: 1025px) {
   #mainNavLinks { display: flex !important; }
-  #gameControlsWrapper { display: block !important; }
   .controls-toggler, .nav-toggler { display: none !important; }
-
   .play-layout {
     justify-content: center;
     grid-template-columns: minmax(180px, 240px) minmax(320px, min(66dvh, 760px)) minmax(180px, 240px);
   }
-
   .play-render {
     width: 100%;
     max-width: none;
@@ -995,14 +992,27 @@ th, td {
     gap: 0.5em;
   }
 }
-@media (max-width: 896px) {
-  .difficulty-button-bar,
-  .theme-button-bar,
-  .profile-button-bar {
+@media (max-width: 914px) and (orientation: landscape), (max-width: 896px) {
+  .play-layout {
+    margin-bottom: 3.5rem !important; /* Extra space for coin controls and footer */
+  }
+  /* Only make button bars vertical when controls are collapsed (not .show) */
+  #gameControlsWrapper:not(.show) .difficulty-button-bar,
+  #gameControlsWrapper:not(.show) .theme-button-bar,
+  #gameControlsWrapper:not(.show) .profile-button-bar {
     display: flex !important;
     flex-direction: column !important;
     align-items: stretch;
     width: 100%;
+  }
+  /* When controls are expanded (.show), keep button bars horizontal */
+  #gameControlsWrapper.show .difficulty-button-bar,
+  #gameControlsWrapper.show .theme-button-bar,
+  #gameControlsWrapper.show .profile-button-bar {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    width: auto;
   }
   .controls-toggler {
     display: inline-flex !important;

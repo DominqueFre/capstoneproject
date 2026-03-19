@@ -59,16 +59,6 @@
   pointer-events: none;
 }
 
-.coin-column {
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: sticky;
-  bottom: 2.5rem; /* Height of footer, adjust as needed */
-  z-index: 10;
-  background: inherit;
-}
 
 /* Hide rotate overlay by default */
 .rotate-overlay {
@@ -620,17 +610,7 @@ body.play-viewport {
   container-type: size;
 }
 
-.coin-column {
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 0.75rem;
-  padding: 0.75rem 0;
-  background: transparent;
-  margin-top: auto;
-}
+
 
 .board-frame {
   width: min(100cqw, 100cqh);
@@ -857,6 +837,13 @@ th, td {
     align-self: start;
     padding: 0.25rem 0;
     background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.75rem;
+    min-height: 0;
+    margin-top: auto;
   }
 
   .play-render {
