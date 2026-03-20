@@ -1,7 +1,17 @@
+
+/*
+* Prefixed by https://autoprefixer.github.io
+* PostCSS: v8.4.14,
+* Autoprefixer: v10.4.7
+* Browsers: last 4 version
+*/
+
 #playMainContent {
   max-width: none;
   margin: 0 auto;
-  flex: 1 1 0;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 0px;
+          flex: 1 1 0;
   min-width: 0;
   overflow-x: hidden;
 }
@@ -28,10 +38,19 @@
 
 #coinStatusContainer {
   min-height: 2.5em;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
 
 #coinStatusMessage {
@@ -40,12 +59,18 @@
 /* Universal site margin wrapper, theme-agnostic */
 .site-padding {
   padding: 0.5rem;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 /* Visually balanced, full-height play area */
 .play-screen {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   height: 100dvh;
   min-height: 0;
   padding: 0;
@@ -59,24 +84,39 @@
   min-height: 0;
   width: 100%;
   min-width: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
 
 #playerStatusColumn,
 #computerStatusColumn {
   height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
   min-height: 0;
   overflow-y: auto;
   min-width: 0;
   overflow-x: hidden;
   width: 20vw;
   max-width: 20vw;
-  flex: 0 0 20vw;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 20vw;
+          flex: 0 0 20vw;
 }
 
 #computerStatusColumn {
@@ -90,9 +130,15 @@
   min-width: 0;
   min-height: 0;
   margin: 0 auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   position: relative;
 }
 
@@ -102,9 +148,15 @@
   height: 75%;
   z-index: 1;
   margin: 0 auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
 
 .board-bg {
@@ -131,15 +183,20 @@
   font-size: 2rem;
   font-weight: bold;
   z-index: 2000;
-  align-items: center;
-  justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   text-align: center;
   padding: 2rem;
 }
 /* Highlight selected gallery piece */
 .thumbnail-item.is-selected {
   border: 2.5px solid var(--theme-control-border, #999999);
-  box-shadow: 0 0 0 2px var(--theme-accent, #204f9f);
+  -webkit-box-shadow: 0 0 0 2px var(--theme-accent, #204f9f);
+          box-shadow: 0 0 0 2px var(--theme-accent, #204f9f);
 }
 /* Piece gallery images: use theme control background */
 .thumbnail-image {
@@ -229,7 +286,8 @@ html[data-theme="flowers"] {
   border: 1.5px solid var(--theme-status-border);
   color: var(--theme-status-text);
   border-radius: 0.7em;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+          box-shadow: 0 1px 2px rgba(0,0,0,0.04);
   padding: 0.08em 0.32em 0.08em 0.32em;
   margin-left: 0.25em;
   vertical-align: middle;
@@ -241,6 +299,8 @@ html[data-theme="flowers"] {
   color: var(--theme-control-text, #333333);
   border-radius: 999px;
   font-weight: 600;
+  -webkit-transition: background 0.2s, color 0.2s, border-color 0.2s;
+  -o-transition: background 0.2s, color 0.2s, border-color 0.2s;
   transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
 .profile-content .avatar-form button.profile-pref-btn:hover {
@@ -254,11 +314,14 @@ html[data-theme="flowers"] {
   border: 1px solid color-mix(in srgb, var(--theme-status-border, #cfd7e8) 75%, white 25%);
   color: var(--theme-status-text, #222233);
   border-radius: 10px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+          box-shadow: 0 1px 2px rgba(0,0,0,0.03);
 }
 /* Profile page comment icon colors */
 .comment-list .edit-comment-btn .fa-pen {
   color: var(--theme-control-text);
+  -webkit-transition: color 0.2s;
+  -o-transition: color 0.2s;
   transition: color 0.2s;
 }
 .comment-list .edit-comment-btn:hover .fa-pen,
@@ -268,6 +331,8 @@ html[data-theme="flowers"] {
 }
 .comment-list .delete-comment-form .fa-trash-can {
   color: #b91c1c;
+  -webkit-transition: color 0.2s;
+  -o-transition: color 0.2s;
   transition: color 0.2s;
 }
 .comment-list .delete-comment-form button:hover .fa-trash-can,
@@ -311,7 +376,9 @@ main {
 
 body.play-viewport {
   height: 100dvh;
+  display: -ms-grid;
   display: grid;
+  -ms-grid-rows: auto 1fr;
   grid-template-rows: auto 1fr;
   overflow: hidden;
   padding: 0;
@@ -332,31 +399,48 @@ body.play-viewport {
 .play-screen {
   height: 100%;
   min-height: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   gap: 0.5rem;
   overflow: hidden;
   padding-bottom: 2.5rem; /* Reserve space for footer */
 }
 
 .site-nav {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
-  flex-wrap: wrap;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
   gap: 0.75rem;
   margin-bottom: 1rem;
 }
 
 #mainNavLinks {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   gap: 1rem;
-  flex-wrap: wrap;
-  align-items: center;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 .nav-toggler {
   display: none;
-  align-items: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   gap: 0.4rem;
   border: 1px solid var(--theme-control-border, #999999);
   background: var(--theme-control-bg, #f4f4f4);
@@ -376,7 +460,9 @@ body.play-viewport {
 
 .controls-toggler {
   display: none;
-  align-items: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   gap: 0.4rem;
   border: 1px solid var(--theme-control-border, #999999);
   background: var(--theme-control-bg, #f4f4f4);
@@ -398,7 +484,7 @@ body.play-viewport {
 .play-screen .controls {
   margin-bottom: 0;
 }
-.controls { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.controls { display: -webkit-box; display: -ms-flexbox; display: flex; gap: 1rem; margin-bottom: 1rem; -ms-flex-wrap: wrap; flex-wrap: wrap; }
 .member-tier {
   margin: 0 0 0.5rem;
   font-weight: 600;
@@ -408,10 +494,15 @@ body.play-viewport {
 
 .difficulty-picker,
 .theme-picker {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   gap: 0.5rem;
-  flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
 }
 
 .toss-controls > span {
@@ -422,8 +513,12 @@ body.play-viewport {
 
 .bar-help {
   position: relative;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
   display: inline-flex;
-  align-items: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 .bar-help-btn {
@@ -433,6 +528,7 @@ body.play-viewport {
   border: 1px solid var(--theme-control-border, #999999);
   background: var(--theme-control-bg, #f4f4f4);
   color: var(--theme-control-text, #333333);
+  display: -ms-inline-grid;
   display: inline-grid;
   place-items: center;
   cursor: pointer;
@@ -464,7 +560,8 @@ body.play-viewport {
   border: 1px solid var(--theme-status-border, #cfd7e8);
   background: var(--theme-status-bg, #f7f9ff);
   color: var(--theme-status-text, #222233);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+  -webkit-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
   font-size: 0.92rem;
   line-height: 1.35;
   display: none;
@@ -483,8 +580,11 @@ body.play-viewport {
 .difficulty-button-bar,
 .theme-button-bar,
 .profile-button-bar {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
   display: inline-flex;
-  flex-wrap: nowrap;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
   border: 1px solid var(--theme-control-border);
   border-radius: 999px;
   overflow: hidden;
@@ -534,12 +634,19 @@ body.play-viewport {
 }
 
 .toss-controls {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   gap: 0.5rem;
   margin: 0;
-  justify-content: center;
-  flex-wrap: wrap;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
 }
 
 .toss-controls button {
@@ -566,15 +673,29 @@ body.play-viewport {
   height: 100vh;
   min-height: 100vh;
   margin-inline: auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  justify-content: center;
-  flex-grow: 1;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
 }
 
 #playerStatusColumn {
+  -ms-grid-column: 1;
   grid-column: 1;
+  -ms-grid-row: 1;
+  -ms-grid-row-span: 2;
   grid-row: 1 / span 2;
 }
 
@@ -587,8 +708,13 @@ body.play-viewport {
   font-family: var(--theme-font-display, Arial, sans-serif);
   font-weight: 600;
   line-height: 1.3;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 
 .side-status-title {
@@ -600,8 +726,11 @@ body.play-viewport {
   letter-spacing: 0.07em;
   text-transform: uppercase;
   opacity: 0.75;
-  flex-shrink: 0;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
   color: var(--theme-accent);
+  -webkit-transition: font-weight 0.1s;
+  -o-transition: font-weight 0.1s;
   transition: font-weight 0.1s;
 }
 
@@ -619,20 +748,33 @@ body.play-viewport {
 }
 
 #computerStatusColumn {
+  -ms-grid-column: 3;
   grid-column: 3;
+  -ms-grid-row: 1;
+  -ms-grid-row-span: 2;
   grid-row: 1 / span 2;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
   height: 100%;
 }
 
 .side-status-messages {
+  display: -ms-grid;
   display: grid;
   gap: 0.35rem;
   max-height: min(54vh, 510px);
   overflow-y: auto;
-  flex: 1;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
 }
 
 #playerStatusColumn .status-item {
@@ -660,13 +802,17 @@ body.play-viewport {
 }
 
 #playRender {
+  -ms-grid-column: 2;
   grid-column: 2;
+  -ms-grid-row: 1;
   grid-row: 1;
   min-height: 0;
   width: 100%;
+  display: -ms-grid;
   display: grid;
   place-items: center;
-  align-self: stretch;
+  -ms-grid-row-align: stretch;
+      align-self: stretch;
   container-type: size;
 }
 
@@ -676,6 +822,7 @@ body.play-viewport {
   width: min(100cqw, 100cqh);
   aspect-ratio: 1 / 1;
   margin: 0;
+  display: -ms-grid;
   display: grid;
   place-items: center;
   background-size: cover;
@@ -692,19 +839,29 @@ body.play-viewport {
   overflow: hidden;
   background-color: transparent;
   border: 1px solid rgba(0, 0, 0, 0.25);
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
   margin: 0 auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
 
 .coin-indicator.is-reset-ready {
   cursor: pointer;
-  box-shadow: 0 0 0 3px rgba(32, 79, 159, 0.2), 0 3px 12px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 0 0 0 3px rgba(32, 79, 159, 0.2), 0 3px 12px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 0 0 3px rgba(32, 79, 159, 0.2), 0 3px 12px rgba(0, 0, 0, 0.2);
 }
 
 .coin-column .toss-controls {
+  width: -webkit-max-content;
+  width: -moz-max-content;
   width: max-content;
 }
 
@@ -712,44 +869,113 @@ body.play-viewport {
   width: 100%;
   height: auto;
   max-width: 100%;
-  object-fit: contain;
+  -o-object-fit: contain;
+     object-fit: contain;
   display: block;
   margin: 0 auto;
 }
 
 .coin-indicator img.flipping {
-  animation: coin-flip 160ms linear infinite;
+  -webkit-animation: coin-flip 160ms linear infinite;
+          animation: coin-flip 160ms linear infinite;
+}
+
+@-webkit-keyframes coin-flip {
+  from { -webkit-transform: rotateY(0deg); transform: rotateY(0deg); }
+  to { -webkit-transform: rotateY(180deg); transform: rotateY(180deg); }
 }
 
 @keyframes coin-flip {
-  from { transform: rotateY(0deg); }
-  to { transform: rotateY(180deg); }
+  from { -webkit-transform: rotateY(0deg); transform: rotateY(0deg); }
+  to { -webkit-transform: rotateY(180deg); transform: rotateY(180deg); }
 }
 
 
 .board {
+  display: -ms-grid;
   display: grid;
+  -ms-grid-columns: minmax(0, 1fr) 2.5% minmax(0, 1fr) 2.5% minmax(0, 1fr);
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  -ms-grid-rows: minmax(0, 1fr) 2.5% minmax(0, 1fr) 2.5% minmax(0, 1fr);
   grid-template-rows: repeat(3, minmax(0, 1fr));
   width: 50%;
   height: 50%;
   gap: 2.5%;
 }
+
+
+.board > *:nth-child(1) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 1;
+}
+
+
+.board > *:nth-child(2) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 3;
+}
+
+
+.board > *:nth-child(3) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 5;
+}
+
+
+.board > *:nth-child(4) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 1;
+}
+
+
+.board > *:nth-child(5) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 3;
+}
+
+
+.board > *:nth-child(6) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 5;
+}
+
+
+.board > *:nth-child(7) {
+  -ms-grid-row: 5;
+  -ms-grid-column: 1;
+}
+
+
+.board > *:nth-child(8) {
+  -ms-grid-row: 5;
+  -ms-grid-column: 3;
+}
+
+
+.board > *:nth-child(9) {
+  -ms-grid-row: 5;
+  -ms-grid-column: 5;
+}
 .cell {
+  display: -ms-grid;
   display: grid;
   place-items: center;
   font-size: clamp(1.25rem, 3.2vw, 2.5rem);
   border: 1px solid #444;
   border-radius: 8px;
   cursor: pointer;
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
   background: color-mix(in srgb, var(--theme-control-bg, #f4f4f4) 88%, white 12%);
   aspect-ratio: 1 / 1;
 }
 .piece-img {
   width: 70%;
   height: 70%;
-  object-fit: contain;
+  -o-object-fit: contain;
+     object-fit: contain;
   pointer-events: none;
 }
 table {
@@ -779,6 +1005,8 @@ th, td {
 }
 
 .leaderboard-display-area .leaderboard-title {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
   width: fit-content;
   margin-inline: auto;
   padding: 0.35rem 0.8rem;
@@ -787,7 +1015,8 @@ th, td {
   background: var(--theme-control-bg);
   color: var(--theme-status-text);
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
+  -webkit-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
 }
 
 .leaderboard-table {
@@ -807,6 +1036,8 @@ th, td {
 }
 
 .leaderboard-display-area .leaderboard-title {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
   width: fit-content;
   margin-inline: auto;
   padding: 0.35rem 0.8rem;
@@ -815,7 +1046,8 @@ th, td {
   background: var(--theme-control-bg);
   color: var(--theme-status-text);
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
+  -webkit-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
 }
 
 .leaderboard-table th,
@@ -848,6 +1080,8 @@ th, td {
 /* Controls toggler and controls bar visibility for play screen */
 @media (max-width: 896px) {
   .controls-toggler {
+    display: -webkit-inline-box !important;
+    display: -ms-inline-flexbox !important;
     display: inline-flex !important;
   }
   #gameControlsWrapper {
@@ -881,7 +1115,10 @@ th, td {
 /* Collapse button bars except on large (lg) and extra-large (xl) screens */
 @media (max-width: 1199.98px) {
   .controls.row {
-    flex-direction: column !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-box-direction: normal !important;
+        -ms-flex-direction: column !important;
+            flex-direction: column !important;
     gap: 0.5em !important;
   }
 }
@@ -902,25 +1139,40 @@ th, td {
     row-gap: 0.5rem;
   }
   .play-render {
+    -ms-grid-column: 1;
+    -ms-grid-column-span: 3;
     grid-column: 1 / span 3;
+    -ms-grid-row: 2;
     grid-row: 2;
     width: 100%;
     min-width: 0;
-    flex-direction: column;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
   }
   #playerStatusColumn {
+    -ms-grid-column: 1;
+    -ms-grid-column-span: 3;
     grid-column: 1 / span 3;
+    -ms-grid-row: 3;
     grid-row: 3;
   }
   #computerStatusColumn {
+    -ms-grid-column: 1;
+    -ms-grid-column-span: 3;
     grid-column: 1 / span 3;
+    -ms-grid-row: 4;
     grid-row: 4;
     padding-bottom: 2.5vh;
   }
   .coin-column {
+    -ms-grid-column: 2;
     grid-column: 2;
+    -ms-grid-row: 1;
     grid-row: 1;
-    align-self: start;
+    -ms-grid-row-align: start;
+        align-self: start;
     padding: 0.25rem 0;
     background-color: transparent;
   }
@@ -930,8 +1182,11 @@ th, td {
   .side-status .status-item:first-child { display: block; }
   .coin-column .toss-controls {
     width: 20vw;
-    flex-wrap: wrap;
-    justify-content: center;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
     gap: 0.2rem;
   }
   .coin-column .toss-controls button {
@@ -950,10 +1205,12 @@ th, td {
   }
 }
 @media (min-width: 1025px) {
-  #mainNavLinks { display: flex !important; }
+  #mainNavLinks { display: -webkit-box !important; display: -ms-flexbox !important; display: flex !important; }
   .controls-toggler, .nav-toggler { display: none !important; }
   #playLayout {
-    justify-content: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
   }
   .play-render {
     width: 100%;
@@ -969,6 +1226,8 @@ th, td {
 /* --- MEDIA QUERIES --- */
 @media (max-width: 767.98px) and (orientation: portrait) {
   .rotate-overlay {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
   }
   .play-screen, .container-fluid#playLayout, .footer {
@@ -983,7 +1242,7 @@ th, td {
 /* (max-width: 767.98px) and (orientation: portrait): Only block play and show rotate overlay; no play area layout rules here. */
 /* (max-width: 914px) and (orientation: landscape), (max-width: 896px) no longer needed for play area grid/flex rules; handled by (max-width: 1024px) and (orientation: landscape) above. */
 @media (max-width: 900px) and (orientation: landscape) {
-  .controls-toggler { display: inline-flex; }
+  .controls-toggler { display: -webkit-inline-box; display: -ms-inline-flexbox; display: inline-flex; }
   #playLayout {
     padding: 0;
   }
@@ -997,10 +1256,19 @@ th, td {
   .play-render {
     min-width: 0;
     width: 100%;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
   }
   .board-frame {
     width: min(100vw, 60vh, 98%);
@@ -1014,7 +1282,7 @@ th, td {
 }
 /* (max-width: 1024px): Only nav and controls toggler, no play area grid/flex rules. All play area rules are in base or (max-width: 1024px) and (orientation: landscape). */
 @media (orientation: portrait) {
-  .rotate-overlay { display: flex; }
+  .rotate-overlay { display: -webkit-box; display: -ms-flexbox; display: flex; }
   .play-screen,
   #playLayout,
   #playRender,
@@ -1027,6 +1295,8 @@ th, td {
 /* Only show rotate overlay for small screens in portrait mode */
 @media (max-width: 767.98px) and (orientation: portrait) {
   .rotate-overlay {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
   }
   .play-screen, .container-fluid#playLayout, .footer {
@@ -1054,8 +1324,11 @@ th, td {
   #playLayout .row {
     width: 100vw;
     margin: 0;
-    flex-wrap: nowrap;
-    justify-content: center;
+    -ms-flex-wrap: nowrap;
+        flex-wrap: nowrap;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
   }
   .controls-toggler {
     position: absolute;
@@ -1073,11 +1346,15 @@ th, td {
     z-index: 1040;
     background: var(--page-bg, #fff);
     border-radius: 0.7em;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.12);
+    -webkit-box-shadow: 0 2px 16px rgba(0,0,0,0.12);
+            box-shadow: 0 2px 16px rgba(0,0,0,0.12);
     padding: 0.5em 0.5em 0.2em 0.5em;
   }
   .controls {
-    flex-direction: column;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
     gap: 0.5em;
   }
 }
