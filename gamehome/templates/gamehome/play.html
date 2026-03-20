@@ -2,19 +2,23 @@
 {% load static %}
 {% block body_class %}play-viewport{% endblock %}
 {% block content %}
-<div class="rotate-overlay">Please rotate your device to landscape to play.</div>
-<section class="play-screen min-vh-100 d-flex flex-column justify-content-center">
-  <p class="member-tier d-none d-md-block">Welcome, you are a {{ member_tier|title }} player.</p>
+<div class="rotate-overlay">
+  Please rotate your device to landscape to play.
+</div>
+<section class="play-screen min-vh-90 d-flex flex-column justify-content-center">
+  <p class="member-tier d-none d-md-block text-center">Welcome, you are a {{ member_tier|title }} player.</p>
 
-  <!-- Pickers toggler absolutely positioned top right on small screens -->
-  <button class="controls-toggler d-lg-none btn btn-outline-secondary p-2" type="button" data-bs-toggle="collapse"
+
+  <!-- Pickers toggler and collapse for md and smaller screens -->
+  <button class="controls-toggler d-md-block d-lg-none btn btn-outline-secondary p-2 mb-2" type="button" data-bs-toggle="collapse"
     data-bs-target="#gameControlsWrapper" aria-controls="gameControlsWrapper" aria-expanded="false"
     aria-label="Show pickers">
     <i class="fa-solid fa-circle-down" aria-hidden="true"></i>
   </button>
-  <div id="gameControlsWrapper" class="collapse mb-2">
+  <div id="gameControlsWrapper" class="collapse d-md-block d-lg-none mb-2">
     <div class="controls row gx-2">
-      <div class="col-12 col-md-5 mb-2 mb-md-0">
+      <!-- ...existing picker markup... -->
+      <div class="col-5 col-md-11 mb-2 mb-md-0">
         <div class="difficulty-picker" aria-label="Difficulty selector">
           <input id="difficulty" type="hidden" value="{{ allowed_difficulties.0|default:'easy' }}">
           <div class="difficulty-button-bar" role="group" aria-label="Choose difficulty">
@@ -49,7 +53,7 @@
           </div>
         </div>
       </div>
-      <div class="col-12 col-md-5">
+      <div class="col-5 col-md-11">
         <div class="theme-picker" aria-label="Theme selector">
           <input id="theme" type="hidden" value="{{ allowed_themes.0|default:'traditional' }}">
           <div class="theme-button-bar" role="group" aria-label="Choose game theme">
@@ -85,22 +89,96 @@
     </div>
   </div>
 
-  <div class="container-fluid play-layout flex-grow-1 d-flex flex-column justify-content-center h-100">
-    <div class="row flex-grow-1 h-100 flex-nowrap align-items-stretch justify-content-center g-0">
+  <!-- Always show pickers on large screens and up, below welcome message -->
+  <div class="d-none d-lg-block mb-2">
+    <div class="controls row justify-content-evenly gx-2">
+      <!-- ...existing picker markup... -->
+      <div class="col-11 col-md-5 mb-2 mb-md-0 justify-content-start d-flex">
+        <div class="difficulty-picker" aria-label="Difficulty selector">
+          <input id="difficulty-lg" type="hidden" value="{{ allowed_difficulties.0|default:'easy' }}">
+          <div class="difficulty-button-bar" role="group" aria-label="Choose difficulty">
+            {% if "easy" in allowed_difficulties %}
+            <button type="button" class="difficulty-btn {% if allowed_difficulties.0 == 'easy' %}is-selected{% endif %}"
+              data-difficulty="easy">Easy</button>
+            {% endif %}
+            {% if "normal" in allowed_difficulties %}
+            <button type="button"
+              class="difficulty-btn {% if allowed_difficulties.0 == 'normal' %}is-selected{% endif %}"
+              data-difficulty="normal">Normal</button>
+            {% endif %}
+            {% if "hard" in allowed_difficulties %}
+            <button type="button" class="difficulty-btn {% if allowed_difficulties.0 == 'hard' %}is-selected{% endif %}"
+              data-difficulty="hard">Hard</button>
+            {% endif %}
+            {% if "fiendish" in allowed_difficulties %}
+            <button type="button"
+              class="difficulty-btn {% if allowed_difficulties.0 == 'fiendish' %}is-selected{% endif %}"
+              data-difficulty="fiendish">Fiendish</button>
+            {% endif %}
+          </div>
+          <div class="bar-help" data-help>
+            <button type="button" class="bar-help-btn" aria-label="About difficulty settings" aria-expanded="false"
+              aria-controls="difficultyHelpPanel-lg">
+              <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+            </button>
+            <div id="difficultyHelpPanel-lg" class="bar-help-panel" role="note">
+              Difficulty changes how smart and aggressive the computer is. Start on Easy, then move up to Normal, Hard,
+              and Fiendish.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-11 col-md-5 mb-2 mb-md-0 justify-content-end d-flex">
+        <div class="theme-picker" aria-label="Theme selector">
+          <input id="theme-lg" type="hidden" value="{{ allowed_themes.0|default:'traditional' }}">
+          <div class="theme-button-bar" role="group" aria-label="Choose game theme">
+            {% if "traditional" in allowed_themes %}
+            <button type="button" class="theme-btn {% if allowed_themes.0 == 'traditional' %}is-selected{% endif %}"
+              data-theme="traditional">Traditional</button>
+            {% endif %}
+            {% if "robot" in allowed_themes %}
+            <button type="button" class="theme-btn {% if allowed_themes.0 == 'robot' %}is-selected{% endif %}"
+              data-theme="robot">Robot</button>
+            {% endif %}
+            {% if "flowers" in allowed_themes %}
+            <button type="button" class="theme-btn {% if allowed_themes.0 == 'flowers' %}is-selected{% endif %}"
+              data-theme="flowers">Flowers</button>
+            {% endif %}
+            {% if "fantasy" in allowed_themes %}
+            <button type="button" class="theme-btn {% if allowed_themes.0 == 'fantasy' %}is-selected{% endif %}"
+              data-theme="fantasy">Fantasy</button>
+            {% endif %}
+          </div>
+          <div class="bar-help" data-help>
+            <button type="button" class="bar-help-btn" aria-label="About theme settings" aria-expanded="false"
+              aria-controls="themeHelpPanel-lg">
+              <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+            </button>
+            <div id="themeHelpPanel-lg" class="bar-help-panel" role="note">
+              Theme changes the board art, game pieces, and coin visuals. Pick any unlocked theme to personalize the
+              match.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="playLayout" class="play-layout container flex-grow-1 d-flex flex-column justify-content-center h-100">
+    <div class="row flex-grow-1 h-100 flex-nowrap align-items-start justify-content-center g-0">
       <!-- Left Column: Player Status -->
-      <div class="col-3 d-flex flex-column justify-content-start h-100 px-1 order-1 order-md-1"
-        style="min-width:0; overflow-y:auto; overflow-x:hidden;">
-        <div class="side-status side-status-player flex-grow-1">
-          <p class="side-status-title">You-{{ member_tier|title }}</p>
+      <div id="playerStatusColumn" class="col d-flex flex-column align-items-start h-100 playerstatuscolumn"
+        >
+        <div id="sideStatusPlayer" class="side-status side-status-player flex-grow-1">
+          <p id="sideStatusPlayerTitle" class="side-status-title">You-{{ member_tier|title }}</p>
           <div id="playerStatus" class="side-status-messages" aria-live="polite"></div>
         </div>
       </div>
 
       <!-- Center Column: Gameboard -->
-      <div
-        class="playmain-content col-6 d-flex flex-column align-items-center justify-content-center px-1 mx-auto text-center order-3 order-md-2"
-        style="min-width:0; height: 100%; max-width: 100vw;">
-        <div class="play-render d-flex align-items-center justify-content-center w-100" style="min-width:0; height: 90vh; max-width: 100vw;">
+      <div id="playMainContent"
+        class="playmain-content d-flex flex-column align-items-start mb-4 justify-content-center px-1 mx-auto text-center">
+        <div id="playRender" class="play-render d-flex align-items-center justify-content-center w-100">
           <div id="boardFrame" class="board-frame d-flex align-items-center justify-content-center mx-auto position-relative" aria-hidden="true">
             <div id="board" class="board position-relative" aria-label="tic tac toe board"></div>
           </div>
@@ -108,27 +186,27 @@
       </div>
 
       <!-- Right Column: Computer Status & Coin -->
-      <div class="col-3 d-flex flex-column justify-content-between h-100 px-1 order-2 order-md-3"
-        style="min-width:0; overflow-y:auto; overflow-x:hidden;">
-        <div class="side-status side-status-computer flex-grow-1 mb-2 d-flex flex-column">
-          <p class="side-status-title">Computer</p>
+      <div id="computerStatusColumn" class="col d-flex flex-column computerstatuscolumn"
+        >
+        <div id="sideStatusComputer" class="side-status side-status-computer flex-grow-1 d-flex flex-column">
+          <p id="sideStatusComputerTitle" class="side-status-title">Computer</p>
           <div id="computerStatus" class="side-status-messages flex-grow-1" aria-live="polite"></div>
           <!-- Coin and controls always at bottom on md+ screens, can be toggled for small screens in future -->
-          <div class="coin-column mt-auto">
+          <div id="coinColumn" class="coin-column mt-auto">
             <div id="coinIndicator" class="coin-indicator" aria-hidden="true">
               <img id="coinIndicatorImg" src="{% static 'gamehome/images/game_traditional_coin_head.png' %}"
                 alt="coin toss result">
             </div>
-            <div class="coin-status-container"
-              style="min-height:2.5em;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-              <p id="coinStatusMessage" class="coin-status-message" aria-live="polite" style="margin:0.5em 0 0 0;">
+            <div id="coinStatusContainer" class="coin-status-container"
+              >
+              <p id="coinStatusMessage" class="coin-status-message" aria-live="polite">
                 &nbsp;</p>
-            </div>
-            <div id="tossControls" class="toss-controls" hidden>
-              <button id="startBtn" type="button">Start</button>
-              <button id="pickHeadsBtn" type="button">Heads</button>
-              <span>or</span>
-              <button id="pickTailsBtn" type="button">Tails</button>
+              <div id="tossControls" class="toss-controls" hidden>
+                <button id="startBtn" type="button">Start</button>
+                <button id="pickHeadsBtn" type="button">Heads</button>
+                <span>or</span>
+                <button id="pickTailsBtn" type="button">Tails</button>
+              </div>
             </div>
           </div>
         </div>

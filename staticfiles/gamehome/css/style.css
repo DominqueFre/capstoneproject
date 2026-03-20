@@ -1,3 +1,25 @@
+/* Moved from play.html inline styles */
+
+
+
+
+#playRender {
+  min-width: 0;
+  height: 90vh;
+  max-width: 100vw;
+}
+
+#coinStatusContainer {
+  min-height: 2.5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#coinStatusMessage {
+  margin: 0.5em 0 0 0;
+}
 /* Universal site margin wrapper, theme-agnostic */
 .site-margin {
   margin: 0.5rem;
@@ -23,6 +45,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+#playerStatusColumn,
+#computerStatusColumn {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 0;
+  overflow-y: auto;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+#computerStatusColumn {
+  padding-bottom: 2.5vh; /* visual gap at bottom */
 }
 .board-frame {
   aspect-ratio: 1 / 1;
@@ -259,14 +297,16 @@ body.play-viewport {
   padding: 0;
 }
 
-.playmain-content {
+#playMainContent {
     padding: 2.5rem 0 3rem;
+    min-width: 0;
+    height: 100%;
+    max-width: 100vw;
 }
-
-  body.play-viewport .playmain-content {
+  body.play-viewport #playMainContent {
     height: 100%;
     min-height: 0;
-  overflow: hidden;
+    overflow: hidden;
 }
 
 .play-screen {
@@ -499,7 +539,7 @@ body.play-viewport {
   border-color: var(--theme-accent, #204f9f);
 }
 
-.play-layout {
+#playLayout {
   --coin-size: clamp(78px, 12vw, 156px);
   width: 100%;
   max-width: 100%;
@@ -513,7 +553,7 @@ body.play-viewport {
   align-items: start;
 }
 
-.side-status-player {
+#playerStatusColumn {
   grid-column: 1;
   grid-row: 1 / span 2;
 }
@@ -550,15 +590,15 @@ body.play-viewport {
   opacity: 1;
 }
 
-.side-status-player .side-status-title {
+#playerStatusColumn .side-status-title {
   color: var(--theme-accent, #204f9f);
 }
 
-.side-status-computer .side-status-title {
+#computerStatusColumn .side-status-title {
   color: var(--theme-status-text, #222233);
 }
 
-.side-status-computer {
+#computerStatusColumn {
   grid-column: 3;
   grid-row: 1 / span 2;
   display: flex;
@@ -575,11 +615,11 @@ body.play-viewport {
   flex: 1;
 }
 
-.side-status-player .status-item {
+#playerStatusColumn .status-item {
   color: var(--theme-accent, #204f9f);
 }
 
-.side-status-computer .status-item {
+#computerStatusColumn .status-item {
   color: var(--theme-status-text, #222233);
 }
 
@@ -599,7 +639,7 @@ body.play-viewport {
   opacity: 0.55;
 }
 
-.play-render {
+#playRender {
   grid-column: 2;
   grid-row: 1;
   min-height: 0;
@@ -624,14 +664,19 @@ body.play-viewport {
 }
 
 .coin-indicator {
-  width: var(--coin-size);
-  min-width: var(--coin-size);
+  width: var(--coin-size, 19vw);
+  min-width: var(--coin-size, 19vw);
+  max-width: 100%;
   aspect-ratio: 1 / 1;
   border-radius: 999px;
   overflow: hidden;
   background-color: transparent;
   border: 1px solid rgba(0, 0, 0, 0.25);
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .coin-indicator.is-reset-ready {
@@ -645,9 +690,11 @@ body.play-viewport {
 
 .coin-indicator img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
   display: block;
+  margin: 0 auto;
 }
 
 .coin-indicator img.flipping {
@@ -796,7 +843,7 @@ th, td {
 
 /* Force play-layout to use full viewport width on large screens */
 @media (min-width: 768px) {
-  .play-layout {
+  #playLayout {
     width: 100vw !important;
     max-width: 100vw !important;
     padding-left: 0 !important;
@@ -804,7 +851,7 @@ th, td {
     margin-left: 0 !important;
     margin-right: 0 !important;
   }
-  .container-fluid.play-layout {
+  .container-fluid#playLayout {
     padding-left: 0 !important;
     padding-right: 0 !important;
     margin-left: 0 !important;
@@ -819,60 +866,80 @@ th, td {
   }
 }
 /* Tablet <=1024px: nav collapses; coin above board, top-right 20vw, 10vw from edge */
-@media (max-width: 1024px) {
-  .nav-toggler { display: inline-flex; }
 
-  #mainNavLinks { display: none !important; width: 100%; }
-  #mainNavLinks.show { display: flex !important; flex-direction: column; gap: 0.4rem; padding: 0.4rem 0; }
+/* --- PLAY AREA BASE (LANDSCAPE-FIRST) --- */
+#playLayout {
+  display: grid;
+  grid-template-columns: minmax(10vw, 1fr) minmax(40vw, 2.5fr) minmax(10vw, 1fr);
+  justify-content: center;
+  width: 100vw;
+  max-width: 100vw;
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: 0;
+  margin-right: 0;
+}
 
-  .play-layout {
-    --coin-size: 13vw;
-    grid-template-columns: 1fr 20vw 10vw;
+.play-render {
+  grid-column: 2;
+  grid-row: 1;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#playerStatusColumn {
+  grid-column: 1;
+  grid-row: 1;
+}
+#computerStatusColumn {
+  grid-column: 3;
+  grid-row: 1;
+  padding-bottom: 2.5vh;
+}
+
+/* --- WIDTH-BASED LANDSCAPE OVERRIDES --- */
+@media (max-width: 1024px) and (orientation: landscape) {
+  #playLayout {
+    grid-template-columns: 1fr 2fr 1fr;
     row-gap: 0.5rem;
   }
-
+  .play-render {
+    grid-column: 1 / span 3;
+    grid-row: 2;
+    width: 100%;
+    min-width: 0;
+    flex-direction: column;
+  }
+  #playerStatusColumn {
+    grid-column: 1 / span 3;
+    grid-row: 3;
+  }
+  #computerStatusColumn {
+    grid-column: 1 / span 3;
+    grid-row: 4;
+    padding-bottom: 2.5vh;
+  }
   .coin-column {
     grid-column: 2;
     grid-row: 1;
     align-self: start;
     padding: 0.25rem 0;
     background-color: transparent;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 0.75rem;
-    min-height: 0;
-    margin-top: auto;
   }
-
-  .play-render {
-    grid-column: 1 / span 3;
-    grid-row: 2;
-  }
-
-  .side-status-player {
-    grid-column: 1 / span 3;
-    grid-row: 3;
-  }
-
-  .side-status-computer {
-    grid-column: 1 / span 3;
-    grid-row: 4;
-  }
-
   .side-status { margin-top: 0; }
   .side-status-messages { max-height: min(26vh, 220px); overflow-y: auto; }
   .side-status .status-item { display: none; }
   .side-status .status-item:first-child { display: block; }
-
   .coin-column .toss-controls {
     width: 20vw;
     flex-wrap: wrap;
     justify-content: center;
     gap: 0.2rem;
   }
-
   .coin-column .toss-controls button {
     font-size: 0.75rem;
     padding: 0.25rem 0.45rem;
@@ -880,36 +947,7 @@ th, td {
 }
 
 /* Mobile <=640px: coin 30vw; controls collapse toggle visible; toss buttons stack */
-@media (max-width: 900px) and (orientation: landscape) {
-  .controls-toggler { display: inline-flex; }
-  .play-layout {
-    padding: 0;
-  }
-  .side-status-messages {
-    max-width: 100%;
-    min-width: 0;
-    max-height: 32vh;
-    overflow-y: auto;
-    margin-bottom: 0.5rem;
-  }
-  .play-render {
-    min-width: 0;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  .board-frame {
-    width: min(100vw, 60vh, 98%);
-    max-width: 100vw;
-    aspect-ratio: 1 / 1;
-    margin: 0 auto;
-  }
-  .coin-column {
-    margin-top: auto;
-  }
-}
+/* (max-width: 900px) and (orientation: landscape) no longer needed for play area grid/flex rules; handled by (max-width: 1024px) and (orientation: landscape) above. */
 
 /* Desktop >1024px: always show nav links and controls; hide togglers */
 @media (min-width: 897px) {
@@ -920,7 +958,7 @@ th, td {
 @media (min-width: 1025px) {
   #mainNavLinks { display: flex !important; }
   .controls-toggler, .nav-toggler { display: none !important; }
-  .play-layout {
+  #playLayout {
     justify-content: center;
     grid-template-columns: minmax(180px, 240px) minmax(320px, min(66dvh, 760px)) minmax(180px, 240px);
   }
@@ -931,7 +969,7 @@ th, td {
 }
 
 @media (min-width: 1200px) {
-  .play-layout {
+  #playLayout {
     --coin-size: clamp(112px, 9vw, 182px);
   }
 }
@@ -940,7 +978,7 @@ th, td {
   .rotate-overlay {
     display: flex;
   }
-  .play-screen, .container-fluid.play-layout, .footer {
+  .play-screen, .container-fluid#playLayout, .footer {
     display: none !important;
   }
 }
@@ -949,84 +987,11 @@ th, td {
     display: none !important;
   }
 }
-@media (max-width: 767.98px) and (orientation: portrait) {
-  .play-screen {
-    position: relative;
-    min-height: 100vh;
-    width: 100vw;
-    overflow-x: hidden;
-  }
-  .container-fluid.play-layout {
-    width: 100vw;
-    max-width: 100vw;
-    margin: 0 auto;
-    padding: 0;
-  }
-  .play-layout .row {
-    width: 100vw;
-    margin: 0;
-    flex-wrap: nowrap;
-    justify-content: center;
-  }
-  .controls-toggler {
-    position: absolute;
-    top: 0.5rem;
-    right: 1rem;
-    z-index: 1050;
-    display: block;
-  }
-  #gameControlsWrapper {
-    width: 96vw;
-    left: 2vw;
-    right: 2vw;
-    position: absolute;
-    top: 2.5rem;
-    z-index: 1040;
-    background: var(--page-bg, #fff);
-    border-radius: 0.7em;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.12);
-    padding: 0.5em 0.5em 0.2em 0.5em;
-  }
-  .controls {
-    flex-direction: column;
-    gap: 0.5em;
-  }
-}
-@media (max-width: 914px) and (orientation: landscape), (max-width: 896px) {
-  .play-layout {
-    margin-bottom: 3.5rem !important; /* Extra space for coin controls and footer */
-  }
-  /* Only make button bars vertical when controls are collapsed (not .show) */
-  #gameControlsWrapper:not(.show) .difficulty-button-bar,
-  #gameControlsWrapper:not(.show) .theme-button-bar,
-  #gameControlsWrapper:not(.show) .profile-button-bar {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: stretch;
-    width: 100%;
-  }
-  /* When controls are expanded (.show), keep button bars horizontal */
-  #gameControlsWrapper.show .difficulty-button-bar,
-  #gameControlsWrapper.show .theme-button-bar,
-  #gameControlsWrapper.show .profile-button-bar {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center;
-    width: auto;
-  }
-  .controls-toggler {
-    display: inline-flex !important;
-  }
-  #gameControlsWrapper {
-    display: none;
-  }
-  #gameControlsWrapper.show {
-    display: block;
-  }
-}
+/* (max-width: 767.98px) and (orientation: portrait): Only block play and show rotate overlay; no play area layout rules here. */
+/* (max-width: 914px) and (orientation: landscape), (max-width: 896px) no longer needed for play area grid/flex rules; handled by (max-width: 1024px) and (orientation: landscape) above. */
 @media (max-width: 900px) and (orientation: landscape) {
   .controls-toggler { display: inline-flex; }
-  .play-layout {
+  #playLayout {
     padding: 0;
   }
   .side-status-messages {
@@ -1054,104 +1019,14 @@ th, td {
     margin-top: auto;
   }
 }
-@media (max-width: 1024px) {
-  .nav-toggler { display: inline-flex; }
-
-  #mainNavLinks { display: none !important; width: 100%; }
-  #mainNavLinks.show { display: flex !important; flex-direction: column; gap: 0.4rem; padding: 0.4rem 0; }
-
-  .play-layout {
-    --coin-size: 13vw;
-    grid-template-columns: 1fr 20vw 10vw;
-    row-gap: 0.5rem;
-  }
-
-  .coin-column {
-    grid-column: 2;
-    grid-row: 1;
-    align-self: start;
-    padding: 0.25rem 0;
-    background-color: transparent;
-  }
-
-  .play-render {
-    grid-column: 1 / span 3;
-    grid-row: 2;
-  }
-
-  .side-status-player {
-    grid-column: 1 / span 3;
-    grid-row: 3;
-  }
-
-  .side-status-computer {
-    grid-column: 1 / span 3;
-    grid-row: 4;
-  }
-
-  .side-status { margin-top: 0; }
-  .side-status-messages { max-height: min(26vh, 220px); overflow-y: auto; }
-  .side-status .status-item { display: none; }
-  .side-status .status-item:first-child { display: block; }
-
-  .coin-column .toss-controls {
-    width: 20vw;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.2rem;
-  }
-
-  .coin-column .toss-controls button {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.45rem;
-  }
-}
-@media (orientation: portrait), (max-width: 1024px) {
-  .play-screen {
-    position: relative;
-    min-height: 100vh;
-    width: 100vw;
-    overflow-x: hidden;
-  }
-  .container-fluid.play-layout {
-    width: 100vw;
-    max-width: 100vw;
-    margin: 0 auto;
-    padding: 0;
-  }
-  .play-layout .row {
-    width: 100vw;
-    margin: 0;
-    flex-wrap: nowrap;
-    justify-content: center;
-  }
-  .controls-toggler {
-    position: absolute;
-    top: 0.5rem;
-    right: 1rem;
-    z-index: 1050;
-    display: block;
-  }
-  #gameControlsWrapper {
-    width: 96vw;
-    left: 2vw;
-    right: 2vw;
-    position: absolute;
-    top: 2.5rem;
-    z-index: 1040;
-    background: var(--page-bg, #fff);
-    border-radius: 0.7em;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.12);
-    padding: 0.5em 0.5em 0.2em 0.5em;
-  }
-  .controls {
-    flex-direction: column;
-    gap: 0.5em;
-  }
-  .member-tier {
-    display: none !important;
-  }
-  body.play-viewport .footer {
+/* (max-width: 1024px): Only nav and controls toggler, no play area grid/flex rules. All play area rules are in base or (max-width: 1024px) and (orientation: landscape). */
+@media (orientation: portrait) {
+  .rotate-overlay { display: flex; }
+  .play-screen,
+  #playLayout,
+  #playRender,
+  #playerStatusColumn,
+  #computerStatusColumn {
     display: none !important;
   }
 }
@@ -1161,7 +1036,7 @@ th, td {
   .rotate-overlay {
     display: flex;
   }
-  .play-screen, .container-fluid.play-layout, .footer {
+  .play-screen, .container-fluid#playLayout, .footer {
     display: none !important;
   }
 }
@@ -1177,13 +1052,13 @@ th, td {
     width: 100vw;
     overflow-x: hidden;
   }
-  .container-fluid.play-layout {
+  .container-fluid#playLayout {
     width: 100vw;
     max-width: 100vw;
     margin: 0 auto;
     padding: 0;
   }
-  .play-layout .row {
+  #playLayout .row {
     width: 100vw;
     margin: 0;
     flex-wrap: nowrap;
@@ -1211,56 +1086,5 @@ th, td {
   .controls {
     flex-direction: column;
     gap: 0.5em;
-  }
-}
-
-
-@media (orientation: portrait), (max-width: 1024px) {
-  .play-screen {
-    position: relative;
-    min-height: 100vh;
-    width: 100vw;
-    overflow-x: hidden;
-  }
-  .container-fluid.play-layout {
-    width: 100vw;
-    max-width: 100vw;
-    margin: 0 auto;
-    padding: 0;
-  }
-  .play-layout .row {
-    width: 100vw;
-    margin: 0;
-    flex-wrap: nowrap;
-    justify-content: center;
-  }
-  .controls-toggler {
-    position: absolute;
-    top: 0.5rem;
-    right: 1rem;
-    z-index: 1050;
-    display: block;
-  }
-  #gameControlsWrapper {
-    width: 96vw;
-    left: 2vw;
-    right: 2vw;
-    position: absolute;
-    top: 2.5rem;
-    z-index: 1040;
-    background: var(--page-bg, #fff);
-    border-radius: 0.7em;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.12);
-    padding: 0.5em 0.5em 0.2em 0.5em;
-  }
-  .controls {
-    flex-direction: column;
-    gap: 0.5em;
-  }
-  .member-tier {
-    display: none !important;
-  }
-  body.play-viewport .footer {
-    display: none !important;
   }
 }
