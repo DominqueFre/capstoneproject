@@ -55,26 +55,26 @@ activate the venv
     `pip freeze --local >requirements .txt`
 
 ### Steps for creating project 
-Create a project
+- Create a project
     `django.admin start project xxx`
-Create apps
+- Create apps
     `python manage.py startapp yyy`
-Include in Installed apps
-Create a view
-Include in URL's
+- Include in Installed apps
+- Create a view
+- Include in URL's
 
 ### Steps for setting up django's key safely
-As the env.py file is in the gitignore file this can securely hold the keys 
-In the projects settings.py file
+- As the env.py file is in the gitignore file this can securely hold the keys 
+- In the projects settings.py file
 
 
-In the env.py file
+- In the env.py file
 
 
 ### Steps for setting up database URL safely
-In the projects settings.py file - utilising the imported env from the key.
+- In the projects settings.py file - utilising the imported env from the key.
     `DATABASES = {'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))}`
-In the env.py file
+- In the env.py file
 `import os`
 
 `os.environ.setdefault('DATABASE_URL',"postgresql://etc")`
@@ -87,11 +87,11 @@ Inside settings under the database information (this is similar to allowed hosts
 ### Steps for completing the installation of summernote
 In the projects settings.py file - in INSTALLED APPS
     `django_summernote`
-In the projects urls.py file - add the path
+- In the projects urls.py file - add the path
     `path('summernote/', include('django_summernote.urls)),`
-In the admin.py file  - of the app that will use summernote add the import 
+- In the admin.py file  - of the app that will use summernote add the import 
     `from django_summernote.admin import SummernoteModelAdmin`
-Then in the same file add a decorator and class 
+- Then in the same file add a decorator and class 
 (replaces a simple registration eg admin.site.register(ModelClassName))
 `@admin.register(ModelClassName)`
 `class PostAdmin(SummernoteModelAdmin):`
@@ -100,7 +100,7 @@ Then in the same file add a decorator and class
     `list_filter = ('status',)`
     `prepopulated_fields = {'slug': ('aaaaa',)}`
     `summernote_fields = ('content',)`
-Apply the migrations for the django_summernote app
+- Apply the migrations for the django_summernote app
 `python manage.py migrate`
 
 
@@ -170,9 +170,9 @@ Displaying a confirmation message
 ### Steps for completing the installation of Cloudinary
 - In installed apps below staticfiles add 
 `'cloudinary_storage',`
-and below django_summernotes add
+- Below django_summernotes add
 `'cloudinary',`
-in env.py set the default cloudinary URL and also set this in your deployment platform ie Heroku, 
+- In env.py set the default cloudinary URL and also set this in your deployment platform ie Heroku, 
 `os.environ.setdefault(`
 `    'CLOUDINARY_URL',`
 `    'cloudinary://<key>:<secret>@dnfsa35yv'`
@@ -182,11 +182,11 @@ in env.py set the default cloudinary URL and also set this in your deployment pl
 ### Models /Views / Templates and URL's
 **Models**
 (The database bit)
-Create models in apps in models.py
-Once created use manage.py
+- Create models in apps in models.py
+- Once created use manage.py
     `python manage.py makemigrations yyy`
     `python manage.py migrate yyy`
-Inside yyy/admin.py - register the model(s)
+- Inside yyy/admin.py - register the model(s)
     `from .models import zzz`
     `admin.site.register(zzz)`
 **Views**
@@ -237,7 +237,7 @@ A mixture of CRUD features have been included in the project, standard functiona
 
 The navigation login bar provides a visual clue as to login status when on display and if a superuser is logged in they have an addtional link to take them directly to the admin page. Additonal interactive content on the pages indicate logged in status such as the user or gamer name, if one has been chosen, apparent in several places such as the scoreboard, the game comments and in the profile page introduction. 
 
-L04 Testing manual etc
+L04 Testing manual etc  Testing of features has been done manually and has acted as a sense-check that all is working correctly.
 
 Regular Github commits were made, and consideration of data security through use of env.py in conjunction with a gitignore file, with keys then set up in the configuration files of Heroku for hosting.  Debug was set to False for the production environment through judicious use of code and the env.py file.
 
@@ -321,12 +321,12 @@ Scores recorded	|No	|Yes	|As Member	|As Member
 
 Wireframes
 
-- [Homescreen Wireframes](static/wireframes/wfhome.png)
-- [Profilescreen Wireframes](static/wireframes/wfprofile.png)
-- [Scores Wireframes](static/wireframes/wfscores.png)
+- [Homescreen Wireframes](doccsupport/wireframes/wfhome.png)
+- [Profilescreen Wireframes](docsupport/wireframes/wfprofile.png)
+- [Scores Wireframes](docssupport/wireframes/wfscores.png)
 
 ERD
-- [Entity Relationship Diagram](static/erds/capstone-erd.svg)
+- [Entity Relationship Diagram](doccsupport/erds/capstone-erd.svg)
 
  
  Sources
@@ -353,15 +353,9 @@ ERD
 |CSS||Code Checkers||
 |JavaScript||Code Checkers||
 |||||
-|||||
+
 
 
 Add tests / manual checking
-
-Non-Negotiable Requirements”.
-
-- The game-play screen should take up the viewport/browser window only - no scrolling should be required of the page itself.  Elements within the page may be scrollable. This effectively limits the size of the gameboard image and game-play area wich is nested within the game-image area. This is to give the best visual impact possible.
-- The gameboard image must be fully on screen on all device sizes.
- 
 
 
