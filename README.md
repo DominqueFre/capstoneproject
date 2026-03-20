@@ -84,7 +84,7 @@ Inside settings under the database information (this is similar to allowed hosts
 `CSRF_TRUSTED_ORIGINS = ["https://*.codeinstitute-ide.net/","https://*.herokuapp.com"]`
 
 ### Steps for completing the installation of summernote
-In the projects settings.py file - in INSTALLED APPS
+- In the projects settings.py file - in INSTALLED APPS
     `django_summernote`
 - In the projects urls.py file - add the path
     `path('summernote/', include('django_summernote.urls)),`
