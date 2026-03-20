@@ -66,10 +66,9 @@ activate the venv
 ### Steps for setting up django's key safely
 - As the env.py file is in the gitignore file this can securely hold the keys 
 - In the projects settings.py file
-
-
+add the code to retrieve the key from env.py
 - In the env.py file
-
+securely store the key
 
 ### Steps for setting up database URL safely
 - In the projects settings.py file - utilising the imported env from the key.
