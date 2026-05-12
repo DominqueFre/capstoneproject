@@ -2,18 +2,22 @@
 
 ## Table of Contents
 -[Introduction](#introduction)
--[Initial steps for setup and deployment](#initial-steps-for-setup-and-deployment)
-    -[Steps for Django Framework setup](#steps-for-django-framework-setup)
-    -[Steps for deployment](#steps-for-deployment) 
+
+-[Steps for Django Framework setup](#steps-for-django-framework-setup)
+ 
+-[Steps for deployment](#steps-for-deployment) 
+
 -[Learning Objectives](#learning-objectives)
+
 -[AI Usage](#ai-usage)
+
 -[Supporting documentation](#supporting-documentation)
+
 -[Sources](#sources)
 
-# Introduction
-    This project is a simple noughts and crosses game, with interactive features for the user to enjoy and to stimulate continued gameplay and interactions.  The game is playable and the leaderboard can be viewed without login but additional features are accessible if they do so.  Once registered and logged in, gmaeplay results are recorded and the users own score can be viewed on the leaderboard.  The user is able to access, additional levels of play , different themes, enter and save their own gamer name, upload their own avatar for play and create, read, update and delete their own win/play/draw and lose messages.  These are accessed through registering and when logged in they can gain access to further features by achieving certain levels of proficiency. Gameplay and screens are streamlined , with as few unnecessary visual and textual cues as possible to give an uncluttered screen, so the theme and gameplay are the primary impression given to user.
+## Introduction
+    This project is a simple noughts and crosses game, with interactive features for the user to enjoy and to stimulate continued gameplay and interactions.  The game is playable and the leaderboard can be viewed without login but additional features are accessible if they do so.  Once registered and logged in, gmaeplay results are recorded and the users own score can be viewed on the leaderboard.  The user is able to access, additional levels of play , different themes, enter and save their own gamer name, upload their own avatar for play and create, read, update and delete their own win/play/draw and lose messages.  These are accessed through registering and when logged in they can gain access to further features by achieving certain levels of proficiency. Gameplay and screens are streamlined , with as few unnecessary visual and textual cues as possible to give an uncluttered screen, so the theme and gameplay are the primary impression the user receives.
 
-# Initial steps for setup and deployment
 ## Steps for Django Framework setup
     Select python version and the appropriate versions of other apps...
 - Start a venv 
@@ -22,7 +26,7 @@
 - Create 
 - -a .python-version file
     input version only eg. 3.12
-- -a env.py file 
+- -an env.py file 
     to include SECRET_KEY and DATABASE_URL
 - -a .gitignore 
     to include env.py and .venv
@@ -212,18 +216,14 @@ Once required the command below must be run before each commit/deploy
 Run the command 
 `python manage.py createsuperuser`
 
-
-
-
-
-
-
-
-
-
-
-
-
+---
+## Steps for Deployment
+Using Heroku
+- set up all security keys
+- connect to the repository
+- deploy
+- check the deployed site looks as expected
+---
 ## Learning Objectives
 Points of note  - rename this to Project working notes and learnings or similar ...
 LO1 -  Very few changes were required to the designed ERD  - additional items were used due to adding additional layer of securtiy for Cloudinary images and not having used Cloudinary before not being fully aware of the requirements.  
@@ -234,7 +234,7 @@ Only one theme was shown throughout the wireframes, as each theme is essentially
 
 A mixture of CRUD features have been included in the project, standard functionality with clear messaging is used in the User's ability to add their own comments for use in gameplay and slightly less standard functionality with onscreen visual cues to indicate success for avatar upload and selection. 
 
-The navigation login bar provides a visual clue as to login status when on display and if a superuser is logged in they have an addtional link to take them directly to the admin page. Additonal interactive content on the pages indicate logged in status such as the user or gamer name, if one has been chosen, apparent in several places such as the scoreboard, the game comments and in the profile page introduction. 
+The navigation login bar provides a visual clue as to login status when on display and if a superuser is logged in they have an addtional link to take them directly to the admin page. Additional interactive content on the pages indicate logged in status such as the user or gamer name, if one has been chosen, apparent in several places such as the scoreboard, the game comments and in the profile page introduction. 
 
 L04 Testing manual etc  Testing of features has been done manually and has acted as a sense-check that all is working correctly.
 
@@ -242,7 +242,7 @@ Regular Github commits were made, and consideration of data security through use
 
 The application successfully deployed in Heroku.
 
-The application contains a unique data model not previously seen in the course based on the requirements of the project.  
+The application contains a unique data model, not previously seen in the course, based on the requirements of the project.  
 
 ## AI Usage
 I used AI at many points throughout the project from image generation, to talking to the Cloudinary chat bot and mainly using Copilot in chats and for inline coding changes.  I regard it as a useful tool but did come across some limitations - being aware of these allows some work arounds.  It appears to have an issue with {% endblock %} if they do not have the title in the endblock , there was a near miss where it suggested deleting code that had been overwritten without considering what had been overwritten. It can be very literal on occasion. It is great at getting things started when there is a very specific list or with tasks that have well-defined parameters.  
@@ -299,10 +299,9 @@ _Proposed Django layout_
         - Various input modal pop ups
 
 
+_Functionality_
 
-
-Functionality
-Information – the game can be played without logging in, but some functionality is disabled.
+    Information – the game can be played without logging in, but some functionality is disabled.
 ---------------------------------------------------
 | |Casual User |New Member/Novice |	Seasoned*|	Master*|
 |--|--|----|-------------|--|
@@ -316,19 +315,19 @@ Avatar selection	|Default	|Random	|Selection	|As Seasoned
 Scores screen	|Yes 	|Own score highlighted	|As Member	|As Member
 Scores recorded	|No	|Yes	|As Member	|As Member
 
-* Users must maintain a score within that meets the criteria or they will lose their status.
+* Users must maintain a score that meets that levels' criteria or they will lose their status.
 
 Wireframes
 
-- [Homescreen Wireframes](doccsupport/wireframes/wfhome.png)
-- [Profilescreen Wireframes](docsupport/wireframes/wfprofile.png)
+- [Homescreen Wireframes](docssupport/wireframes/wfhome.png)
+- [Profilescreen Wireframes](docssupport/wireframes/wfprofile.png)
 - [Scores Wireframes](docssupport/wireframes/wfscores.png)
 
 ERD
-- [Entity Relationship Diagram](doccsupport/erds/capstone-erd.svg)
+- [Entity Relationship Diagram](docssupport/erds/capstone-erd.svg)
 
  
- Sources
+## Sources
  |Item|Source|Usage|Comment|
 |--|--|--|--|
 |Wireframe|Balsamiq|Screen, tablet and mobile views of main screens||
