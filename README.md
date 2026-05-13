@@ -1,13 +1,17 @@
-# Capstone Project
+# Tic Tac Toe
 
 ## Table of Contents
 -[Introduction](#introduction)
+
+-[Links](#links)
 
 -[Steps for Django Framework setup](#steps-for-django-framework-setup)
  
 -[Steps for deployment](#steps-for-deployment) 
 
--[Learning Objectives](#learning-objectives)
+-[Project Outcomes](#learning-objectives)
+
+-[Testing](#testing)
 
 -[AI Usage](#ai-usage)
 
@@ -17,7 +21,14 @@
 
 ## Introduction
     This project is a simple noughts and crosses game, with interactive features for the user to enjoy and to stimulate continued gameplay and interactions.  The game is playable and the leaderboard can be viewed without login but additional features are accessible if they do so.  Once registered and logged in, gmaeplay results are recorded and the users own score can be viewed on the leaderboard.  The user is able to access, additional levels of play , different themes, enter and save their own gamer name, upload their own avatar for play and create, read, update and delete their own win/play/draw and lose messages.  These are accessed through registering and when logged in they can gain access to further features by achieving certain levels of proficiency. Gameplay and screens are streamlined , with as few unnecessary visual and textual cues as possible to give an uncluttered screen, so the theme and gameplay are the primary impression the user receives.
+---
+## Links
 
+**Live deployment:** (https://capstone06032026-5e77c3836e14.herokuapp.com/)
+
+**Github repository:** (https://github.com/DominqueFre/capstoneproject)
+
+---
 ## Steps for Django Framework setup
     Select python version and the appropriate versions of other apps...
 - Start a venv 
@@ -108,14 +119,14 @@ Inside settings under the database information (this is similar to allowed hosts
 
 
 
-### Steps for completing the installation of Whitenoise tbc
+### Steps for completing the installation of Whitenoise
 In settings.py file in Middleware after the security middleware add
     `'whitenoise.middleware.WhiteNoiseMiddleware',`
-Once installed and when a production deploy is planned run 
+Once installed and each time a commit / production deploy is planned run 
     `python manage.py collectstatic`
 
 ### Steps for completing installation of django-allauth
-- In installed apps(For controlled user login's etc without accessing admin)
+- In settings.py file in installed apps(For controlled user login's etc without accessing admin)
     `'django.contrib.sites',` below djoango apps
     `'allauth',`  above project apps
     `'allauth.account',`
@@ -206,7 +217,7 @@ Java Script , CSS style sheets and images are stored in here.  They do not chang
 part of the project set up.
 
 **staticfiles**
-Once required the command below must be run before each commit/deploy
+Once the application has been deployed the command below must be run before each commit/deploy to ensure everything is up to date.
 `python manage.py collectstatic`
 
 **Model and View setups**
@@ -224,19 +235,14 @@ Using Heroku
 - deploy
 - check the deployed site looks as expected
 ---
-## Learning Objectives
-Points of note  - rename this to Project working notes and learnings or similar ...
-LO1 -  Very few changes were required to the designed ERD  - additional items were used due to adding additional layer of securtiy for Cloudinary images and not having used Cloudinary before not being fully aware of the requirements.  
-Only one theme was shown throughout the wireframes, as each theme is essentially the same.  This was a time-saving decision as it would have in essence been duplication of work.
+## Project Outcomes
+ Very few changes were required to the designed ERD  - additional items were used due to adding additional layer of security for Cloudinary images and not having used Cloudinary before, not being fully aware of the requirements.  
 
-
-
+  Only one theme was shown throughout the wireframes, as each theme is essentially the same.  This was a time-saving decision as it would have in essence been duplication of work.
 
 A mixture of CRUD features have been included in the project, standard functionality with clear messaging is used in the User's ability to add their own comments for use in gameplay and slightly less standard functionality with onscreen visual cues to indicate success for avatar upload and selection. 
 
-The navigation login bar provides a visual clue as to login status when on display and if a superuser is logged in they have an addtional link to take them directly to the admin page. Additional interactive content on the pages indicate logged in status such as the user or gamer name, if one has been chosen, apparent in several places such as the scoreboard, the game comments and in the profile page introduction. 
-
-L04 Testing manual etc  Testing of features has been done manually and has acted as a sense-check that all is working correctly.
+The navigation login bar provides a visual clue as to login status when on display and if a superuser is logged in they have an addtional link to take them directly to the admin page. Additional interactive content on the pages indicate logged in status such as the user or ,if chosen, gamer name, apparent in several places throughout the sites pages, such as the scoreboard, the game comments and in the profile page introduction. 
 
 Regular Github commits were made, and consideration of data security through use of env.py in conjunction with a gitignore file, with keys then set up in the configuration files of Heroku for hosting.  Debug was set to False for the production environment through judicious use of code and the env.py file.
 
@@ -244,8 +250,31 @@ The application successfully deployed in Heroku.
 
 The application contains a unique data model, not previously seen in the course, based on the requirements of the project.  
 
+---
+## Testing
+ Testing of features has been done manually and has acted as a sense-check that all is working correctly.
+#### Manual
+Manual testing was done by setting up accounts for fictitious users.
+This allowed the testing of level achievement and that the various additional features became available when expected.
+This also provided data to fill the scoreboard and allow a visual check that data appeared as expected.
+#### Computerised
+List tests ...
+
+Model
+Form
+View
+
+Test results
+
+---
+
 ## AI Usage
+#### limitations of AI
 I used AI at many points throughout the project from image generation, to talking to the Cloudinary chat bot and mainly using Copilot in chats and for inline coding changes.  I regard it as a useful tool but did come across some limitations - being aware of these allows some work arounds.  It appears to have an issue with {% endblock %} if they do not have the title in the endblock , there was a near miss where it suggested deleting code that had been overwritten without considering what had been overwritten. It can be very literal on occasion. It is great at getting things started when there is a very specific list or with tasks that have well-defined parameters.  
+
+#### Specific instance of code creation and adaptation
+#### Specific bug resolution
+#### How AI used to optimize code
 
 
 ## Supporting Documentation
@@ -315,7 +344,7 @@ Avatar selection	|Default	|Random	|Selection	|As Seasoned
 Scores screen	|Yes 	|Own score highlighted	|As Member	|As Member
 Scores recorded	|No	|Yes	|As Member	|As Member
 
-* Users must maintain a score that meets that levels' criteria or they will lose their status.
+`*` Users must maintain a score that meets that levels' criteria or they will lose their status.
 
 Wireframes
 
@@ -325,8 +354,8 @@ Wireframes
 
 ERD
 - [Entity Relationship Diagram](docssupport/erds/capstone-erd.svg)
+---
 
- 
 ## Sources
  |Item|Source|Usage|Comment|
 |--|--|--|--|
@@ -335,14 +364,17 @@ ERD
 |||||
 |Images|Freepik|AI generated|Altered as required|
 |Images|Craiyon|AI generated|Altered as required|
+|Image Editing|Microsft Photos|AI image background removal and editing||
 |||||
 |Repository|Git Hub|Repository hosting service||
-|Hosting Platform|Heroku|Platform hosting service||
 |IDE|VSCode|||
-|Image Storage|Cloudinairy|Also used AI chatbot|User avatar|
+|Framework|Django|Including allauth, crispy-forms and summernote||
 |Database|PostGresSQL|||
-|Framework|Django|||
-|Image Editing|Microsft Photos|AI image background removal and editing||
+|Middleware|Whitenoise|Handles static files in production||
+|Image Storage|Cloudinairy|Also used AI chatbot|User avatar|
+|Front-end Framework|Bootstrap|||
+|Library|Font Awesome|Icons||
+|Hosting Platform|Heroku|Platform hosting service||
 |||||
 |AI|Copilot|Use for coding, suggestions,queries||
 |||||
@@ -350,10 +382,3 @@ ERD
 |Python||Code Linters||
 |CSS||Code Checkers||
 |JavaScript||Code Checkers||
-|||||
-
-
-
-Add tests / manual checking
-
-
