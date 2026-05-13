@@ -56,7 +56,7 @@ activate the venv
 - gunicorn            (web launcher heroku)
 - django-summernote   (adds functionality eg filtering capability)
     (also installs webencodings and bleach)
-- whitenoise          (static files)
+- whitenoise          (static files in production)
 - django-allauth      (user login)
     - (also installs many other apps ie cryptography etc.)
 - django-crispy-forms
@@ -269,12 +269,15 @@ Test results
 ---
 
 ## AI Usage
-#### limitations of AI
-I used AI at many points throughout the project from image generation, to talking to the Cloudinary chat bot and mainly using Copilot in chats and for inline coding changes.  I regard it as a useful tool but did come across some limitations - being aware of these allows some work arounds.  It appears to have an issue with {% endblock %} if they do not have the title in the endblock , there was a near miss where it suggested deleting code that had been overwritten without considering what had been overwritten. It can be very literal on occasion. It is great at getting things started when there is a very specific list or with tasks that have well-defined parameters.  
 
 #### Specific instance of code creation and adaptation
+
+
 #### Specific bug resolution
 #### How AI used to optimize code
+#### Use AI tools to create unit tests
+#### limitations of AI
+I used AI at many points throughout the project from image generation, to talking to the Cloudinary chat bot and mainly using Copilot in chats and for inline coding changes.  I regard it as a useful tool but did come across some limitations - being aware of these allows some work arounds.  It appears to have an issue with {% endblock %} if they do not have the title in the endblock , there was a near miss where it suggested deleting code that had been overwritten without considering what had been overwritten. It can be very literal on occasion. It is great at getting things started when there is a very specific list or with tasks that have well-defined parameters.  
 
 
 ## Supporting Documentation
