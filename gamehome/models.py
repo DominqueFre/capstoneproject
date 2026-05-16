@@ -52,10 +52,26 @@ class MemberWinPost(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="win_posts")
     winpost = models.CharField(max_length=200, blank=True, null=True)
 
+    def clean(self):
+        if self.winpost:
+            qs = MemberWinPost.objects.filter(user=self.user, winpost=self.winpost)
+            if self.pk:
+                qs = qs.exclude(pk=self.pk)
+            if qs.count() >= 10:
+                raise ValidationError("A user may only have a maximum of 10 win comments.")
+
 
 class MemberLosePost(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="lose_posts")
     losepost = models.CharField(max_length=200, blank=True, null=True)
+
+    def clean(self):
+        if self.losepost:
+            qs = MemberLosePost.objects.filter(user=self.user, losepost=self.losepost)
+            if self.pk:
+                qs = qs.exclude(pk=self.pk)
+            if qs.count() >= 10:
+                raise ValidationError("A user may only have a maximum of 10 lose comments.")
 
 
 class MemberDrawPost(models.Model):
@@ -68,12 +84,20 @@ class MemberDrawPost(models.Model):
             if self.pk:
                 qs = qs.exclude(pk=self.pk)
             if qs.count() >= 10:
-                raise ValidationError("A user can only use the same draw comment up to 10 times.")
+                raise ValidationError("A user may only have a maximum of 10 draw comments.")
 
 
 class MemberMovePost(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="move_posts")
     movepost = models.CharField(max_length=200, blank=True, null=True)
+
+    def clean(self):
+        if self.movepost:
+            qs = MemberMovePost.objects.filter(user=self.user, movepost=self.movepost)
+            if self.pk:
+                qs = qs.exclude(pk=self.pk)
+            if qs.count() >= 10:
+                raise ValidationError("A user may only have a maximum of 10 move comments.")
 
 
 class MemberAvatar(models.Model):
