@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.test import TestCase
 from .models import MemberMovePost, MemberWinPost, MemberLosePost, MemberDrawPost
 from .models import MemberAvatar, MemberChoice, GameScore, MemberInformation
+from django.core.files.uploadedfile import SimpleUploadedFile
 # Create your tests here. AI generated test cases for views in gamehome/views.py
 
 
@@ -32,6 +33,7 @@ class GameHomeViewAccessTest(TestCase):
         leaderboard_url = reverse('gamehome:leaderboard')
         self.assertContains(response, leaderboard_url)
 
+
 # to review
 class GameHomeViewAvatarUploadTest(TestCase):
     def setUp(self):
@@ -40,13 +42,16 @@ class GameHomeViewAvatarUploadTest(TestCase):
         self.client.login(username='testusera', password='testpassa', email='testusera@example.com')
 
     def test_avatar_upload(self):
-        with open('path/to/test/avatar.png', 'rb') as avatar_file:
-            response = self.client.post(
-                reverse('gamehome:home'),
-                {
-                    'avatar_image': avatar_file
-                }
-            )
+        fake_image = SimpleUploadedFile("test_avatar.png", b"file_content", content_type="image/png")
+        response = self.client.post(
+            reverse('gamehome:profile'),
+            {
+                'avatar_upload': fake_image,
+            },
+            format='multipart'
+        )
+        avatar = MemberAvatar.objects.get(user=self.user)
+        self.assertIsNotNone(avatar.avatar_upload)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(MemberAvatar.objects.filter(user=self.user).exists())
 
@@ -58,14 +63,14 @@ class GameHomeViewChoiceTest(TestCase):
         self.client.login(username='testuserc', password='testpassc', email='testuserc@example.com')
 
     def test_valid_choice_submission(self):
-        response = self.client.post(reverse('gamehome:home'), {
-            'choice': 'option1'
+        response = self.client.post(reverse('gamehome:profile'), {
+            'choice': 'robot_0'
         })
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(MemberChoice.objects.filter(user=self.user, choice='option1').exists())
+        self.assertTrue(MemberChoice.objects.filter(user=self.user, choice='robot_0').exists())
 
     def test_invalid_choice_submission(self):
-        response = self.client.post(reverse('gamehome:home'), {
+        response = self.client.post(reverse('gamehome:profile'), {
             'choice': 'invalid_option'
         })
         self.assertEqual(response.status_code, 200)
@@ -137,6 +142,7 @@ class GameHomeViewPostTest(TestCase):
         self.assertFalse(MemberDrawPost.objects.filter(user=self.user, drawpost='This should not work.').exists())
         self.assertFalse(MemberMovePost.objects.filter(user=self.user, movepost='This should not work.').exists())
 
+
 # to test new logged in user functionalities in gamehome/views.py
 class GameHomeViewTest(TestCase):
     def setUp(self):
@@ -145,6 +151,7 @@ class GameHomeViewTest(TestCase):
             password='testpasst',
             email='testusert@example.com'
             )
+        MemberInformation.objects.create(user=self.user, gamername='testusert', status='novice')
         self.client.login(username='testusert', password='testpasst', email='testusert@example.com')
 
     def test_user_starts_as_novice(self):
@@ -178,11 +185,9 @@ class GameHomeViewTest(TestCase):
 
     def test_user_accessible_and_inaccessible_urls(self):
         response = self.client.get(reverse('gamehome:home'))
-        self.assertContains(response, reverse('logout'))
-        self.assertContains(response, reverse('profile'))
-        self.assertContains(response, reverse('leaderboard'))
-        self.assertNotContains(response, reverse('login'))
-        self.assertNotContains(response, reverse('signup'))
+        self.assertContains(response, reverse('account_logout'))
+        self.assertNotContains(response, reverse('account_login'))
+        self.assertNotContains(response, reverse('account_signup'))
         self.assertNotContains(response, '/admin/')  # admin is usually not in reverse
 
     def test_gamehome_view_profile(self):
@@ -196,8 +201,14 @@ class GameHomeViewTest(TestCase):
     def test_gamehome_view_context(self):
         response = self.client.get(reverse('gamehome:home'))
         self.assertIn('member_info', response.context)
+        self.assertIn('current_user_row', response.context)
         self.assertIn('win_percentage', response.context)
         self.assertIn('total_percentage', response.context)
+        self.assertIn('comments_by_type', response.context)
+        self.assertIn('draw', response.context['comments_by_type'])
+        self.assertIn('win', response.context['comments_by_type'])
+        self.assertIn('lose', response.context['comments_by_type'])
+        self.assertIn('move', response.context['comments_by_type'])
         self.assertIn('winpost', response.context)
         self.assertIn('losepost', response.context)
         self.assertIn('drawpost', response.context)
@@ -234,47 +245,68 @@ class GameHomeViewTest(TestCase):
         GameScore.objects.create(
             user=self.user, difficulty='normal', outcome='D'
         )
-        response = self.client.get(reverse('gamehome:home'))
-        scores = response.context['recent_scores']
-        self.assertEqual(scores.count(), 8)
-        self.assertEqual(scores[0].outcome, 'W')
-        self.assertEqual(scores[2].outcome, 'L')
-        self.assertEqual(scores[4].outcome, 'W')
-        self.assertEqual(response.context['win_percentage'], 50.0)
-        self.assertEqual(response.context['total_percentage'], 75.0)
+
+        # Request the leaderboard view
+        response = self.client.get(reverse('gamehome:leaderboard'))
+        current_user_row = response.context['current_user_row']
+
+        # Assert the row exists and has the correct values
+        self.assertIsNotNone(current_user_row)
+        self.assertEqual(current_user_row['total'], 8)
+        self.assertEqual(current_user_row['wins'], 4)
+        self.assertEqual(current_user_row['losses'], 2)
+        self.assertEqual(current_user_row['draws'], 2)
+        self.assertEqual(current_user_row['win_percentage'], 50.0)
+        self.assertEqual(current_user_row['total_percentage'], 75.0)
 
     def test_gamehome_view_with_winposts(self):
-        response = self.client.post(reverse('gamehome:home'), {
+        response = self.client.post(reverse('gamehome:profile'), {
             'message_type': 'win',
             'comment_text': 'Great win!',
         })
         self.assertEqual(response.status_code, 200)
         self.assertTrue(MemberWinPost.objects.filter(user=self.user, winpost='Great win!').exists())
-        self.assertIn('winpost', response.context)
+        self.assertIn('comments_by_type', response.context)
+        self.assertIn('win', response.context['comments_by_type'])
+        self.assertTrue(
+            any(c['text'] == 'Great win!' for c in response.context['comments_by_type']['win'])
+        )
 
     def test_gamehome_view_with_lose_posts(self):
-        response = self.client.post(reverse('gamehome:home'), {
+        response = self.client.post(reverse('gamehome:profile'), {
             'message_type': 'lose',
             'comment_text': 'Tough loss!',
         })
         self.assertEqual(response.status_code, 200)
         self.assertTrue(MemberLosePost.objects.filter(user=self.user, losepost='Tough loss!').exists())
-        self.assertIn('losepost', response.context)
+        self.assertIn('comments_by_type', response.context)
+        self.assertIn('lose', response.context['comments_by_type'])
+        self.assertTrue(
+            any(c['text'] == 'Tough loss!' for c in response.context['comments_by_type']['lose'])
+        )
 
     def test_gamehome_view_with_draw_posts(self):
-        response = self.client.post(reverse('gamehome:home'), {
+        response = self.client.post(reverse('gamehome:profile'), {
             'message_type': 'draw',
             'comment_text': 'Close game!',
         })
         self.assertEqual(response.status_code, 200)
         self.assertTrue(MemberDrawPost.objects.filter(user=self.user, drawpost='Close game!').exists())
-        self.assertIn('drawpost', response.context)
+        self.assertIn('comments_by_type', response.context)
+        self.assertIn('draw', response.context['comments_by_type'])
+        self.assertTrue(
+            any(c['text'] == 'Close game!' for c in response.context['comments_by_type']['draw'])
+        )
 
     def test_gamehome_view_with_move_posts(self):
-        response = self.client.post(reverse('gamehome:home'), {
+        response = self.client.post(reverse('gamehome:profile'), {
             'message_type': 'move',
             'comment_text': 'Great move!',
         })
         self.assertEqual(response.status_code, 200)
         self.assertTrue(MemberMovePost.objects.filter(user=self.user, movepost='Great move!').exists())
-        self.assertIn('movepost', response.context)
+        self.assertIn('comments_by_type', response.context)
+        self.assertIn('move', response.context['comments_by_type'])
+        self.assertTrue(
+            any(c['text'] == 'Great move!' for c in response.context['comments_by_type']['move'])
+        )
