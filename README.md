@@ -329,15 +329,35 @@ Manual testing was done by setting up accounts for fictitious users.
 This allowed the testing of level achievement and that the various additional features became available when expected.
 This also provided data to fill the scoreboard and allow a visual check that data appeared as expected.
 
+#### Screen / HTML / Coin - needs to be more similar .... force in a box..
+
 #### Computerised
 
 List tests ...
 
-Model
-Form
-View
+##### Model
+
+- MemberWinPostModelTest
+- MemberAvatarModelTest
+- MemberChoiceModelTest
+
+##### Form
+
+- MemberAvatarFormTest
+- MemberChoiceFormTest
+- MemberCommentFormTest
+
+##### View
+
+- SubmitScoreApiTest
+- GameHomeViewAccessTest
+- GameHomeViewAvatarUploadTest
+- GameHomeViewChoiceTest
+- GameHomeViewPostTest
+- GameHomeViewTest
 
 Test results
+All passed
 
 ---
 
@@ -345,15 +365,27 @@ Test results
 
 #### Specific instance of code creation and adaptation
 
+In order to create a gallery that would both appear only when necessary and allow piece selection from it when it was visible, the AI generated a separate views_piece_choice_api.py file to handle this process separately and reduce the risk of conflicts.
+
+Whilst not code, other AI sources were also used to generate images which were then altered to give a transparent background and uniform sizing, to give standalone game pieces, which could be placed on the gameboard during play.
+
 #### Specific bug resolution
+
+Initially the requirement to 
+
+
 
 #### How AI used to optimize code
 
+When writing initial code, less thought was given to utilising code which styled for several items.  AI suggested using :root, which I had not previously used for the overarching styles, and the html tag for the theme styles as well as other rationalisations.  Doing this greatly reduced the number of lines of code and improved readability.
+
 #### Use AI tools to create unit tests
+
+Inline suggestions were used to create both the test_views.py , and test_forms.py files. After these tests had been worked with to ensure that these passed, I asked AI chat to evaluate if the tests covered all areas.  It pointed out that there was no model validation.  The chat function was used to generate a scaffold for the test_models.py file.  In terms of tests being clear and fault free, the more detailed chat function gave tests that were more readily usable as it utilised more information.  The model winpost test failure highlighted the need to update the clean function (also on the other post functions).
 
 #### Limitations of AI
 
-I used AI at many points throughout the project from image generation, to talking to the Cloudinary chat bot and mainly using Copilot in chats and for inline coding changes.  I regard it as a useful tool but did come across some limitations - being aware of these allows some work arounds.  It appears to have an issue with {% endblock %} if they do not have the title in the endblock , there was a near miss where it suggested deleting code that had been overwritten without considering what had been overwritten. It can be very literal on occasion. It is great at getting things started when there is a very specific list or with tasks that have well-defined parameters.  
+I used AI at many points throughout the project from image generation, to talking to the Cloudinary chat bot and mainly using Copilot in chats and for inline coding changes.  I regard it as a useful tool but did come across some limitations - being aware of these allows some work arounds.  It appears to have an issue with {% endblock %} if they do not have the title in the endblock , there was a near miss where it suggested deleting code that had been partially overwritten, without considering it's relevance to what had been overwritten. It can be very literal on occasion. It is great at getting things started when there is a very specific list or with tasks that have well-defined parameters.  
 
 ## Supporting Documentation
 

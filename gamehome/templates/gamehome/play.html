@@ -1,6 +1,6 @@
 {% extends "gamehome/base.html" %}
 {% load static %}
-{% block body_class %}play-viewport{% endblock %}
+{% block body_class %}play-viewport{% endblock body_class %}
 {% block content %}
 <div class="rotate-overlay">
   Please rotate your device to landscape to play.
@@ -290,4 +290,4 @@
   <script src="{% static 'gamehome/js/game.js' %}"></script>
   <script src="{% static 'gamehome/js/help.js' %}"></script>
 </section>
-{% endblock %}
+{% endblock content %}

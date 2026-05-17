@@ -53,8 +53,8 @@ class MemberWinPost(models.Model):
     winpost = models.CharField(max_length=200, blank=True, null=True)
 
     def clean(self):
-        if self.winpost:
-            qs = MemberWinPost.objects.filter(user=self.user, winpost=self.winpost)
+        if self.user:
+            qs = MemberWinPost.objects.filter(user=self.user)
             if self.pk:
                 qs = qs.exclude(pk=self.pk)
             if qs.count() >= 10:
@@ -66,8 +66,8 @@ class MemberLosePost(models.Model):
     losepost = models.CharField(max_length=200, blank=True, null=True)
 
     def clean(self):
-        if self.losepost:
-            qs = MemberLosePost.objects.filter(user=self.user, losepost=self.losepost)
+        if self.user:
+            qs = MemberLosePost.objects.filter(user=self.user)
             if self.pk:
                 qs = qs.exclude(pk=self.pk)
             if qs.count() >= 10:
@@ -79,8 +79,8 @@ class MemberDrawPost(models.Model):
     drawpost = models.CharField(max_length=200, blank=True, null=True)
 
     def clean(self):
-        if self.drawpost:
-            qs = MemberDrawPost.objects.filter(user=self.user, drawpost=self.drawpost)
+        if self.user:
+            qs = MemberDrawPost.objects.filter(user=self.user)
             if self.pk:
                 qs = qs.exclude(pk=self.pk)
             if qs.count() >= 10:
@@ -92,8 +92,8 @@ class MemberMovePost(models.Model):
     movepost = models.CharField(max_length=200, blank=True, null=True)
 
     def clean(self):
-        if self.movepost:
-            qs = MemberMovePost.objects.filter(user=self.user, movepost=self.movepost)
+        if self.user:
+            qs = MemberMovePost.objects.filter(user=self.user)
             if self.pk:
                 qs = qs.exclude(pk=self.pk)
             if qs.count() >= 10:
