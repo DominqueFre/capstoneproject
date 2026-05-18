@@ -125,8 +125,8 @@
 .board-frame {
   aspect-ratio: 1 / 1;
   width: 100%;
-  max-width: 80vh;
-  max-height: 80vh;
+  max-width: 70vw;
+  max-height: 70vh;
   min-width: 0;
   min-height: 0;
   margin: 0 auto;

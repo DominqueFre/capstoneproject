@@ -128,7 +128,8 @@
               <div class="form-errors">{{ avatar_form.avatar_upload.errors }}</div>
               {% endif %}
             </div>
-            <div class="avatar-help" data-help="help">
+            <button type="submit" class="profile-pref-btn">Upload your avatar to the game</button>
+            <div class="avatar-help bar-help" data-help="help">
               <button type="button" class="bar-help-btn" aria-label="About avatar requirements" aria-expanded="false"
                 aria-controls="avatarHelpPanel">
                 <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
@@ -144,8 +145,7 @@
                   <li>Maximum file size: 2MB</li>
                 </ul>
               </div>
-            </div>
-            <button type="submit" class="profile-pref-btn">Upload</button>
+            </div>            
           </form>
         </section>
         {% else %}
@@ -176,7 +176,7 @@
               id="pieceChoiceChangeSelected">Change Selected</button>
             {% endif %}
           </div>
-          <div class="choice-help" data-help="help">
+          <div class="choice-help bar-help" data-help="help">
             <button type="button" class="bar-help-btn" aria-label="About game piece choice" aria-expanded="false"
               aria-controls="choiceHelpPanel">
               <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
