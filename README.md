@@ -321,33 +321,39 @@ The application contains a unique data model, not previously seen in the course,
 
 ## Testing
 
- Testing of features has been done manually and has acted as a sense-check that all is working correctly.
+ Testing of features has been done both manually and through django's built in testing module run through the manage.py file.  
 
 #### Manual
+
+Code Linters
+
+Visual checks
+
+Setting up test users
 
 Manual testing was done by setting up accounts for fictitious users.
 This allowed the testing of level achievement and that the various additional features became available when expected.
 This also provided data to fill the scoreboard and allow a visual check that data appeared as expected.
 
-#### Screen / HTML / Coin - needs to be more similar .... force in a box..
+#### Screen / HTML / Coin - needs to be more similar .... force in a box
 
-#### Computerised
+### Computerised
 
-List tests ...
+Tests were run under the following headings, with 44 tests being run in total.
 
-##### Model
+#### Model
 
 - MemberWinPostModelTest
 - MemberAvatarModelTest
 - MemberChoiceModelTest
 
-##### Form
+#### Form
 
 - MemberAvatarFormTest
 - MemberChoiceFormTest
 - MemberCommentFormTest
 
-##### View
+#### View
 
 - SubmitScoreApiTest
 - GameHomeViewAccessTest
@@ -371,9 +377,7 @@ Whilst not code, other AI sources were also used to generate images which were t
 
 #### Specific bug resolution
 
-Initially the requirement to 
-
-
+Initially the requirement to
 
 #### How AI used to optimize code
 
@@ -494,7 +498,8 @@ ERD
 |||||
 |AI|Copilot|Use for coding, suggestions,queries||
 |||||
-|HTML||Code Checkers||
-|Python||Code Linters||
 |CSS||Code Checkers||
+|HTML||Code Checkers||
 |JavaScript||Code Checkers||
+|Markdown|markdownlint|Markdown Linter||
+|Python|Flake8|Python Linter||

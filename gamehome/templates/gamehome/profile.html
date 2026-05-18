@@ -48,7 +48,7 @@
               data-difficulty="fiendish">Fiendish</button>
             {% endif %}
           </div>
-          <div class="bar-help" data-help">
+          <div class="bar-help" data-help="help">
             <button type="button" class="bar-help-btn" aria-label="About default difficulty setting"
               aria-expanded="false" aria-controls="profileDifficultyHelpPanel">
               <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
@@ -84,7 +84,7 @@
               data-theme="fantasy">Fantasy</button>
             {% endif %}
           </div>
-          <div class="bar-help" data-help">
+          <div class="bar-help" data-help="help">
             <button type="button" class="bar-help-btn" aria-label="About default theme setting" aria-expanded="false"
               aria-controls="profileThemeHelpPanel">
               <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
@@ -128,7 +128,7 @@
               <div class="form-errors">{{ avatar_form.avatar_upload.errors }}</div>
               {% endif %}
             </div>
-            <div class="avatar-help" data-help">
+            <div class="avatar-help" data-help="help">
               <button type="button" class="bar-help-btn" aria-label="About avatar requirements" aria-expanded="false"
                 aria-controls="avatarHelpPanel">
                 <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
@@ -176,7 +176,7 @@
               id="pieceChoiceChangeSelected">Change Selected</button>
             {% endif %}
           </div>
-          <div class="choice-help" data-help">
+          <div class="choice-help" data-help="help">
             <button type="button" class="bar-help-btn" aria-label="About game piece choice" aria-expanded="false"
               aria-controls="choiceHelpPanel">
               <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
@@ -226,7 +226,7 @@
           </a>
           {% endfor %}
         </div>
-        <div class="bar-help" data-help">
+        <div class="bar-help" data-help="help">
           <button type="button" class="bar-help-btn" aria-label="About message type settings" aria-expanded="false"
             aria-controls="messageTypeHelpPanel">
             <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
@@ -410,69 +410,15 @@
   window.AVATAR_IMAGE_URL = "{{ avatar_form.avatar_image.value|default:'' }}";
 </script>
 <script src="{% static 'gamehome/js/profile.js' %}"></script>
-
+<script src="{% static 'gamehome/js/help.js' %}"></script>
 
 <!-- Cloudinary Upload Widget -->
 <!-- <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script> -->
 
 <script>
-  // Cloudinary Widget Integration
-  document.addEventListener('DOMContentLoaded', function () {
-    const openCloudinaryBtn = document.getElementById('openCloudinaryWidget');
-    const avatarImageInput = document.getElementById('id_avatar_image');
-    const avatarForm = document.getElementById('avatarForm');
-
-    if (openCloudinaryBtn && avatarImageInput && avatarForm && window.cloudinary) {
-      openCloudinaryBtn.addEventListener('click', function (e) {
-        e.preventDefault();
-
-        // Initialize Cloudinary upload widget
-        cloudinary.openUploadWidget(
-          {
-            cloudName: "{{ cloudinary_cloud_name }}",
-            uploadPreset: "{{ cloudinary_upload_preset }}",
-            clientAllowedFormats: ['png', 'jpg', 'jpeg', 'gif'],
-            maxFileSize: 2000000,  // 2MB
-            multiple: false,
-            autoMinimize: true,
-            folder: 'ttt-avatars/',
-            resourceType: 'image'
-          },
-          function (error, result) {
-            if (!error && result && result.event === 'success') {
-              avatarImageInput.value = result.info.secure_url;
-
-              let preview = avatarForm.querySelector('.avatar-preview');
-              if (!preview) {
-                preview = document.createElement('p');
-                preview.className = 'avatar-preview';
-                avatarForm.appendChild(preview);
-              }
-              preview.textContent = 'Avatar uploaded. Saving to your profile...';
-              avatarForm.submit();
-            }
-          }
-        );
-      });
-    }
-
-    // Help panel toggle functionality
-    const helpButtons = document.querySelectorAll('.bar-help-btn');
-    helpButtons.forEach(button => {
-      button.addEventListener('click', function (e) {
-        e.preventDefault();
-        const isExpanded = this.getAttribute('aria-expanded') === 'true';
-        const panelId = this.getAttribute('aria-controls');
-        const panel = document.getElementById(panelId);
-
-        if (panel) {
-          this.setAttribute('aria-expanded', !isExpanded);
-          panel.hidden = isExpanded;
-        }
-      });
-    });
-  });
+  window.CLOUDINARY_CLOUD_NAME = "{{ cloudinary_cloud_name }}";
+  window.CLOUDINARY_UPLOAD_PRESET = "{{ cloudinary_upload_preset }}";
 </script>
-
+<script src="{% static 'gamehome/js/cloudinary_avatar_upload.js' %}"></script>
 
 {% endblock content %}
