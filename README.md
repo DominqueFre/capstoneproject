@@ -371,6 +371,8 @@ All passed
 
 #### Specific instance of code creation and adaptation
 
+AI was a significant part of this development, and was utilised extensively to create first draft code.  This gave the benefit of AI's ability to suggest new method's of coding that I have yet to come across.
+
 In order to create a gallery that would both appear only when necessary and allow piece selection from it when it was visible, the AI generated a separate views_piece_choice_api.py file to handle this process separately and reduce the risk of conflicts.
 
 Whilst not code, other AI sources were also used to generate images which were then altered to give a transparent background and uniform sizing, to give standalone game pieces, which could be placed on the gameboard during play.

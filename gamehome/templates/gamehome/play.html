@@ -15,7 +15,7 @@
     aria-label="Show pickers">
     <i class="fa-solid fa-circle-down" aria-hidden="true"></i>
   </button>
-  <div id="gameControlsWrapper" class="collapse d-md-block d-lg-block mb-2">
+  <div id="gameControlsWrapper" class="collapse d-lg-block mb-2">
     <div class="controls row gx-2 justify-content-evenly">
       <div class="col-5 col-md-11 col-lg-5 mb-2 mb-md-0 justify-content-start d-flex">
         <div class="difficulty-picker" aria-label="Difficulty selector">
@@ -88,7 +88,7 @@
     </div>
   </div>
 
-  <div id="playLayout" class="play-layout container flex-grow-1 d-flex flex-column justify-content-center h-100">
+  <div id="playLayout" class="play-layout container flex-grow-1 d-flex flex-column justify-content-center">
     <div class="row flex-grow-1 h-100 flex-nowrap align-items-start justify-content-center g-0">
       <!-- Left Column: Player Status -->
       <div id="playerStatusColumn" class="col d-flex flex-column align-items-start h-100 playerstatuscolumn"
@@ -215,3 +215,5 @@
   <script src="{% static 'gamehome/js/help.js' %}"></script>
 </section>
 {% endblock content %}
+{% block footer %}
+{% endblock footer %}
