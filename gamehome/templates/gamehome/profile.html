@@ -23,7 +23,7 @@
         <input id="displayName" name="display_name" type="text" maxlength="20" value="{{ profile_member_name }}"
           placeholder="e.g. Player One">
 
-        <div class="profile-pref-picker" aria-label="Default difficulty selector">
+        <div class="profile-pref-picker">
           <input id="defaultDifficulty" name="defaultDifficulty" type="hidden"
             value="{{ allowed_difficulties.0|default:'easy' }}">
           <div class="profile-button-bar" role="group" aria-label="Choose default difficulty">
@@ -59,7 +59,7 @@
             </div>
           </div>
         </div>
-        <div class="profile-pref-picker" aria-label="Default theme selector">
+        <div class="profile-pref-picker">
           <input id="defaultTheme" name="defaultTheme" type="hidden"
             value="{{ allowed_themes.0|default:'traditional' }}">
           <div class="profile-button-bar" role="group" aria-label="Choose default theme">
@@ -215,13 +215,13 @@
 
     <form id="commentForm" class="comment-form" method="post">
       {% csrf_token %}
-      <div class="profile-pref-picker" aria-label="Message type selector">
+      <div class="profile-pref-picker">
         <input type="hidden" name="message_type" id="id_message_type" value="{{ selected_type }}">
         <div class="profile-button-bar" role="group" aria-label="Choose message type">
           {% for value, label in form.message_type.field.choices %}
           <a href="?type={{ value }}"
             class="profile-pref-btn comment-type-btn {% if selected_type == value %}is-selected{% endif %}"
-            data-message-type="{{ value }}" aria-current="{% if selected_type == value %}page{% endif %}">
+            data-message-type="{{ value }}" aria-current="{% if selected_type == value %}page{% else %}false{% endif %}">
             {{ label }}
           </a>
           {% endfor %}

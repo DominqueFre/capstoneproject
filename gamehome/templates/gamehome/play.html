@@ -90,7 +90,7 @@
 
   <div id="playLayout" class="play-layout d-flex flex-row flex-grow-1 w-100 h-100 align-items-stretch justify-content-center">
     <!-- Left: Player Status -->
-    <div id="playerStatusColumn" class="d-flex flex-column align-items-start playerstatuscolumn flex-shrink-0">
+    <div id="playerStatusColumn" class="d-flex flex-column align-items-start playerstatuscolumn flex-shrink-0 ">
       <div id="sideStatusPlayer" class="side-status side-status-player d-flex flex-column flex-grow-1 w-100">
         <p id="sideStatusPlayerTitle" class="side-status-title">You-{{ member_tier|title }}</p>
         <div id="playerStatus" class="side-status-messages flex-grow-1" aria-live="polite"></div>
@@ -98,9 +98,9 @@
     </div>
 
     <!-- Center: Gameboard -->
-    <div id="playMainContent" class="playmain-content d-flex flex-column align-items-center justify-content-center flex-grow-1 px-1 mx-auto text-center">
+    <div id="playMainContent" class="playmain-content object-fit-fill d-flex flex-column align-items-center justify-content-center flex-grow-1 px-1 mx-auto text-center">
       <div id="playRender" class="play-render d-flex flex-column align-items-center justify-content-center w-100">
-        <div id="boardFrame" class="board-frame d-flex align-items-center justify-content-center mx-auto position-relative" aria-hidden="true">
+        <div id="boardFrame" class="object-fit-fill board-frame d-flex align-items-center justify-content-center mx-auto position-relative" aria-hidden="true">
           <div id="board" class="board position-relative" aria-label="tic tac toe board"></div>
         </div>
       </div>

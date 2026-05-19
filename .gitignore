@@ -1,3 +1,6 @@
+#miscellaneous files to ignore in gitignore
+READMEother.md
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
