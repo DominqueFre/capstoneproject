@@ -505,3 +505,23 @@ ERD
 |JavaScript||Code Checkers||
 |Markdown|markdownlint|Markdown Linter||
 |Python|Flake8|Python Linter||
+
+
+Must-haves for the play.html / screen
+0. Themes,fonts and colours currently used do not require any change at this time.
+1. Rotate overlay remains in place to enhance game play.
+2. #playScreen takes up the remaining viewport after considering the navbar and footer  - as the play.html sits within the main element in base.html some margin.border padding etc. is already inherited so it can-not take up 100% viewport width.  Currently it's contents are not central on the page and half the #computerStatusColumn is cut-off.
+3. .member-tier appears on md and above screens only (bootstrap handles this currently). Currently it's contents are not central on the page - see 2.
+4. .controls-toggler and #gameControlsWrapper are set up but may have a gap in the logic as the inspect functionality shows a 915 by 412 device to not pick up either a collapsed toggler or the buttons on first screen load.
+5. #playLayout uses h-100, but this is not possible due to the footer 48px, the navbar 24px , and other content - this needs adjusting so that content is not pushed off the bottom of the screen.  This contains 3 columns -RTL this is #playerStatusColumn, #playMainContent, #computerStatusColumn with the middle column requiring the bulk of the viewport width around 60% no less than 50%.
+6. #playerStatusColumn appears to the left of the Gameboard
+7. Gameboard (this is the images containing the word gameboard - each gameboard has a transparent area in the middle where the play-area is to be laid out, all are square) must always be centred horizontally on screen and at the top of the areas it is nested within - #playLayout , #playMainContent, #playRender #boardFrame.  The full gameboard should ideally be visible as it forms part of the theme aesthetic.
+7.1 the 9 play squares should be separate and distinct - laid out in a 3x3 grid with a small gap between each play square, these sit in the centre of the gameboard , visually appearing to be in a frame provided by the gameboard image.
+8. #computerStatusColumn appears to the right and is slightly misnamed as it contains two elements that require stacking in the same column. and therefore will require some additional html. The Coin and the side-status should be visually distinct.
+8.1. Coin must always be visible, no matter what play state it is in it should always take up the same amount of space, so that no other feature jumps or moves on screen during play.  Whilst it is currently below the #sideStatusComputerTitle,  it should ideally be above and outside this element, so that coin and the Computer responses are visually separated and each have their own background (although these may be the same colour).  The coin area needs no title.
+8.2  #sideStatusComputerTitle  contains the computers play messages and coin responses, in order to enhance the users experience and give the feel of playing against another player.
+
+Messages
+M1. If the player picks heads or tails the pick message should appear in the #playerStatus message area. If the computer picks heads or tails, a pick message should appear in the #computerStatus message area. 
+M2. Play messages are displayed after a move, ie if no pieces have been played there will be no message displayed in either #playerStatus or #computerStatus other than the coin outcome messages until after a move has played. ie Move by player- determine game status play(move), win , lose, or draw - pick appropriate message according to status - post message in players #playerStatus   OR Move by computer - determine game status play(move), win , lose, or draw - pick appropriate message according to status - post message in computers #computerStatus.
+M3. Visually the #playerStatus, #computerStatus should not require scrolling whilst their contents are still able to fit on screen

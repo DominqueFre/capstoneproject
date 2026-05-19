@@ -723,7 +723,7 @@ function endGame(resultText, outcome) {
   const userType = outcome === "W" ? "win" : outcome === "L" ? "lose" : "draw";
   const userMessage = getUserMessage(userType);
     if (coinStatusMessageEl) coinStatusMessageEl.classList.add("d-none");
-  setStatus(`${resultText} Press Start for the next game.`, inferStatusSide(resultText));
+  setStatus(`${resultText} Press Play Again for the next game.`, inferStatusSide(resultText));
   postScore(outcome).catch(() => {});
 }
 
