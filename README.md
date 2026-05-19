@@ -508,6 +508,9 @@ ERD
 
 
 Must-haves for the play.html / screen
+
+Screen elements are expected to fill the screen generally.
+
 0. Themes,fonts and colours currently used do not require any change at this time.
 1. Rotate overlay remains in place to enhance game play.
 2. #playScreen takes up the remaining viewport after considering the navbar and footer  - as the play.html sits within the main element in base.html some margin.border padding etc. is already inherited so it can-not take up 100% viewport width.  Currently it's contents are not central on the page and half the #computerStatusColumn is cut-off.
