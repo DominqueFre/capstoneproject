@@ -338,8 +338,7 @@ The application contains a unique data model, not previously seen in the course,
 Manual testing was done by setting up accounts for fictitious users.
 This allowed the testing of level achievement and that the various additional features became available when expected.
 This also provided data to fill the scoreboard and allow a visual check that data appeared as expected.
-
-Lighthouse testing
+ 
 
 HTML validator <https://validator.w3.org/nu/#textarea>
 
@@ -352,11 +351,13 @@ profile.html
 - revealed duplicate aria-label elements - 3 were removed
 - revealed aria current had no entry on non-current message types - added an {% else %} to add false
 
-Code Linters
+Code Linters were used during development to maintain readability and pick up obvious missing items.
 
-Visual checks
+Visual checks were done of the website
 
-Setting up test users
+Setting up test users,  allowed for manual testing of the user experience and highlighted errors and unexpected outcomes.
+
+Currently the play view is unplayable and requires further work.
 
 
 #### Screen / HTML / Coin - needs to be more similar .... force in a box
@@ -403,7 +404,7 @@ Whilst not code, other AI sources were also used to generate images which were t
 
 #### Specific bug resolution
 
-Initially the requirement to
+Initially the requirement to upload in cloudinary did not work, this involved going throught several iteration and sourcing additional information from the cloudinary site and chatbot and querying with the AI chat to come to a solution that allowed upload of an avatar. Whilst successful, I noted that the old avatar was not deleted from cloudinary of it was overwritten in this application.  This still requires further work to be as required in a true production application.
 
 #### How AI used to optimize code
 

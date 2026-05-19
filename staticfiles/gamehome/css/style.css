@@ -1,37 +1,88 @@
 /* Ensure status columns keep width/min-width after removing inline styles from play.html */
+
+/* Unified column sizing */
+#computerStatusColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-height: 0;
+}
+
+
+
+.coin-column {
+  flex-shrink: 0;
+  margin-bottom: 1rem;
+}
+
+.side-status-wrap {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
 #playerStatusColumn,
 #computerStatusColumn {
   width: 20vw;
   min-width: 120px;
-}
-/* --- Moved from play.html inline styles --- */
-#playerStatusColumn {
-  width: 20vw;
-  min-width: 120px;
-}
-#playerStatus {
-  overflow-y: auto;
+  max-width: 22vw;
+  flex: 0 0 20vw;
   min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow: visible;
 }
+
+#computerStatusColumn {
+  align-items: stretch;
+}
+
+/* Main play area content */
+#playMainContent, #playRender {
+  min-width: 0;
+  min-height: 60vh;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Board and coin sizing */
 #boardFrame {
   aspect-ratio: 1/1;
   width: clamp(250px, 50vw, 600px);
   max-width: 100%;
-}
-#computerStatusColumn {
-  width: 20vw;
-  min-width: 120px;
+  min-width: 0;
+  min-height: 60vh;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 #coinIndicator {
   aspect-ratio: 1/1;
   width: clamp(78px, 12vw, 156px);
   margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-#computerStatus {
-  overflow-y: auto;
+
+/* Only status panels are scrollable */
+.side-status-messages {
   min-height: 0;
+  max-height: 60vh;
+  overflow-y: auto;
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
 }
-/* --- End moved styles --- */
 
 /*
 * Prefixed by https://autoprefixer.github.io
@@ -103,9 +154,11 @@
     display: flex;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-        flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    height: 100vh;
     min-height: 0;
+    flex: 1 1 0;
     padding: 0;
 }
 
@@ -412,6 +465,10 @@ body.play-viewport {
     min-width: 0;
     height: 100%;
     max-width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
   body.play-viewport #playMainContent {
     height: 100%;
@@ -722,6 +779,18 @@ body.play-viewport {
   grid-row: 1 / span 2;
 }
 
+.coin-wrap {
+  min-height: 3rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--theme-status-border, #cfd7e8);
+  border-radius: 12px;
+  background: var(--theme-status-bg, #f7f9ff);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  min-height: 0;
+}
+
 .side-status {
   min-height: 3rem;
   padding: 0.65rem 0.8rem;
@@ -835,13 +904,15 @@ body.play-viewport {
   place-items: center;
   -ms-grid-row-align: stretch;
       align-self: stretch;
-  container-type: size;
+  container-type: size; 
+   /* in use since 2023 in browsers errored in css validator */
 }
 
 
 
 .board-frame {
   width: min(100cqw, 100cqh);
+  /* container query - parse error in css validator */
   aspect-ratio: 1 / 1;
   margin: 0;
   display: -ms-grid;
@@ -1196,7 +1267,6 @@ th, td {
     -ms-grid-row-align: start;
         align-self: start;
     padding: 0.25rem 0;
-    background-color: transparent;
   }
   .side-status { margin-top: 0; }
   .side-status-messages { max-height: min(26vh, 220px); overflow-y: auto; }
