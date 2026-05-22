@@ -1,0 +1,180 @@
+
+
+/* Highlight selected gallery piece */
+.thumbnail-item.is-selected {
+  border: 2.5px solid var(--theme-control-border, #999999);
+  box-shadow: 0 0 0 2px var(--theme-accent, #204f9f);
+}
+/* Piece gallery images: use theme control background */
+.thumbnail-image {
+  background: var(--theme-control-bg, #f4f4f4);
+  border-radius: 8px;
+  padding: 0.15em;
+}
+/* Prevent layout jump for piece choice change container */
+.piece-choice-change-container {
+  min-height: 2.2em;
+}
+/* Avatar image beside heading: styled background */
+.piece-choice-avatar-bg {
+  display: inline-block;
+  background: var(--theme-status-bg);
+  border: 1.5px solid var(--theme-status-border);
+  color: var(--theme-status-text);
+  border-radius: 0.7em;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  padding: 0.08em 0.32em 0.08em 0.32em;
+  margin-left: 0.25em;
+  vertical-align: middle;
+}
+/* Profile page: style upload avatar button and comment containers */
+.profile-content .avatar-form button.profile-pref-btn {
+  background: color-mix(in srgb, var(--theme-control-bg, #f4f4f4) 80%, transparent 20%);
+  border: 1px solid color-mix(in srgb, var(--theme-control-border, #999999) 80%, white 20%);
+  color: var(--theme-control-text, #333333);
+  border-radius: 999px;
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.profile-content .avatar-form button.profile-pref-btn:hover {
+  background: var(--theme-accent, #204f9f);
+  color: var(--theme-accent-text, #ffffff);
+  border-color: var(--theme-accent, #204f9f);
+}
+
+.profile-content .comment-list li {
+  background: color-mix(in srgb, var(--theme-status-bg, #f7f9ff) 74%, transparent 26%);
+  border: 1px solid color-mix(in srgb, var(--theme-status-border, #cfd7e8) 75%, white 25%);
+  color: var(--theme-status-text, #222233);
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+/* Profile page comment icon colors */
+.comment-list .edit-comment-btn .fa-pen {
+  color: var(--theme-control-text);
+  transition: color 0.2s;
+}
+.comment-list .edit-comment-btn:hover .fa-pen,
+.comment-list .edit-comment-btn:focus .fa-pen {
+  color: var(--theme-accent-text);
+  background: var(--theme-accent);
+}
+.comment-list .delete-comment-form .fa-trash-can {
+  color: #b91c1c;
+  transition: color 0.2s;
+}
+.comment-list .delete-comment-form button:hover .fa-trash-can,
+.comment-list .delete-comment-form button:focus .fa-trash-can {
+  color: #fff;
+  background: #b91c1c;
+}
+
+/* in both play and profile views */
+.bar-help {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.bar-help-btn {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  border: 1px solid var(--theme-control-border, #999999);
+  background: var(--theme-control-bg, #f4f4f4);
+  color: var(--theme-control-text, #333333);
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.bar-help-btn i,
+.bar-help-btn svg {
+  display: block;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
+}
+
+.bar-help-btn:hover,
+.bar-help-btn:focus-visible {
+  background: var(--theme-accent, #204f9f);
+  color: var(--theme-accent-text, #ffffff);
+  border-color: var(--theme-accent, #204f9f);
+}
+
+.bar-help-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.4rem);
+  z-index: 40;
+  width: min(25rem, 60vw);
+  padding: 0.6rem 0.7rem;
+  border-radius: 10px;
+  border: 1px solid var(--theme-status-border, #cfd7e8);
+  background: var(--theme-status-bg, #f7f9ff);
+  color: var(--theme-status-text, #222233);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+  font-size: 0.92rem;
+  line-height: 1.35;
+  display: none;
+}
+
+.bar-help:hover .bar-help-panel,
+.bar-help:focus-within .bar-help-panel,
+.bar-help.is-open .bar-help-panel {
+  display: block;
+}
+
+/* .difficulty-button-bar,
+.theme-button-bar, */
+.profile-button-bar {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  border: 1px solid var(--theme-control-border);
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--theme-control-bg);
+}
+
+/* .theme-btn,
+.difficulty-btn, */
+.profile-pref-btn {
+  border: 0;
+  border-right: 1px solid var(--theme-control-border);
+  background: transparent;
+  color: var(--theme-control-text);
+  padding: 0.35rem 0.7rem;
+  cursor: pointer;
+  font-family: var(--theme-font-ui, Arial, sans-serif);
+}
+
+/* .theme-btn:last-child,
+.difficulty-btn:last-child, */
+.profile-pref-btn:last-child {
+  border-right: 0;
+}
+
+/* .theme-btn.is-selected,
+.difficulty-btn.is-selected, */
+.profile-pref-btn.is-selected {
+  background: var(--theme-accent);
+  color: var(--theme-accent-text);
+  border-color: var(--theme-accent);
+}
+
+/* .difficulty-btn.is-disabled,
+.difficulty-btn:disabled,
+.theme-btn.is-disabled,
+.theme-btn:disabled, */
+.profile-pref-btn.is-disabled,
+.profile-pref-btn:disabled {
+  background: #e7e7e7;
+  color: #9a9a9a;
+  cursor: not-allowed;
+}
+
+
+/* .piece-img only data-piece-img in profile page*/
+
+

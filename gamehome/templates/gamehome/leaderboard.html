@@ -63,8 +63,8 @@
               <table class="table mb-0 mt-2 leaderboard-table leaderboard-user-summary-table">
                 <tbody>
                   <tr>
-                    <td class="leaderboard-position-col">{{ current_user_row.position }}</td>
-                    <td class="leaderboard-player-col"><span class="leaderboard-player-text">{{ current_user_row.display_name }}</span></td>
+                    <td ">{{ current_user_row.position }}</td>
+                    <td class="leaderboard-player col"><span class="leaderboard-player-text">{{ current_user_row.display_name }}</span></td>
                     <td class="align-end leaderboard-wins-col">{{ current_user_row.wins }}</td>
                     <td class="leaderboard-percent-col leaderboard-win-pct-col">{{ current_user_row.win_percentage|floatformat:1 }}%</td>
                     <td class="leaderboard-draws-col">{{ current_user_row.draws }}</td>
